@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.btcgenius.market-collector</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/tatianathevisionary/market-genius/src/market_collector.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/tatianathevisionary/market-genius</string>
+    <!-- Every 5 minutes: the real-time pulse -->
+    <key>StartInterval</key>
+    <integer>300</integer>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/market_collector.stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/market_collector.stderr.log</string>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>LowPriorityIO</key>
+    <true/>
+    <key>Nice</key>
+    <integer>10</integer>
+</dict>
+</plist>

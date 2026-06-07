@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BTC GENIUS · INTELLIGENCE CONSOLE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root { --bg:#06090d; --panel:#0b1016; --line:#1b2733; --line2:#2a3b4d;
+          --txt:#c9d7e3; --dim:#5e7387; --accent:#2ea8ff; --red:#ff4f56; --green:#27c87f;
+          --amber:#e3a008; --purple:#a78bfa; --mono:"SF Mono", ui-monospace, Menlo, monospace; }
+  body.light { --bg:#eef1f5; --panel:#ffffff; --line:#d4dbe3; --line2:#b9c4d0;
+               --txt:#1c2733; --dim:#5a6b7d; --accent:#0969da; --red:#d1242f; --green:#1a7f37;
+               --amber:#9a6700; --purple:#6f42c1; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+         font:13px/1.45 var(--mono); padding:0 0 24px; }
+  ::-webkit-scrollbar { width:8px; height:8px; } ::-webkit-scrollbar-thumb { background:var(--line2); }
+
+  /* Top command bar */
+  .bar { display:flex; align-items:center; gap:16px; padding:10px 18px;
+         border-bottom:1px solid var(--line); background:var(--panel);
+         position:sticky; top:0; z-index:5; flex-wrap:wrap; }
+  .logo { font-weight:700; letter-spacing:.14em; font-size:14px; }
+  .logo span { color:var(--accent); }
+  .price { font-size:22px; font-weight:700; }
+  .badge { padding:3px 10px; font-size:11px; font-weight:700; letter-spacing:.08em;
+           color:#000; text-transform:uppercase; }
+  .kv { font-size:11px; color:var(--dim); } .kv b { color:var(--txt); }
+  .right { margin-left:auto; display:flex; align-items:center; gap:14px; }
+  .clock { font-size:12px; color:var(--accent); }
+  .sys { display:flex; gap:10px; font-size:10px; color:var(--dim); }
+  .dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; }
+  .ok { background:var(--green); } .stale { background:var(--amber); } .missing { background:var(--red); }
+  .toggle button { background:transparent; color:var(--dim); border:1px solid var(--line2);
+                   padding:4px 10px; font:11px var(--mono); cursor:pointer; }
+  .toggle button.on { color:var(--accent); border-color:var(--accent); }
+
+  /* Layout */
+  .layout { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:12px;
+            max-width:1500px; margin:12px auto; padding:0 14px; }
+  @media (max-width:1100px){ .layout { grid-template-columns:1fr; } }
+  .col { display:flex; flex-direction:column; gap:12px; min-width:0; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:760px){ .row2 { grid-template-columns:1fr; } }
+  .row2 > .panel { min-width:0; }
+
+  .panel { background:var(--panel); border:1px solid var(--line); }
+  .panel-h { display:flex; align-items:baseline; gap:8px; padding:8px 12px;
+             border-bottom:1px solid var(--line); }
+  .panel-h h2 { margin:0; font-size:11px; font-weight:700; letter-spacing:.12em;
+                color:var(--txt); text-transform:uppercase; }
+  .panel-h .tag { font-size:10px; color:var(--accent); }
+  .grip { margin-left:auto; color:var(--dim); cursor:grab; user-select:none; font-size:12px; }
+  .grip:hover { color:var(--accent); }
+  .drag-ghost { opacity:.35; outline:1px dashed var(--accent); }
+  .panel-b { padding:10px 12px; }
+  .edu { padding:7px 12px; border-top:1px dashed var(--line); font-size:11px;
+         color:var(--dim); }
+  .edu b { color:var(--amber); font-weight:700; }
+  canvas { max-height:300px; } .small canvas { max-height:160px; }
+
+  .checks div { padding:2px 0; font-size:12px; }
+  .checks .why { color:var(--dim); font-size:10px; padding-left:22px; }
+  .chain { font-size:11px; line-height:1.7; color:var(--dim); white-space:pre; overflow-x:auto; }
+  .chain b { color:var(--txt); }
+
+  /* Feed column */
+  .news { max-height:430px; overflow-y:auto; }
+  .news a { display:block; padding:7px 0; border-bottom:1px solid var(--line);
+            color:var(--txt); text-decoration:none; font-size:12px; }
+  .news a:hover { color:var(--accent); }
+  .news .meta { font-size:10px; color:var(--dim); }
+  .xwrap { max-height:560px; overflow-y:auto; }
+  .manual li { margin:6px 0; font-size:11px; color:var(--dim); }
+  .manual b { color:var(--txt); }
+  .pos { color:var(--green); } .neg { color:var(--red); }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="logo">BTC<span>GENIUS</span> ▮ INTELLIGENCE CONSOLE</div>
+  <span class="price" id="price">—</span>
+  <span class="badge" id="regime" style="background:#666">LOADING</span>
+  <span class="badge" id="verdictBadge" style="background:#666">—</span>
+  <span class="kv" id="kpis"></span>
+  <div class="right">
+    <div class="sys" id="sys"></div>
+    <div class="toggle">
+      <button id="btnAll" class="on" onclick="setView('all')">FULL</button>
+      <button id="btnCrypto" onclick="setView('crypto')">CRYPTO</button>
+      <button id="btnFlow" onclick="setView('flow')">FLOW</button>
+      <button id="btnValue" onclick="setView('value')">VALUE</button>
+      <button id="btnTheme" onclick="toggleTheme()">☀ LIGHT</button>
+      <button onclick="location.href='/journal'">✎ JOURNAL</button>
+      <button onclick="location.href='/reports'">⛁ REPORTS</button>
+      <button onclick="location.href='/ledger'">◉ LEDGER</button>
+      <button onclick="location.href='/social'">𝕏 SOCIAL</button>
+    </div>
+    <div class="toggle" id="ranges" title="chart time range">
+      <button data-r="1d">1D</button><button data-r="1w">1W</button><button data-r="1m">1M</button><button data-r="1y" class="on">1Y</button><button data-r="5y">5Y</button><button data-r="all">ALL</button>
+    </div>
+    <span class="clock" id="clock"></span>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- MAIN COLUMN -->
+  <div class="col">
+    <div class="panel">
+      <div class="panel-h"><h2>BTC/USD · 1Y Daily</h2><span class="tag">50D/200D MA · AUTO S/R</span></div>
+      <div class="panel-b"><canvas id="priceChart"></canvas></div>
+      <div class="edu"><b>HOW TO READ:</b> dashed lines are computed support (green) / resistance (red)
+        — price zones where prior buying/selling clustered. A level touched more times (×N) is stronger.
+        Breaks only count on &gt;1.5× average volume; thin-volume breaks are fakeout candidates.</div>
+    </div>
+
+    <div class="row2">
+      <div class="panel small">
+        <div class="panel-h"><h2>Intraday Pulse</h2><span class="tag">5-MIN COLLECTOR</span></div>
+        <div class="panel-b"><canvas id="intradayChart"></canvas></div>
+        <div class="edu"><b>WHY:</b> intraday flow shows whether the daily story is accelerating or fading in real time.</div>
+      </div>
+      <div class="panel small">
+        <div class="panel-h"><h2>Crypto Majors · 90D</h2><span class="tag">REBASED %</span></div>
+        <div class="panel-b"><canvas id="cryptoChart"></canvas></div>
+        <div class="edu"><b>WHY:</b> think of BTC as the "safest" crypto and ETH/SOL as riskier bets on top of it.
+          When people feel brave they reach for the riskier coins (bigger potential gains) → ETH/SOL rise <i>faster</i> than BTC.
+          When people get scared they retreat to the safest thing or to cash → ETH/SOL fall <i>harder</i> than BTC.
+          So the <b>gap</b> between these lines is a fear/greed gauge: lines converging down = fear spreading; ETH/SOL pulling above BTC = greed returning. Often turns before price does.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h2>Risk Appetite 101</h2><span class="tag">THE SUPPLY &amp; DEMAND OF COURAGE</span></div>
+      <div class="panel-b chain">
+  Remember econ: price sits where SUPPLY meets DEMAND. Crypto's supply is nearly
+  fixed short-term — so <b>price moves are almost pure demand shifts</b>. "Risk appetite"
+  is WHAT moves the demand curve: how much risk people are willing to hold for a
+  shot at gains. It moves along a ladder:
+
+  <b>CASH → BONDS → STOCKS → BTC → ETH → SOL/LINK → memecoins</b>
+  safest ◀──────────── the risk ladder ────────────▶ riskiest
+
+  GREED  = demand reaches OUT the ladder → riskiest assets rise FASTEST
+  FEAR   = demand retreats DOWN the ladder → riskiest assets fall HARDEST
+  That's the whole concept. Everything below just measures where on the ladder
+  demand currently sits — and it usually turns at the ends BEFORE it turns in BTC.</div>
+      <div class="edu"><b>WHY IT'S TRADEABLE:</b> appetite shifts are <i>gradual and sequenced</i> — memecoins die first,
+        then SOL/LINK fade, then ETH, then BTC. Watching the riskier rungs gives you an early-warning system for the safer ones.</div>
+    </div>
+
+    <div class="row2">
+      <div class="panel small">
+        <div class="panel-h"><h2>Risk Appetite Oscillator</h2><span class="tag">ALTS vs BTC · 30D RELATIVE</span></div>
+        <div class="panel-b"><canvas id="appetiteChart"></canvas></div>
+        <div class="edu"><b>HOW TO READ:</b> (ETH+SOL+LINK average 30d return) minus (BTC 30d return).
+          <b>Above 0 = greed</b> — money reaching out the ladder. <b>Below 0 = fear</b> — money retreating to BTC/cash.
+          Crossing up from deep negative is one of the earliest recovery tells; deep positive = late-cycle froth.</div>
+      </div>
+      <div class="panel small">
+        <div class="panel-h"><h2>Buy-Zone Matrix</h2><span class="tag">BTC · ETH · SOL · LINK</span></div>
+        <div class="panel-b"><table style="width:100%;border-collapse:collapse;font-size:11px" id="zoneTable"></table></div>
+        <div class="edu"><b>HOW TO READ:</b> ZONE = where price sits vs its own history (Mayer = price ÷ 200d MA,
+          drawdown, RSI). Mayer zones: <b>&lt;0.8</b> deep value · <b>0.8–1.0</b> accum · <b>1.0–1.6</b> fair ·
+          <b>1.6–2.4</b> hot · <b>&gt;2.4</b> froth. <b>ACCUM zone ≠ "buy now"</b> — it means knife-catching is being
+          compensated. Zone says <i>where</i>, the B-score says <i>when</i>: zone + capitulation trigger = tranche.
+          FROTH zone = stop adding, plan exits.</div>
+      </div>
+    </div>
+
+    <div class="panel small">
+      <div class="panel-h"><h2>BTC vs Gold · 1Y</h2><span class="tag">THE HEDGE TEST · REBASED %</span></div>
+      <div class="panel-b"><canvas id="goldChart"></canvas></div>
+      <div class="edu"><b>HOW TO READ:</b> gold is the incumbent safe-haven — the bottom rung of the risk ladder,
+        where money goes when it's scared but still wants a hedge. If BTC were "digital gold," these lines would move
+        together in a crisis. When gold rises while BTC falls (now), the market is voting that BTC is a <b>risk asset,
+        not a hedge</b> — expect it to trade with the Nasdaq, not against it. If BTC ever starts rising <i>with</i> gold
+        during stress, that regime change would be one of the most bullish structural signals possible.</div>
+    </div>
+
+    <div class="row2">
+      <div class="panel small">
+        <div class="panel-h"><h2>Bottom Radar · Drawdown</h2><span class="tag">% FROM 1Y HIGH</span></div>
+        <div class="panel-b"><canvas id="ddChart"></canvas></div>
+        <div class="edu"><b>HOW TO READ:</b> bear-market bottoms historically formed at -55% to -80% drawdowns.
+          A bottom is a <i>process</i>: first low → bounce → retest on lower volume. The retest matters more than the low.</div>
+      </div>
+      <div class="panel small">
+        <div class="panel-h"><h2>Bottom Radar · Mayer Multiple &amp; RSI</h2><span class="tag">VALUATION + MOMENTUM</span></div>
+        <div class="panel-b"><canvas id="mayerChart"></canvas></div>
+        <div class="edu"><b>MAYER ZONES</b> (price ÷ 200d MA — "how far from normal?"):
+          <b>&lt;0.8</b> deep value / historical accumulation · <b>0.8–1.0</b> below trend, accumulation edge ·
+          <b>1.0–1.6</b> fair value · <b>1.6–2.4</b> hot, trim into strength · <b>&gt;2.4</b> froth, historically
+          preceded major tops. RSI&lt;30 = oversold; a <b>higher RSI low while price makes a lower low</b>
+          (divergence) is the classic bottom tell — the second low has less force.</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="panel small">
+        <div class="panel-h"><h2>Whale Tape</h2><span class="tag">BINANCE LARGE PRINTS ≥ $100K</span></div>
+        <div class="panel-b"><canvas id="whaleChart"></canvas></div>
+        <div class="edu"><b>HOW TO READ:</b> every 5 min we sample the live trade tape and total the large trades
+          (≥$100k), split by aggressor. <b>Red over green while price falls = a sell-off in progress</b> —
+          big players hitting bids. Green surging at a low = whales absorbing the panic (accumulation).
+          Single giant prints = one entity moving size. <span id="whaleNow"></span></div>
+      </div>
+      <div class="panel small macro-only">
+        <div class="panel-h"><h2>Transmission Series · 1Y</h2><span class="tag">ALL INDICATORS · REBASED %</span></div>
+        <div class="panel-b"><canvas id="macroChart"></canvas></div>
+        <div class="edu"><b>HOW TO READ:</b> every link of the chain as a line, rebased to 0% a year ago —
+          oil (shock), 10Y (transmission), DXY (dollar), Nasdaq (risk appetite), gold (hedge), USD/CAD (your
+          home-currency lens: BTC in CAD = BTC-USD × this line). Click legend names to isolate lines.</div>
+      </div>
+    </div>
+
+    <div class="row2 macro-only">
+      <div class="panel small">
+        <div class="panel-h"><h2>Macro Chain · 5D Moves</h2><span class="tag">TRANSMISSION</span></div>
+        <div class="panel-b"><canvas id="rocChart"></canvas></div>
+        <div class="edu"><b>WHY:</b> BTC rarely moves alone. Oil shocks → inflation fear → yields up →
+          dollar up → risk assets down → BTC down (hardest, as the highest-beta risk asset).</div>
+      </div>
+      <div class="panel small">
+        <div class="panel-h"><h2>Signal History</h2><span class="tag">A/B SCORES · CORR</span></div>
+        <div class="panel-b"><canvas id="scoreChart"></canvas></div>
+        <div class="edu"><b>WHY:</b> the <i>trend</i> of A and B matters more than the level.
+          Rising A = macro cause releasing. Rising B = sellers exhausting. Both ≥3 = bottom-watch.</div>
+      </div>
+    </div>
+
+    <div class="panel macro-only">
+      <div class="panel-h"><h2>Transmission Chain</h2><span class="tag">EDUCATIONAL MODEL</span></div>
+      <div class="panel-b chain">
+  GEOPOLITICAL SHOCK ──▶ <b>BRENT CRUDE ↑</b> ──▶ INFLATION EXPECTATIONS ↑ ──▶ <b>10Y YIELD ↑</b>
+                                  │                                              │
+                                  ▼                                              ▼
+                          <b>GOLD ↑</b> (safe haven)                          <b>DXY ↑</b> (dollar bid)
+                                  ▲                                              │
+        divergence = BTC failing  │                                              ▼
+        the "digital gold" test ──┘                       <b>NASDAQ / S&amp;P ↓</b> (risk-off)
+                                                                                 │
+                                                                                 ▼
+                                                          <b>BTC ↓</b> (highest-beta risk asset)</div>
+      <div class="edu"><b>CURRENT READ:</b> <span id="chainRead">—</span></div>
+    </div>
+
+    <div class="row2">
+      <div class="panel macro-only">
+        <div class="panel-h"><h2>A · Macro Release</h2><span class="tag" id="aTag"></span></div>
+        <div class="panel-b checks" id="aChecks"></div>
+        <div class="edu"><b>RULE:</b> a selloff stops when its <i>cause</i> stops. No A-flips = the shock is still live.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h2>B · Seller Exhaustion</h2><span class="tag" id="bTag"></span></div>
+        <div class="panel-b checks" id="bChecks"></div>
+        <div class="edu"><b>RULE:</b> capitulation without macro relief (B without A) historically = bounce, not bottom.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h2>Field Manual</h2><span class="tag">DECISION RULES</span></div>
+      <div class="panel-b"><ul class="manual">
+        <li><b>Durable bottom:</b> needs A ≥ 3 AND B ≥ 3. Either alone is incomplete.</li>
+        <li><b>Capitulation-reversal entry (aggressive):</b> B1 + B6 in the same ~3 sessions, smallest size,
+            hard invalidation below the capitulation wick low.</li>
+        <li><b>Basing-breakout entry (conservative):</b> ≥2 weeks flat, then range-high break on &gt;1.5× volume with A ≥ 3.</li>
+        <li><b>Entry veto:</b> never enter while oil makes new spike highs or 10Y rises &gt;10bps/day — the shock is live.</li>
+        <li><b>Exit:</b> scale out on 2 froth signals (price &gt;25% over 50d MA, extreme funding, alt mania); out on 3+.</li>
+        <li><b>Correlation breakdown</b> (BTC↔Nasdaq &lt; 0.2): driver is crypto-specific → weight ETF flows &amp; sentiment over macro.</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- FEED COLUMN -->
+  <div class="col">
+    <div class="panel">
+      <div class="panel-h"><h2>Objective</h2><span class="tag" id="objTag">edit data/objective.json</span></div>
+      <div class="panel-b" id="objBody">loading…</div>
+      <div class="edu"><b>WHY IT'S FIRST:</b> every signal below only matters relative to a goal.
+        Position P/L is marked live against the engine price.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Position Sizing</h2><span class="tag">FIRST-TIMER'S GUIDE · RISK-ASSET MATH</span></div>
+      <div class="panel-b">
+        <div style="font-size:11px;color:var(--dim);margin-bottom:8px">
+          BTC is a <b>risk asset</b> with volatility ~<b>3–4× the stock market</b> (50–70%
+          annualized vs ~15–20% for equities). A "small" allocation carries big-feeling swings —
+          size by the loss you can watch without selling, not the gain you want.</div>
+        <div class="kv" style="margin-bottom:8px">investable fund (after emergency cash + near-term needs):
+          $<input id="fundInput" placeholder="e.g. 50,000" style="width:110px;background:transparent;
+            color:var(--txt);border:1px solid var(--line2);padding:3px 6px;font:12px var(--mono)"
+            oninput="renderSizing()"></div>
+        <div id="sizeOut"></div>
+      </div>
+      <div class="edu"><b>RULES:</b> 1) emergency fund stays out, always; 2) only money untouchable
+        for a full cycle (4+ years — past recoveries took ~3); 3) never leverage; 4) enter in
+        tranches gated by B-triggers, not feelings; 5) the stress-test column is the real question:
+        <b>if that number would make you sell, the size is too big.</b></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Verdict</h2><span class="tag">MODEL CALL · AUTO-GRADED IN JOURNAL</span></div>
+      <div class="panel-b" id="verdictBody">awaiting signal engine…</div>
+      <div class="edu"><b>HOW IT'S MADE:</b> a deterministic read of the SIGNALS.md checklists —
+        BUY needs A≥3 + B≥2 confluence, SELL fires on froth signals, WAIT means the selloff cause
+        is still live. Every call is logged to the journal and graded against price at its horizon.
+        <b>Educational model, not financial advice.</b></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Track Record</h2><span class="tag" id="trackTag">CALLS GRADED AT HORIZON</span></div>
+      <div class="panel-b news" id="trackRecord">loading…</div>
+      <div class="edu"><b>HOW GRADING WORKS:</b> every model call (and any call you log in the
+        journal) is checked against price when its horizon expires: up-bias needs +2%, down-bias
+        -2%, neutral within ±2%. ✓ = right, ✗ = wrong, ⧖ = still open. The win rate is the
+        honest answer to "was that a good call?" — for the model AND for you.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Analyst Desk</h2><span class="tag"><a href="/reports" style="color:var(--accent)">FULL ARCHIVE →</a></span></div>
+      <div class="panel-b news" id="analystDesk">loading…</div>
+      <div class="edu"><b>WORKFLOW:</b> <code>python3 src/report_generator.py</code> builds today's data
+        skeleton; the analyst (you + Claude) completes the synthesis. Stored forever under
+        data/reports/ — re-read old calls to grade your own judgment, not just the model's.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Live Wire</h2><span class="tag" id="newsTag">RSS · COINDESK / COINTELEGRAPH / DECRYPT</span></div>
+      <div class="panel-b news" id="news">loading…</div>
+      <div class="edu"><b>WHY:</b> headlines move the chain before charts do — strait escalations, Fed remarks, ETF flows.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>X / Twitter</h2><span class="tag" id="xTag">SENTIMENT-TAGGED · 6H CACHE</span></div>
+      <div class="panel-b news" id="xfeed">loading…</div>
+      <div class="edu"><b>SENTIMENT:</b> each tweet is keyword-scored 🟢 bullish / 🔴 bearish / ⚪ neutral.
+        Crude but honest — it measures <i>tone of the conversation</i>, not truth. Crowd sentiment is a
+        contrarian input at extremes: maximum bearishness clusters near bottoms. Cached 6h (X free-tier limits).</div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Whale Ledger</h2><span class="tag">≥$250K PRINTS · ≥$1M ON-CHAIN</span></div>
+      <div class="panel-b news" id="whaleLedger">collecting…</div>
+      <div class="edu"><b>SOURCES:</b> Binance tape (single prints ≥$250k, tagged by aggressor:
+        🔴 sell hit the bid, 🟢 buy lifted the offer) + on-chain mempool transfers ≥$1M (🐋, direction
+        unknown — a transfer can be an exchange deposit = sell pressure, a withdrawal = accumulation,
+        or an internal shuffle; click the entry to inspect on mempool.space). Deduped, last 1000 kept.</div>
+    </div>
+  </div>
+</div>
+<script>
+const REGIME_COLOR = { 'Macro-driven selloff':'#ff4f56', 'Crypto-specific selloff':'#ff8c42',
+                       'Basing':'#e3a008', 'Froth':'#a78bfa', 'Trending':'#27c87f' };
+// Theme: applied before charts render; toggling reloads so the X embed re-themes too.
+const THEME = localStorage.getItem('theme') || 'light';
+if (THEME === 'light') {
+  document.body.classList.add('light');
+  document.querySelectorAll('.twitter-timeline').forEach(el => el.setAttribute('data-theme', 'light'));
+}
+function toggleTheme() {
+  localStorage.setItem('theme', THEME === 'light' ? 'dark' : 'light');
+  location.reload();
+}
+document.getElementById('btnTheme').textContent = THEME === 'light' ? '☾ DARK' : '☀ LIGHT';
+const css = name => getComputedStyle(document.body).getPropertyValue(name).trim();
+Chart.defaults.color = css('--dim');
+Chart.defaults.borderColor = css('--line');
+Chart.defaults.font.family = '"SF Mono", ui-monospace, Menlo, monospace';
+Chart.defaults.font.size = 10;
+const charts = {};
+
+// Lenses: each answers a different question about the same market.
+//   all    -> everything (macro machinery included)
+//   crypto -> hide macro panels: BTC moving for its own reasons
+//   flow   -> who is transacting right now (tape, intraday, whales)
+//   value  -> where are we in the cycle (drawdown, Mayer, appetite, hedge test)
+const LENSES = {
+  flow: ['BTC/USD · 1Y Daily', 'Intraday Pulse', 'Whale Tape'],
+  value: ['BTC/USD · 1Y Daily', 'Risk Appetite 101', 'Risk Appetite Oscillator',
+          'BTC vs Gold · 1Y', 'Bottom Radar · Drawdown'],
+};
+function setView(v) {
+  const btn = { all: 'btnAll', crypto: 'btnCrypto', flow: 'btnFlow', value: 'btnValue' };
+  Object.entries(btn).forEach(([k, id]) => document.getElementById(id).classList.toggle('on', v === k));
+  const units = [...document.querySelectorAll('.col')[0].children];
+  units.forEach(u => {
+    const keep = !LENSES[v] || LENSES[v].includes(u.dataset.key);
+    u.style.display = keep ? '' : 'none';
+  });
+  document.querySelectorAll('.macro-only').forEach(el => el.style.display = v === 'crypto' ? 'none' : '');
+  localStorage.setItem('view', v);
+}
+setInterval(() => {
+  document.getElementById('clock').textContent = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
+}, 1000);
+
+// Chart time range: 1D/1W use the 5-min intraday tape; 1M/1Y slice the daily
+// series; 5Y/ALL use the weekly long-history series (series_long.json).
+const RANGES = { '1d': 1, '1w': 7, '1m': 30, '1y': 366, '5y': 1830, 'all': 1e9 };
+let RANGE = localStorage.getItem('chartRange') || '1y';
+document.querySelectorAll('#ranges button').forEach(btn => {
+  btn.classList.toggle('on', btn.dataset.r === RANGE);
+  btn.onclick = () => {
+    RANGE = btn.dataset.r;
+    localStorage.setItem('chartRange', RANGE);
+    document.querySelectorAll('#ranges button').forEach(x => x.classList.toggle('on', x === btn));
+    render().catch(() => {});
+  };
+});
+
+const dstr = ts => new Date(ts * 1000).toISOString().slice(0, 10);
+const ma = (xs, n) => xs.map((_, i) => i + 1 < n ? null :
+  xs.slice(i + 1 - n, i + 1).reduce((a, b) => a + b, 0) / n);
+const rsi = (xs, n = 14) => {
+  const out = [null]; let g = 0, l = 0;
+  for (let i = 1; i < xs.length; i++) {
+    const ch = xs[i] - xs[i - 1], up = Math.max(ch, 0), dn = Math.max(-ch, 0);
+    if (i <= n) { g += up / n; l += dn / n; out.push(null); }
+    else { g = (g * (n - 1) + up) / n; l = (l * (n - 1) + dn) / n;
+           out.push(l === 0 ? 100 : 100 - 100 / (1 + g / l)); }
+  }
+  return out;
+};
+const ago = s => s == null ? '—' : s < 90 ? s + 's' : s < 5400 ? Math.round(s / 60) + 'm' : Math.round(s / 3600) + 'h';
+
+const srPlugin = {
+  id: 'srLines',
+  afterDatasetsDraw(chart) {
+    const levels = chart.options.srLevels || [];
+    const { ctx, chartArea: a, scales: { y } } = chart;
+    ctx.save();
+    for (const z of levels) {
+      const py = y.getPixelForValue(z.level);
+      if (py < a.top || py > a.bottom) continue;
+      ctx.strokeStyle = z.side === 'support' ? '#27c87f99' : '#ff4f5699';
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.moveTo(a.left, py); ctx.lineTo(a.right, py); ctx.stroke();
+      ctx.fillStyle = ctx.strokeStyle; ctx.font = '10px monospace';
+      ctx.fillText(`$${z.level.toLocaleString()} ${z.side.toUpperCase()} x${z.strength}`, a.left + 6, py - 4);
+    }
+    ctx.restore();
+  }
+};
+
+function mkChart(id, cfg) { if (charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); }
+async function getJSON(p) { const r = await fetch(p); if (!r.ok) throw new Error(p); return r.json(); }
+
+const EXPLAIN_A = {
+  A1_oil_rolls_over: 'Brent -5% off spike = the inflation shock input is fading',
+  A2_yields_peak: '10Y below its 20d high and falling = transmission relaxing',
+  A4_dxy_tops: 'dollar rolling over = global liquidity loosening',
+  A5_equities_stable: 'Nasdaq holding a higher low = risk appetite returning',
+};
+const EXPLAIN_B = {
+  B1_capitulation_volume: '>2x volume down-day with long wick = forced sellers flushing',
+  B5_correlation_recouples: 'BTC re-syncing with Nasdaq = idiosyncratic selling finished',
+  B6_failed_new_low: 'undercut prior low then reclaimed = last sellers trapped',
+};
+
+async function render() {
+  const [state, series, history, market, status, obj, longSeries] = await Promise.all([
+    getJSON('/data/state.json'), getJSON('/data/series.json'),
+    getJSON('/data/signals_history.jsonl'), getJSON('/data/market/snapshots.jsonl'),
+    getJSON('/status'), getJSON('/data/objective.json').catch(() => null),
+    getJSON('/data/series_long.json').catch(() => null),
+  ]);
+
+  if (obj) {
+    OBJ_BASIS = obj.cost_basis_usd;
+    const val = obj.position_btc * state.price;
+    const pl = val - obj.cost_basis_usd;
+    const plPct = (pl / obj.cost_basis_usd * 100).toFixed(1);
+    const cls = pl >= 0 ? 'pos' : 'neg';
+    document.getElementById('objTag').textContent = `SINCE ${obj.started}`;
+    document.getElementById('objBody').innerHTML =
+      `<div style="font-size:12px;margin-bottom:8px">${obj.goal}</div>
+       <div class="kv" style="font-size:12px">
+         <b>${obj.position_btc} BTC</b> · cost $${obj.cost_basis_usd.toLocaleString()}
+         · now <b>$${Math.round(val).toLocaleString()}</b>
+         · <b class="${cls}">${pl >= 0 ? '+' : ''}$${Math.round(pl).toLocaleString()} (${plPct}%)</b>
+       </div>
+       <ul class="manual" style="margin:8px 0 0;padding-left:18px">${
+         (obj.rules || []).map(r => `<li>${r}</li>`).join('')}</ul>`;
+  }
+
+  document.getElementById('price').textContent = '$' + Math.round(state.price).toLocaleString();
+  const badge = document.getElementById('regime');
+  badge.textContent = `${state.regime} · A:${state.a_score}/${state.a_max} · B:${state.b_score}/${state.b_max}`;
+  badge.style.background = REGIME_COLOR[state.regime] || '#666';
+  const V = state.verdict;
+  if (V) {
+    const map = { BUY: ['BUY', '#27c87f'], ACCUMULATE: ['BUY', '#27c87f'],
+                  SELL: ['SELL', '#ff4f56'], REDUCE: ['SELL', '#ff4f56'],
+                  HOLD: ['HOLD', '#e3a008'], WAIT: ['WAIT', '#9aa7b4'] };
+    const [vLabel, vColor] = map[V.direction] || [V.direction, '#666'];
+    const vb = document.getElementById('verdictBadge');
+    vb.textContent = vLabel; vb.style.background = vColor;
+    const comps = V.components ? Object.entries(V.components).map(([k, v]) => {
+      const c = v > 0 ? 'var(--green)' : v < 0 ? 'var(--red)' : 'var(--dim)';
+      return `<span style="margin-right:10px;white-space:nowrap">${k.replace('_', ' ')}
+        <b style="color:${c}">${v > 0 ? '+' + v : v}</b></span>`;
+    }).join('') : '';
+    document.getElementById('verdictBody').innerHTML =
+      `<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+         <span style="font-size:22px;font-weight:700;letter-spacing:.1em;color:${vColor}">${vLabel}</span>
+         <span class="kv">${V.score != null ? `score <b>${V.score > 0 ? '+' : ''}${V.score}</b> · ` : ''}confidence <b>${V.confidence_pct}%</b> · bias <b>${V.bias}</b> · horizon <b>${V.horizon_days}d</b></span>
+       </div>
+       ${comps ? `<div style="margin-top:7px;font-size:11px;line-height:1.9">${comps}</div>` : ''}
+       <div style="margin-top:4px;font-size:11px;color:var(--dim)">${V.thesis.replace('[auto] ', '')}</div>`;
+  }
+  const r5 = state.roc5 || {};
+  document.getElementById('kpis').innerHTML =
+    `5D <b class="${r5.btc < 0 ? 'neg' : 'pos'}">${r5.btc}%</b> · VOL <b>${state.volume_vs_30d_avg}×</b>` +
+    ` · vs50D <b>${state.dist_from_50d_pct}%</b> · CORR·NQ <b>${state.corr_btc_nasdaq_30d}</b>`;
+
+  document.getElementById('sys').innerHTML = Object.entries(status).map(([k, v]) =>
+    `<span><span class="dot ${v.state}"></span>${k.replace('_', ' ')} ${ago(v.age_s)}</span>`).join('');
+
+  // Smart lens hint: when BTC decouples from equities, macro charts mislead -> CRYPTO lens.
+  const decoupled = Math.abs(state.corr_btc_nasdaq_30d) < 0.2 || state.corr_btc_nasdaq_30d < 0;
+  document.getElementById('btnCrypto').textContent = decoupled ? 'CRYPTO ⚡' : 'CRYPTO';
+  document.getElementById('btnCrypto').title = decoupled
+    ? 'recommended: BTC↔Nasdaq correlation broken — crypto-specific flows dominate'
+    : 'BTC tracking equities — macro lens (FULL) is the better read';
+
+  const fmt = (obj, ex) => Object.entries(obj).map(([k, v]) =>
+    `<div>${v ? '🟩' : '⬜'} ${k.replaceAll('_', ' ')}</div><div class="why">${ex[k] || ''}</div>`).join('');
+  document.getElementById('aChecks').innerHTML = fmt(state.A, EXPLAIN_A) +
+    '<div>➖ A3 rate-hike odds</div><div class="why">not in free data — check CME FedWatch</div>';
+  document.getElementById('bChecks').innerHTML = fmt(state.B, EXPLAIN_B) +
+    '<div>➖ B2 funding · B3 ETF flows · B4 on-chain</div><div class="why">tier-2 feeds, next build phase</div>';
+  document.getElementById('aTag').textContent = `${state.a_score}/${state.a_max} FLIPPED`;
+  document.getElementById('bTag').textContent = `${state.b_score}/${state.b_max} FLIPPED`;
+
+  const reads = [];
+  reads.push(r5.brent > 3 ? 'oil shock LIVE' : r5.brent < -5 ? 'oil shock FADING' : 'oil neutral');
+  reads.push(r5.us10y > 0 ? 'yields pressing' : 'yields easing');
+  reads.push(state.corr_btc_nasdaq_30d < 0.2 ? 'BTC decoupled from equities (crypto-specific flows dominate)' : 'BTC tracking equities');
+  reads.push(r5.gold > 0 && r5.btc < 0 ? 'gold up while BTC down → market treating BTC as RISK, not hedge' : 'hedge-test neutral');
+  document.getElementById('chainRead').textContent = reads.join(' · ');
+
+  const b = series.btc;
+  // helper: align any series onto BTC's calendar days (macro series skip weekends)
+  const onBtcDays = s => {
+    const m = new Map(s.ts.map((t, i) => [Math.floor(t / 86400), s.close[i]]));
+    return b.ts.map(t => m.get(Math.floor(t / 86400)) ?? null);
+  };
+  const rebase = arr => { const base = arr.find(v => v != null);
+    return arr.map(v => v == null ? null : (v / base - 1) * 100); };
+
+  // ---- time-range windowing -------------------------------------------------
+  const isLong = (RANGE === '5y' || RANGE === 'all') && longSeries && longSeries.btc;
+  const SRC = isLong ? longSeries : series;       // weekly bars beyond 1y
+  const bucket = isLong ? 7 * 86400 : 86400;
+  const cutTs = RANGE === 'all' ? 0 : Date.now() / 1000 - RANGES[RANGE] * 86400;
+  const w = s => {  // slice a {ts, close} series to the active range (keeps i0 for full-context MAs)
+    if (!s || !s.ts) return null;
+    let i0 = s.ts.findIndex(t => t >= cutTs); if (i0 < 0) i0 = 0;
+    return { i0, ts: s.ts.slice(i0), close: s.close.slice(i0) };
+  };
+  const cb = w(SRC.btc) || { i0: 0, ts: b.ts, close: b.close };
+  const onCbDays = s => {  // align any series onto the windowed BTC axis (day/week buckets)
+    const m = new Map(s.ts.map((t, i) => [Math.floor(t / bucket), s.close[i]]));
+    return cb.ts.map(t => m.get(Math.floor(t / bucket)) ?? null);
+  };
+  const rl = { '1d': '1D', '1w': '1W', '1m': '1M', '1y': '1Y', '5y': '5Y', 'all': 'ALL' }[RANGE];
+  const priceTag = document.querySelector('#priceChart')?.closest('.panel')?.querySelector('.tag');
+  if (priceTag) priceTag.textContent = `${rl}${isLong ? ' · WEEKLY' : ''} · MA · AUTO S/R`;
+
+  const vols = b.volume || [];
+  if (RANGE === '1d' || RANGE === '1w') {
+    // intraday tape from the 5-min collector (history depth = collector retention)
+    const pts = market.filter(s => s.btc && Date.parse(s.fetched_at) / 1000 >= cutTs);
+    mkChart('priceChart', {
+      type: 'line',
+      data: { labels: pts.map(s => s.fetched_at.slice(5, 16).replace('T', ' ')),
+        datasets: [{ label: 'BTC', data: pts.map(s => s.btc.price),
+                     borderColor: '#2ea8ff', borderWidth: 1.5, pointRadius: 0 }] },
+      options: { srLevels: b.sr || [], animation: false, interaction: { mode: 'index', intersect: false },
+        scales: { x: { ticks: { maxTicksLimit: 10 } },
+          y: { ticks: { callback: v => '$' + (v / 1000).toFixed(1) + 'k' } } },
+        plugins: { legend: { labels: { boxWidth: 10 } } } },
+      plugins: [srPlugin],
+    });
+  } else {
+    const full = SRC.btc.close;
+    const maF = ma(full, isLong ? 10 : 50).slice(cb.i0);   // ~50d (10wk on weekly bars)
+    const maS = ma(full, isLong ? 29 : 200).slice(cb.i0);  // ~200d (29wk on weekly bars)
+    const v = isLong ? [] : vols.slice(cb.i0);
+    mkChart('priceChart', {
+      type: 'line',
+      data: { labels: cb.ts.map(dstr), datasets: [
+        { label: 'BTC', data: cb.close, borderColor: '#2ea8ff', borderWidth: 1.6, pointRadius: 0 },
+        { label: isLong ? '~50D' : '50D', data: maF, borderColor: '#e3a008', borderWidth: 1, pointRadius: 0 },
+        { label: isLong ? '~200D' : '200D', data: maS, borderColor: '#5e7387', borderWidth: 1, pointRadius: 0 },
+        ...(v.length ? [{ label: 'volume', type: 'bar', data: v, yAxisID: 'yv',
+          backgroundColor: cb.close.map((c, i, arr) => c >= (arr[i - 1] ?? c) ? '#27c87f55' : '#ff4f5655') }] : []),
+      ]},
+      options: { srLevels: isLong ? [] : (b.sr || []), animation: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: { x: { ticks: { maxTicksLimit: 12 } }, y: { ticks: { callback: v2 => '$' + v2 / 1000 + 'k' } },
+          ...(v.length ? { yv: { position: 'right', max: Math.max(...v) * 4, display: false } } : {}) },
+        plugins: { legend: { labels: { boxWidth: 10 } } } },
+      plugins: [srPlugin],
+    });
+  }
+
+  // BTC vs Gold hedge test (rebased, range-aware)
+  mkChart('goldChart', {
+    type: 'line',
+    data: { labels: cb.ts.map(dstr), datasets: [
+      { label: 'BTC', data: rebase(cb.close), borderColor: '#2ea8ff', borderWidth: 1.5, pointRadius: 0 },
+      { label: 'GOLD', data: rebase(onCbDays(SRC.gold || series.gold)), borderColor: '#e3a008',
+        borderWidth: 1.5, pointRadius: 0, spanGaps: true },
+    ]},
+    options: { animation: false, interaction: { mode: 'index', intersect: false },
+      scales: { x: { ticks: { maxTicksLimit: 10 } }, y: { ticks: { callback: v => v + '%' } } },
+      plugins: { legend: { labels: { boxWidth: 10 } } } },
+  });
+
+  // Risk appetite oscillator: (avg alt 30d return) - (BTC 30d return)
+  const altKeys = ['eth', 'sol', 'link'].filter(k => series[k]);
+  const altArrs = altKeys.map(k => onBtcDays(series[k]));
+  const spread = b.ts.map((_, i) => {
+    if (i < 30) return null;
+    const bret = (b.close[i] / b.close[i - 30] - 1) * 100;
+    const rets = altArrs.map(a => (a[i] != null && a[i - 30] != null)
+      ? (a[i] / a[i - 30] - 1) * 100 : null).filter(v => v != null);
+    return rets.length ? rets.reduce((x, y) => x + y, 0) / rets.length - bret : null;
+  });
+  mkChart('appetiteChart', {
+    type: 'line',
+    data: { labels: b.ts.map(dstr), datasets: [{ label: 'alts - BTC 30d', data: spread,
+      borderWidth: 1.6, pointRadius: 0, fill: 'origin', backgroundColor: '#5e738722',
+      segment: { borderColor: c => (c.p1.parsed.y ?? 0) >= 0 ? '#27c87f' : '#ff4f56' } }] },
+    options: { animation: false, plugins: { legend: { display: false } },
+      scales: { x: { ticks: { maxTicksLimit: 10 } }, y: { ticks: { callback: v => v + '%' } } } },
+  });
+
+  // Buy-zone matrix
+  const zoneFor = (mayerV, rsiV) =>
+    mayerV < 0.9 && rsiV < 45 ? ['ACCUM ZONE', '#27c87f'] :
+    mayerV > 1.8 || rsiV > 75 ? ['FROTH', '#a78bfa'] : ['NEUTRAL', '#5e7387'];
+  const assets = [['BTC', 'btc'], ['ETH', 'eth'], ['SOL', 'sol'], ['LINK', 'link'], ['GOLD', 'gold']];
+  let zrows = '<tr><th style="text-align:left;color:var(--dim)">Asset</th><th>Price</th><th>5d</th><th>vs 1y high</th><th>Mayer</th><th>RSI</th><th>Zone</th></tr>';
+  for (const [label, key] of assets) {
+    const s = series[key]; if (!s) continue;
+    const xs = s.close, p = xs[xs.length - 1];
+    const r5v = ((p / xs[xs.length - 6] - 1) * 100).toFixed(1);
+    const ddv = ((p / Math.max(...xs) - 1) * 100).toFixed(0);
+    const mv = p / (xs.slice(-200).reduce((a, c) => a + c, 0) / Math.min(200, xs.length));
+    const rs = rsi(xs); const rv = rs[rs.length - 1] ?? 50;
+    const [zl, zc] = zoneFor(mv, rv);
+    zrows += `<tr><td style="padding:5px 8px;border-bottom:1px solid var(--line)"><b>${label}</b></td>
+      <td style="padding:5px 8px;border-bottom:1px solid var(--line)">$${p < 10 ? p.toFixed(2) : Math.round(p).toLocaleString()}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid var(--line)" class="${r5v < 0 ? 'neg' : 'pos'}">${r5v}%</td>
+      <td style="padding:5px 8px;border-bottom:1px solid var(--line)">${ddv}%</td>
+      <td style="padding:5px 8px;border-bottom:1px solid var(--line)">${mv.toFixed(2)}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid var(--line)">${Math.round(rv)}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid var(--line);color:${zc};font-weight:700">${zl}</td></tr>`;
+  }
+  document.getElementById('zoneTable').innerHTML = zrows;
+
+  // Whale tape from collector snapshots
+  const wh = market.filter(s => s.whales);
+  if (wh.length) {
+    mkChart('whaleChart', {
+      type: 'bar',
+      data: { labels: wh.map(s => s.fetched_at.slice(11, 16)), datasets: [
+        { label: 'big buys $M', data: wh.map(s => s.whales.big_buy_usd / 1e6), backgroundColor: '#27c87f' },
+        { label: 'big sells $M', data: wh.map(s => s.whales.big_sell_usd / 1e6), backgroundColor: '#ff4f56' },
+      ]},
+      options: { animation: false, scales: { x: { stacked: true, ticks: { maxTicksLimit: 8 } },
+        y: { stacked: true } }, plugins: { legend: { labels: { boxWidth: 10 } } } },
+    });
+    const last = wh[wh.length - 1].whales;
+    document.getElementById('whaleNow').innerHTML =
+      `<b>NOW:</b> largest print $${(last.largest_usd / 1e6).toFixed(2)}M · ` +
+      `${last.big_count} prints ≥$100k in last ${last.window_s}s of tape.`;
+  }
+
+  // Full transmission chain, rebased 1y (incl. USD/CAD home-currency lens)
+  const MACRO = [['BRENT', 'brent', '#ff8c42'], ['10Y', 'us10y', '#ff4f56'], ['DXY', 'dxy', '#e3a008'],
+                 ['NQ', 'nasdaq', '#27c87f'], ['GOLD', 'gold', '#d4a017'], ['USD/CAD', 'usdcad', '#a78bfa'],
+                 ['BTC', 'btc', '#2ea8ff']];
+  mkChart('macroChart', {
+    type: 'line',
+    data: { labels: cb.ts.map(dstr), datasets: MACRO.filter(([, k]) => SRC[k] || series[k]).map(([label, k, color]) => ({
+      label, data: rebase(k === 'btc' ? cb.close : onCbDays(SRC[k] || series[k])),
+      borderColor: color, borderWidth: k === 'btc' ? 2 : 1.1, pointRadius: 0, spanGaps: true })) },
+    options: { animation: false, interaction: { mode: 'index', intersect: false },
+      scales: { x: { ticks: { maxTicksLimit: 10 } }, y: { ticks: { callback: v => v + '%' } } },
+      plugins: { legend: { labels: { boxWidth: 10 } } } },
+  });
+
+  // Bottom Radar: drawdown from running high within the active range
+  let peak = -Infinity;
+  const dd = cb.close.map(c => { peak = Math.max(peak, c); return (c / peak - 1) * 100; });
+  mkChart('ddChart', {
+    type: 'line',
+    data: { labels: cb.ts.map(dstr), datasets: [
+      { label: 'drawdown', data: dd, borderColor: '#ff4f56', backgroundColor: '#ff4f5622',
+        borderWidth: 1.5, pointRadius: 0, fill: true }] },
+    options: { animation: false, plugins: { legend: { display: false } },
+      scales: { x: { ticks: { maxTicksLimit: 8 } },
+        y: { max: 0, ticks: { callback: v => v + '%' } } } },
+  });
+
+  // Bottom Radar: Mayer Multiple + RSI(14) — computed on the full source, then windowed
+  const srcClose = SRC.btc.close;
+  const ma200 = ma(srcClose, isLong ? 29 : 200);
+  const mayer = srcClose.map((c, i) => ma200[i] ? c / ma200[i] : null).slice(cb.i0);
+  mkChart('mayerChart', {
+    type: 'line',
+    data: { labels: cb.ts.map(dstr), datasets: [
+      { label: 'Mayer', data: mayer, borderColor: '#e3a008', borderWidth: 1.5, pointRadius: 0 },
+      { label: 'RSI14', data: rsi(srcClose).slice(cb.i0), borderColor: '#a78bfa', borderWidth: 1, pointRadius: 0, yAxisID: 'y2' },
+    ]},
+    options: { animation: false, interaction: { mode: 'index', intersect: false },
+      scales: { x: { ticks: { maxTicksLimit: 8 } },
+        y: { suggestedMin: 0.6, suggestedMax: 2.6 },
+        y2: { position: 'right', min: 0, max: 100, grid: { display: false } } },
+      plugins: { legend: { labels: { boxWidth: 10 } } } },
+  });
+
+  const intr = market.filter(s => s.btc && s.btc.price);
+  mkChart('intradayChart', {
+    type: 'line',
+    data: { labels: intr.map(s => s.fetched_at.slice(11, 16)),
+      datasets: [{ data: intr.map(s => s.btc.price), borderColor: '#2ea8ff', borderWidth: 1.5, pointRadius: 0 }] },
+    options: { animation: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxTicksLimit: 8 } } } },
+  });
+
+  // Crypto majors: 90d at the default 1Y range, otherwise follow the global range
+  const mWin = RANGE === '1y' ? { ts: b.ts.slice(-90), close: b.close.slice(-90) } : cb;
+  const mAlign = s => {
+    const m = new Map(s.ts.map((t, i) => [Math.floor(t / bucket), s.close[i]]));
+    return mWin.ts.map(t => m.get(Math.floor(t / bucket)) ?? null);
+  };
+  const cds = [{ label: 'BTC', data: rebase(mWin.close), borderColor: '#2ea8ff', borderWidth: 1.5, pointRadius: 0 }];
+  for (const [k, color] of [['eth', '#a78bfa'], ['sol', '#27c87f']]) {
+    const s = SRC[k] || series[k];
+    if (s) cds.push({ label: k.toUpperCase(), data: rebase(mAlign(s)), borderColor: color,
+                      borderWidth: 1.5, pointRadius: 0, spanGaps: true });
+  }
+  mkChart('cryptoChart', {
+    type: 'line',
+    data: { labels: mWin.ts.map(dstr), datasets: cds },
+    options: { animation: false, interaction: { mode: 'index', intersect: false },
+      scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { callback: v => v + '%' } } },
+      plugins: { legend: { labels: { boxWidth: 10 } } } },
+  });
+
+  const order = ['brent', 'us10y', 'dxy', 'nasdaq', 'gold', 'btc'];
+  mkChart('rocChart', {
+    type: 'bar',
+    data: { labels: ['BRENT', '10Y', 'DXY', 'NQ', 'GOLD', 'BTC'],
+      datasets: [{ data: order.map(k => r5[k] ?? 0),
+        backgroundColor: order.map(k => (r5[k] ?? 0) < 0 ? '#ff4f56' : '#27c87f') }] },
+    options: { animation: false, plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: v => v + '%' } } } },
+  });
+
+  mkChart('scoreChart', {
+    type: 'line',
+    data: { labels: history.map(h => h.ts.slice(5, 16)), datasets: [
+      { label: 'A', data: history.map(h => h.a_score), borderColor: '#e3a008', borderWidth: 1.5, pointRadius: 0, stepped: true },
+      { label: 'B', data: history.map(h => h.b_score), borderColor: '#27c87f', borderWidth: 1.5, pointRadius: 0, stepped: true },
+      { label: 'CORR·NQ', data: history.map(h => h.corr_nq), borderColor: '#2ea8ff', borderWidth: 1.5, pointRadius: 0, yAxisID: 'y2' },
+    ]},
+    options: { animation: false, scales: { x: { ticks: { maxTicksLimit: 6 } },
+      y: { min: 0, max: 5 }, y2: { position: 'right', min: -1, max: 1, grid: { display: false } } },
+      plugins: { legend: { labels: { boxWidth: 10 } } } },
+  });
+}
+
+async function renderNews() {
+  try {
+    const items = await getJSON('/feed/news');
+    document.getElementById('news').innerHTML = items.map(n =>
+      `<a href="${n.link}" target="_blank" rel="noopener">
+        <div class="meta">${n.source} · ${n.ts ? new Date(n.ts * 1000).toISOString().slice(11, 16) + ' UTC' : ''}</div>
+        ${n.title}</a>`).join('') || 'no items';
+  } catch { document.getElementById('news').textContent = 'news wire unavailable'; }
+}
+
+async function renderX() {
+  const el = document.getElementById('xfeed');
+  try {
+    const feed = await getJSON('/feed/x');
+    if (feed.error) { el.textContent = feed.error; return; }
+    const tw = feed.tweets || [];
+    const counts = { bull: 0, bear: 0, neutral: 0 };
+    tw.forEach(t => counts[t.sentiment]++);
+    document.getElementById('xTag').textContent =
+      `${(feed.source || 'x').toUpperCase()} · 🟢${counts.bull} 🔴${counts.bear} ⚪${counts.neutral}` +
+      `${feed.stale ? ' · STALE' : ''}${feed.archived_total ? ` · DB ${feed.archived_total}` : ''}`;
+    const icon = { bull: '🟢', bear: '🔴', neutral: '⚪' };
+    el.innerHTML = tw.map(t =>
+      `<a href="${t.url || 'https://x.com/i/status/' + t.id}" target="_blank" rel="noopener">
+        <div class="meta">${icon[t.sentiment]} @${t.author} · ${(t.created_at || '').slice(5, 16).replace('T', ' ')} · ♥${t.likes}</div>
+        ${t.text.replace(/</g, '&lt;')}</a>`).join('') || 'no posts cached yet';
+  } catch { el.textContent = 'X feed unavailable'; }
+}
+
+async function renderLedger() {
+  const el = document.getElementById('whaleLedger');
+  try {
+    const rows = await getJSON('/data/whale_ledger.jsonl');
+    if (!rows.length) { el.textContent = 'no large transactions yet'; return; }
+    const icon = { buy: '🟢', sell: '🔴', transfer: '🐋' };
+    el.innerHTML = rows.slice(-40).reverse().map(w => {
+      const size = w.usd >= 1e6 ? '$' + (w.usd / 1e6).toFixed(1) + 'M' : '$' + Math.round(w.usd / 1e3) + 'K';
+      const what = w.source === 'onchain'
+        ? `${w.btc} BTC moved on-chain`
+        : `${w.side.toUpperCase()} ${w.btc} BTC @ $${(w.price || 0).toLocaleString()}`;
+      const inner = `<div class="meta">${icon[w.side] || ''} ${w.source.toUpperCase()} · ${(w.ts || '').slice(5, 16).replace('T', ' ')} UTC</div>
+        <b>${size}</b> — ${what}`;
+      return w.url ? `<a href="${w.url}" target="_blank" rel="noopener">${inner}</a>` : `<a>${inner}</a>`;
+    }).join('');
+  } catch { el.textContent = 'ledger not collected yet — populates on the next 5-min collector run'; }
+}
+
+let OBJ_BASIS = null;  // set in render() from objective.json, used by the sizing calc
+function renderSizing() {
+  const el = document.getElementById('sizeOut');
+  const raw = document.getElementById('fundInput').value.replace(/[^0-9.]/g, '');
+  const fund = parseFloat(raw) || 0;
+  localStorage.setItem('fund', raw);
+  if (!fund) { el.innerHTML = '<span class="kv">enter a fund size for dollar guidance</span>'; return; }
+  const tiers = [['Conservative', 0.01], ['Moderate', 0.03], ['Aggressive cap', 0.05]];
+  const td = 'padding:4px 8px;border-bottom:1px solid var(--line)';
+  let html = `<table style="width:100%;border-collapse:collapse;font-size:11px">
+    <tr><th style="${td};text-align:left;color:var(--dim)">Profile</th>
+        <th style="${td};color:var(--dim)">% of fund</th>
+        <th style="${td};color:var(--dim)">BTC allocation</th>
+        <th style="${td};color:var(--dim)">-70% stress test</th></tr>` +
+    tiers.map(([label, pct]) => `<tr>
+      <td style="${td}"><b>${label}</b></td>
+      <td style="${td};text-align:center">${pct * 100}%</td>
+      <td style="${td};text-align:center">$${Math.round(fund * pct).toLocaleString()}</td>
+      <td style="${td};text-align:center" class="neg">-$${Math.round(fund * pct * 0.7).toLocaleString()} paper</td>
+    </tr>`).join('') + '</table>';
+  if (OBJ_BASIS) {
+    const pc = OBJ_BASIS / fund * 100;
+    const cls = pc <= 5 ? 'pos' : pc <= 10 ? '' : 'neg';
+    html += `<div class="kv" style="margin-top:7px">your current $${OBJ_BASIS.toLocaleString()} basis =
+      <b class="${cls}">${pc.toFixed(1)}%</b> of this fund
+      ${pc <= 5 ? '— inside the risk-asset band ✓' : pc <= 10 ? '— above the usual 5% cap; pause adds' :
+        '— oversized for a volatility this high; do not add'}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+async function renderTrack() {
+  const el = document.getElementById('trackRecord');
+  try {
+    const entries = (await getJSON('/data/journal.jsonl')).filter(e => e.call);
+    if (!entries.length) { el.textContent = 'no calls logged yet'; return; }
+    const graded = entries.filter(e => e.outcome);
+    const wins = graded.filter(e => e.outcome.correct).length;
+    document.getElementById('trackTag').textContent = graded.length
+      ? `${wins}/${graded.length} CORRECT · ${Math.round(wins / graded.length * 100)}% WIN RATE`
+      : 'NO CALLS MATURED YET';
+    const map = { BUY: 'pos', ACCUMULATE: 'pos', SELL: 'neg', REDUCE: 'neg' };
+    el.innerHTML = entries.slice(-10).reverse().map(e => {
+      const c = e.call, o = e.outcome, p = e.snapshot?.price;
+      const mark = o ? (o.correct ? '<b class="pos">✓</b>' : '<b class="neg">✗</b>') : '⧖';
+      const chg = o ? ` → ${o.change_pct > 0 ? '+' : ''}${o.change_pct}%` : '';
+      return `<a><div class="meta">${(e.logged_at || '').slice(0, 16).replace('T', ' ')} ·
+          ${e.author === 'model' ? 'MODEL' : '👤 ' + (e.author || 'you').toUpperCase()}</div>
+        ${mark} <b class="${map[c.direction] || ''}">${c.direction}</b>
+        @ $${p ? Math.round(p).toLocaleString() : '?'}${chg}</a>`;
+    }).join('');
+  } catch { el.textContent = 'journal unavailable'; }
+}
+
+async function renderDesk() {
+  const el = document.getElementById('analystDesk');
+  try {
+    const names = await getJSON('/reports/list');
+    if (!names.length) { el.textContent = 'no reports yet — run report_generator.py'; return; }
+    const latest = names[names.length - 1];
+    const text = await (await fetch('/data/reports/' + latest)).text();
+    const headline = (text.split('\n').find(l => l.startsWith('## Executive')) !== undefined
+      ? text.split('## Executive summary')[1]?.trim().split('\n\n')[0] : '') || '';
+    el.innerHTML = `<a href="/reports#${latest}">
+        <div class="meta">LATEST · ${latest.replace('.md', '')}</div>
+        ${headline.slice(0, 280).replace(/</g, '&lt;')}…</a>` +
+      names.slice(0, -1).reverse().slice(0, 4).map(n =>
+        `<a href="/reports#${n}"><div class="meta">${n.replace('.md', '')}</div></a>`).join('');
+  } catch { el.textContent = 'reports unavailable'; }
+}
+
+// --- Movable sections: drag the ⠿ grip to reorder; order persists per column. ---
+function initDrag() {
+  document.querySelectorAll('.col').forEach((col, ci) => {
+    const KEY = 'panel-order-' + ci;
+    const units = () => [...col.children];
+    units().forEach(u => { u.dataset.key = u.querySelector('h2')?.textContent || ''; });
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (saved) saved.forEach(k => {
+      const el = units().find(e => e.dataset.key === k);
+      if (el) col.appendChild(el);
+    });
+    col.querySelectorAll('.panel-h').forEach(h => {
+      const grip = document.createElement('span');
+      grip.textContent = '⠿'; grip.className = 'grip'; grip.title = 'drag to move this section';
+      h.appendChild(grip);
+      const unit = h.closest('.col > *');
+      grip.addEventListener('mousedown', () => unit.draggable = true);
+    });
+    let dragging = null;
+    col.addEventListener('dragstart', e => {
+      dragging = e.target.closest('.col > *');
+      if (dragging) dragging.classList.add('drag-ghost');
+    });
+    col.addEventListener('dragover', e => {
+      if (!dragging) return;
+      e.preventDefault();
+      const next = units().filter(u => u !== dragging)
+        .find(u => e.clientY < u.getBoundingClientRect().top + u.offsetHeight / 2);
+      next ? col.insertBefore(dragging, next) : col.appendChild(dragging);
+    });
+    col.addEventListener('dragend', () => {
+      if (!dragging) return;
+      dragging.classList.remove('drag-ghost');
+      dragging.draggable = false;
+      localStorage.setItem(KEY, JSON.stringify(units().map(u => u.dataset.key)));
+      dragging = null;
+    });
+  });
+}
+
+initDrag();  // assigns panel keys — must run before setView's lens filter
+setView(localStorage.getItem('view') || 'all');
+document.getElementById('fundInput').value = localStorage.getItem('fund') || '';
+renderSizing();
+render().then(renderSizing).catch(e => console.error(e));
+renderDesk();
+renderTrack();
+renderNews();
+renderX();
+renderLedger();
+setInterval(() => { render().catch(() => {}); renderTrack().catch(() => {}); }, 60_000);
+setInterval(renderNews, 300_000);
+setInterval(() => renderLedger().catch(() => {}), 300_000);
+setInterval(renderX, 1_800_000);
+</script>
+</body>
+</html>

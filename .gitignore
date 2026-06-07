@@ -1,0 +1,27 @@
+# Secrets — never commit
+.env
+.webhook_secret
+.x_credentials
+.reddit_credentials
+
+# Generated data & logs (data/* not data/ so the negation below can work)
+data/*
+!data/exchange_addresses.json
+logs/
+
+# Local tooling
+.claude/settings.local.json
+.playwright-mcp/
+
+# Node (Devvit sub-app)
+node_modules/
+apps/**/dist/
+apps/**/coverage/
+
+# Scratch artifacts
+chart-exports.json
+
+# macOS
+.DS_Store
+# Independent sub-projects (own git repos)
+apps/

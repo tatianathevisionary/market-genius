@@ -1,0 +1,104 @@
+//@version=6
+// BTC Genius — BTC regime, capitulation, and S/R dashboard
+// Implements the computable parts of SIGNALS.md on a TradingView chart.
+// Use on BTCUSD (Coinbase/Binance), DAILY timeframe for correct signal windows.
+indicator("BTC Genius", overlay = true, max_lines_count = 50, max_labels_count = 50)
+
+// ── Inputs ───────────────────────────────────────────────────────────────────
+nqSym    = input.symbol("CME_MINI:NQ1!", "Nasdaq futures")
+goldSym  = input.symbol("TVC:GOLD",      "Gold spot")
+dxySym   = input.symbol("TVC:DXY",       "Dollar index")
+tnxSym   = input.symbol("TVC:TNX",       "US 10Y yield")
+oilSym   = input.symbol("TVC:UKOIL",     "Brent crude")
+corrLen  = input.int(30, "Correlation window (days)", minval = 10)
+pivotN   = input.int(5,  "Pivot strength (bars each side)", minval = 2)
+volMult  = input.float(2.0, "Capitulation volume multiple", step = 0.1)
+extPct   = input.float(25.0, "Froth extension % above 50d MA", step = 1.0)
+
+// ── External series (daily, regardless of chart TF) ──────────────────────────
+nq   = request.security(nqSym,   "D", close)
+gold = request.security(goldSym, "D", close)
+dxy  = request.security(dxySym,  "D", close)
+tnx  = request.security(tnxSym,  "D", close)
+oil  = request.security(oilSym,  "D", close)
+
+// ── Derived: regime inputs ────────────────────────────────────────────────────
+corrNQ   = ta.correlation(close, nq, corrLen)        // BTC↔Nasdaq rolling corr
+corrGold = ta.correlation(close, gold, corrLen)      // hedge test
+btcGold  = close / gold                              // BTC/gold ratio
+roc5(s)  => (s - s[5]) / s[5] * 100                  // 5-day rate of change
+
+ma50  = ta.sma(close, 50)
+ma200 = ta.sma(close, 200)
+volAvg = ta.sma(volume, 30)
+
+// ── A-score: macro pressure release (SIGNALS.md §2A) ─────────────────────────
+a1_oilRolls   = roc5(oil) < -5.0                      // oil off its spike
+a2_yieldPeak  = tnx < ta.highest(tnx, 20) and roc5(tnx) < 0
+a4_dxyTops    = roc5(dxy) < 0
+a5_eqStable   = nq > ta.lowest(nq, 5)[3]              // NQ holding a higher low
+aScore = (a1_oilRolls ? 1 : 0) + (a2_yieldPeak ? 1 : 0) + (a4_dxyTops ? 1 : 0) + (a5_eqStable ? 1 : 0)
+// A3 (Fed funds futures) isn't a TradingView series — tracked off-platform.
+
+// ── B-score: seller exhaustion (SIGNALS.md §2B) ──────────────────────────────
+lowerWick     = math.min(open, close) - low
+b1_capitVol   = volume > volMult * volAvg and close < open and lowerWick > math.abs(close - open)
+b5_recouple   = corrNQ > corrNQ[5] and corrNQ < 0.5   // corr turning up from breakdown
+prior30Low    = ta.lowest(low, 30)[1]
+b6_failedLow  = low < prior30Low and close > prior30Low
+bScore = (b1_capitVol ? 1 : 0) + (b5_recouple ? 1 : 0) + (b6_failedLow ? 1 : 0)
+// B2 (funding), B3 (ETF flows), B4 (on-chain cohorts) live in the local stack.
+
+// ── X-signals: froth/exit (SIGNALS.md §4) ────────────────────────────────────
+x2_extended = close > ma50 * (1 + extPct / 100)
+x6_hedgeFail = roc5(gold) > 0 and roc5(tnx) > 0 and close < ta.highest(close, 20)[1]
+
+// ── Regime classification (simplified §1) ────────────────────────────────────
+btcDown  = roc5(close) < -3
+macroHot = roc5(oil) > 3 or roc5(tnx) > 2 or roc5(dxy) > 1
+regime = btcDown and macroHot ? "Macro selloff" :
+         btcDown and not macroHot ? "Crypto-specific selloff" :
+         x2_extended ? "Froth" :
+         math.abs(roc5(close)) < 1.5 ? "Basing" : "Trending"
+
+// ── R1 support/resistance: pivot highs/lows ──────────────────────────────────
+ph = ta.pivothigh(high, pivotN, pivotN)
+pl = ta.pivotlow(low, pivotN, pivotN)
+var line[] srLines = array.new_line()
+if not na(ph)
+    array.push(srLines, line.new(bar_index - pivotN, ph, bar_index + 50, ph, extend = extend.right, color = color.new(color.red, 60)))
+if not na(pl)
+    array.push(srLines, line.new(bar_index - pivotN, pl, bar_index + 50, pl, extend = extend.right, color = color.new(color.green, 60)))
+if array.size(srLines) > 20   // keep only the 20 most recent levels
+    line.delete(array.shift(srLines))
+
+// ── Plots & markers ──────────────────────────────────────────────────────────
+plot(ma50,  "50d MA",  color = color.orange)
+plot(ma200, "200d MA", color = color.gray)
+plotshape(b1_capitVol, "Capitulation volume", shape.triangleup, location.belowbar, color.green, size = size.small, text = "B1")
+plotshape(b6_failedLow, "Failed new low",     shape.diamond,    location.belowbar, color.lime,  size = size.small, text = "B6")
+plotshape(x2_extended and not x2_extended[1], "Froth extension", shape.triangledown, location.abovebar, color.red, size = size.small, text = "X2")
+
+// ── Dashboard table ──────────────────────────────────────────────────────────
+var table dash = table.new(position.top_right, 2, 7, border_width = 1)
+if barstate.islast
+    table.cell(dash, 0, 0, "Regime",        text_color = color.white, bgcolor = color.new(color.blue, 30))
+    table.cell(dash, 1, 0, regime,          text_color = color.white, bgcolor = color.new(color.blue, 30))
+    table.cell(dash, 0, 1, "A-score (chart)", bgcolor = color.new(color.gray, 80))
+    table.cell(dash, 1, 1, str.tostring(aScore) + "/4", bgcolor = aScore >= 3 ? color.new(color.green, 60) : color.new(color.gray, 80))
+    table.cell(dash, 0, 2, "B-score (chart)", bgcolor = color.new(color.gray, 80))
+    table.cell(dash, 1, 2, str.tostring(bScore) + "/3", bgcolor = bScore >= 2 ? color.new(color.green, 60) : color.new(color.gray, 80))
+    table.cell(dash, 0, 3, "BTC↔NQ corr 30d", bgcolor = color.new(color.gray, 80))
+    table.cell(dash, 1, 3, str.tostring(corrNQ, "#.##"), bgcolor = corrNQ < 0.2 ? color.new(color.orange, 60) : color.new(color.gray, 80))
+    table.cell(dash, 0, 4, "BTC↔Gold corr",   bgcolor = color.new(color.gray, 80))
+    table.cell(dash, 1, 4, str.tostring(corrGold, "#.##"), bgcolor = color.new(color.gray, 80))
+    table.cell(dash, 0, 5, "Vol vs 30d avg",  bgcolor = color.new(color.gray, 80))
+    table.cell(dash, 1, 5, str.tostring(volume / volAvg, "#.#") + "x", bgcolor = volume > volMult * volAvg ? color.new(color.yellow, 60) : color.new(color.gray, 80))
+    table.cell(dash, 0, 6, "Dist from 50d MA", bgcolor = color.new(color.gray, 80))
+    table.cell(dash, 1, 6, str.tostring((close / ma50 - 1) * 100, "#.#") + "%", bgcolor = x2_extended ? color.new(color.red, 60) : color.new(color.gray, 80))
+
+// ── Alert conditions (wire to webhooks → local listener) ─────────────────────
+alertcondition(b1_capitVol,                       "MG: Capitulation volume (B1)", "Capitulation-volume day on BTC")
+alertcondition(b6_failedLow,                      "MG: Failed new low (B6)",      "BTC undercut prior low and reclaimed it")
+alertcondition(aScore >= 3 and bScore >= 2,       "MG: Entry confluence",         "A-score and B-score confluence — review entry checklist")
+alertcondition(x2_extended and x6_hedgeFail,      "MG: Exit confluence",          "Froth extension + hedge-test failure — review exits")

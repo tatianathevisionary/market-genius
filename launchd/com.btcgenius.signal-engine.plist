@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.btcgenius.signal-engine</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/tatianathevisionary/market-genius/src/signal_engine.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/tatianathevisionary/market-genius</string>
+    <!-- Hourly: scores move on daily data; hourly refresh is plenty -->
+    <key>StartInterval</key>
+    <integer>3600</integer>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/signal_engine.stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/signal_engine.stderr.log</string>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>LowPriorityIO</key>
+    <true/>
+    <key>Nice</key>
+    <integer>10</integer>
+</dict>
+</plist>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.btcgenius.reddit-tracker</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/tatianathevisionary/market-genius/src/reddit_tracker.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/tatianathevisionary/market-genius</string>
+
+    <!-- Every 20 minutes: Reddit-friendly, ~16h trailing window = 48 snapshots -->
+    <key>StartInterval</key>
+    <integer>1200</integer>
+
+    <!-- Also run once when the agent loads (login / manual load) -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/reddit_tracker.stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/reddit_tracker.stderr.log</string>
+
+    <!-- Don't fire on battery-critical low power; keep it polite -->
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>LowPriorityIO</key>
+    <true/>
+    <key>Nice</key>
+    <integer>10</integer>
+</dict>
+</plist>

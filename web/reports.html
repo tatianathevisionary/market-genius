@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BTC GENIUS · ANALYST REPORTS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#06090d; --panel:#0b1016; --line:#1b2733; --line2:#2a3b4d;
+          --txt:#c9d7e3; --dim:#5e7387; --accent:#2ea8ff; --red:#ff4f56; --green:#27c87f;
+          --amber:#e3a008; --mono:"SF Mono", ui-monospace, Menlo, monospace; }
+  body.light { --bg:#eef1f5; --panel:#ffffff; --line:#d4dbe3; --line2:#b9c4d0;
+               --txt:#1c2733; --dim:#5a6b7d; --accent:#0969da; --red:#d1242f; --green:#1a7f37;
+               --amber:#9a6700; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:13px/1.55 var(--mono); }
+  .bar { display:flex; align-items:center; gap:16px; padding:10px 18px;
+         border-bottom:1px solid var(--line); background:var(--panel);
+         position:sticky; top:0; z-index:5; }
+  .logo { font-weight:700; letter-spacing:.14em; font-size:14px; }
+  .logo span { color:var(--accent); }
+  .bar button { background:transparent; color:var(--dim); border:1px solid var(--line2);
+                padding:4px 10px; font:11px var(--mono); cursor:pointer; margin-left:auto; }
+  .layout { display:grid; grid-template-columns:220px minmax(0,1fr); gap:12px;
+            max-width:1100px; margin:12px auto; padding:0 14px; }
+  @media (max-width:760px){ .layout { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); }
+  .panel-h { padding:8px 12px; border-bottom:1px solid var(--line); font-size:11px;
+             font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+  .list a { display:block; padding:8px 12px; border-bottom:1px solid var(--line);
+            color:var(--txt); text-decoration:none; font-size:12px; }
+  .list a:hover, .list a.on { color:var(--accent); }
+  .report { padding:18px 22px; }
+  .report h1 { font-size:16px; letter-spacing:.06em; border-bottom:1px solid var(--line2); padding-bottom:8px; }
+  .report h2 { font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-top:22px; }
+  .report table { border-collapse:collapse; width:100%; margin:10px 0; font-size:12px; }
+  .report th, .report td { border:1px solid var(--line); padding:5px 8px; text-align:left; }
+  .report th { color:var(--dim); text-transform:uppercase; font-size:10px; letter-spacing:.08em; }
+  .report blockquote { border-left:3px solid var(--amber); margin:10px 0; padding:4px 12px; color:var(--dim); }
+  .report code { background:var(--line); padding:1px 4px; }
+  .report hr { border:none; border-top:1px dashed var(--line2); margin:18px 0; }
+  .report em { color:var(--dim); }
+  .report li { margin:4px 0; }
+  .report img { max-width:100%; border:1px solid var(--line); margin:8px 0; display:block; }
+  .report pre { background:var(--bg); border:1px solid var(--line); padding:10px 14px;
+                overflow-x:auto; font-size:11px; line-height:1.6; color:var(--dim); }
+  .report pre b { color:var(--txt); }
+  .caption { font-size:11px; color:var(--dim); margin:-4px 0 14px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="logo">BTC<span>GENIUS</span> ▮ ANALYST REPORTS</div>
+  <button onclick="location.href='/'">← CONSOLE</button>
+</div>
+<div class="layout">
+  <div class="panel">
+    <div class="panel-h">Archive</div>
+    <div class="list" id="list">loading…</div>
+  </div>
+  <div class="panel"><div class="report" id="report">select a report</div></div>
+</div>
+<script>
+if ((localStorage.getItem('theme') || 'light') === 'light') document.body.classList.add('light');
+
+// Minimal markdown renderer (headers, bold/italic, code, lists, tables, quotes, hr).
+function md(src) {
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = s => s
+    .replace(/`([^`]+)`/g, (_, c) => '<code>' + c + '</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy">')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines = esc(src).split('\n');
+  const out = [];
+  let list = false, para = [];
+  const flush = () => { if (para.length) { out.push('<p>' + inline(para.join(' ')) + '</p>'); para = []; } };
+  const endList = () => { if (list) { out.push('</ul>'); list = false; } };
+  for (let i = 0; i < lines.length; i++) {
+    const L = lines[i];
+    if (/^```/.test(L)) {                             // fenced block -> <pre> (ASCII diagrams)
+      flush(); endList();
+      const buf = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+      out.push('<pre>' + buf.join('\n') + '</pre>');
+    }
+    else if (/^\|/.test(L)) {                         // table block
+      flush(); endList();
+      const rows = [];
+      while (i < lines.length && /^\|/.test(lines[i])) rows.push(lines[i++]);
+      i--;
+      out.push('<table>' + rows.filter(r => !/^\|[\s\-|]+\|$/.test(r)).map((r, ri) => {
+        const cells = r.split('|').slice(1, -1).map(c => inline(c.trim()));
+        const tag = ri === 0 ? 'th' : 'td';
+        return '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+      }).join('') + '</table>');
+    }
+    else if (/^### /.test(L)) { flush(); endList(); out.push('<h3>' + inline(L.slice(4)) + '</h3>'); }
+    else if (/^## /.test(L))  { flush(); endList(); out.push('<h2>' + inline(L.slice(3)) + '</h2>'); }
+    else if (/^# /.test(L))   { flush(); endList(); out.push('<h1>' + inline(L.slice(2)) + '</h1>'); }
+    else if (/^---+$/.test(L.trim())) { flush(); endList(); out.push('<hr>'); }
+    else if (/^[-*] /.test(L)) { flush(); if (!list) { out.push('<ul>'); list = true; } out.push('<li>' + inline(L.slice(2)) + '</li>'); }
+    else if (/^&gt; /.test(L)) { flush(); endList(); out.push('<blockquote>' + inline(L.slice(5)) + '</blockquote>'); }
+    else if (L.trim() === '') { flush(); endList(); }
+    else if (list) { // continuation line of a list item — merge into the last <li>
+      out[out.length - 1] = out[out.length - 1].replace(/<\/li>$/, ' ' + inline(L.trim()) + '</li>');
+    }
+    else para.push(L.trim());
+  }
+  flush(); endList();
+  return out.join('\n');
+}
+
+async function show(name, el) {
+  document.querySelectorAll('.list a').forEach(a => a.classList.remove('on'));
+  if (el) el.classList.add('on');
+  const r = await fetch('/data/reports/' + name);
+  document.getElementById('report').innerHTML = md(await r.text());
+  history.replaceState(null, '', '/reports#' + name);
+}
+
+(async () => {
+  const names = await (await fetch('/reports/list')).json();
+  const list = document.getElementById('list');
+  if (!names.length) { list.textContent = 'no reports yet'; return; }
+  list.innerHTML = names.slice().reverse().map(n =>
+    `<a href="#${n}" onclick="show('${n}', this); return false">${n.replace('.md', '')}</a>`).join('');
+  const want = location.hash.slice(1);
+  const pick = names.includes(want) ? want : names[names.length - 1];
+  show(pick, [...list.children].find(a => a.textContent === pick.replace('.md', '')));
+})();
+</script>
+</body>
+</html>

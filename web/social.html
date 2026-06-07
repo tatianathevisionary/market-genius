@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BTC GENIUS · SOCIAL RADAR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root { --bg:#06090d; --panel:#0b1016; --line:#1b2733; --line2:#2a3b4d;
+          --txt:#c9d7e3; --dim:#5e7387; --accent:#2ea8ff; --red:#ff4f56; --green:#27c87f;
+          --amber:#e3a008; --purple:#a78bfa; --mono:"SF Mono", ui-monospace, Menlo, monospace; }
+  body.light { --bg:#eef1f5; --panel:#ffffff; --line:#d4dbe3; --line2:#b9c4d0;
+               --txt:#1c2733; --dim:#5a6b7d; --accent:#0969da; --red:#d1242f; --green:#1a7f37;
+               --amber:#9a6700; --purple:#6f42c1; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:13px/1.45 var(--mono); padding:0 0 24px; }
+  .bar { display:flex; align-items:center; gap:16px; padding:10px 18px; border-bottom:1px solid var(--line);
+         background:var(--panel); position:sticky; top:0; z-index:5; flex-wrap:wrap; }
+  .logo { font-weight:700; letter-spacing:.14em; font-size:14px; } .logo span { color:var(--accent); }
+  .kv { font-size:11px; color:var(--dim); } .kv b { color:var(--txt); }
+  .right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .toggle button { background:transparent; color:var(--dim); border:1px solid var(--line2);
+                   padding:4px 10px; font:11px var(--mono); cursor:pointer; }
+  .toggle button.on { color:var(--accent); border-color:var(--accent); }
+  .layout { max-width:1300px; margin:12px auto; padding:0 14px; display:flex; flex-direction:column; gap:12px; }
+  .row { display:grid; grid-template-columns:1fr 2fr 1fr; gap:12px; }
+  .row2 { display:grid; grid-template-columns:2fr 1fr; gap:12px; }
+  @media (max-width:900px){ .row, .row2 { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); min-width:0; }
+  .panel-h { display:flex; align-items:baseline; gap:8px; padding:8px 12px; border-bottom:1px solid var(--line); }
+  .panel-h h2 { margin:0; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+  .panel-h .tag { font-size:10px; color:var(--dim); margin-left:auto; }
+  .panel-b { padding:10px 12px; }
+  canvas { max-height:240px; }
+  .search { width:100%; background:var(--bg); border:1px solid var(--line2); color:var(--txt);
+            font:12px var(--mono); padding:7px 10px; outline:none; }
+  .search:focus { border-color:var(--accent); }
+  .feed { max-height:640px; overflow-y:auto; }
+  .post { padding:9px 0; border-bottom:1px solid var(--line); }
+  .post .meta { font-size:10px; color:var(--dim); display:flex; gap:8px; align-items:center; }
+  .post .meta b { color:var(--txt); }
+  .post .txt { margin-top:3px; font-size:12px; }
+  .post a { color:var(--accent); text-decoration:none; }
+  .dot { display:inline-block; width:7px; height:7px; border-radius:50%; }
+  .bull { background:var(--green); } .bear { background:var(--red); } .neutral { background:var(--dim); }
+  .pos { color:var(--green); } .neg { color:var(--red); }
+  .edu { padding:7px 12px; border-top:1px dashed var(--line); font-size:11px; color:var(--dim); }
+  .edu b { color:var(--amber); }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="logo">BTC<span>GENIUS</span> ▮ SOCIAL RADAR</div>
+  <span class="kv" id="meta"></span>
+  <div class="right">
+    <div class="toggle">
+      <button id="btnTheme" onclick="toggleTheme()">☀ LIGHT</button>
+      <button onclick="location.href='/dashboard'">◀ CONSOLE</button>
+      <button onclick="location.href='/ledger'">◉ LEDGER</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="row">
+    <div class="panel">
+      <div class="panel-h"><h2>Sentiment split</h2><span class="tag">archive</span></div>
+      <div class="panel-b"><canvas id="splitChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Sentiment over time</h2>
+        <span style="margin-left:auto" class="toggle">
+          <button id="bDay" class="on" onclick="setBucket('day')">DAILY</button>
+          <button id="bWeek" onclick="setBucket('week')">WEEKLY</button>
+        </span></div>
+      <div class="panel-b"><canvas id="timeChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Top voices</h2><span class="tag">by posts</span></div>
+      <div class="panel-b"><canvas id="authorChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="panel">
+      <div class="panel-h"><h2>Archive</h2><span class="tag" id="archCount"></span></div>
+      <div class="panel-b">
+        <input class="search" id="q" placeholder="search archive… (enter)" >
+        <div class="feed" id="archive"></div>
+      </div>
+      <div class="edu"><b>NOTE:</b> every post the system ever pulls is archived in the database —
+        the live feed rotates (X → Bluesky → HN fallbacks) but nothing is lost here.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Live feed</h2><span class="tag" id="liveSrc"></span></div>
+      <div class="panel-b feed" id="live"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const THEME = localStorage.getItem('theme') || 'light';
+if (THEME === 'light') document.body.classList.add('light');
+function toggleTheme() { localStorage.setItem('theme', THEME === 'light' ? 'dark' : 'light'); location.reload(); }
+document.getElementById('btnTheme').textContent = THEME === 'light' ? '☾ DARK' : '☀ LIGHT';
+const css = n => getComputedStyle(document.body).getPropertyValue(n).trim();
+Chart.defaults.color = css('--dim');
+Chart.defaults.borderColor = css('--line');
+Chart.defaults.font.family = '"SF Mono", ui-monospace, Menlo, monospace';
+Chart.defaults.font.size = 10;
+const charts = {};
+const mk = (id, cfg) => { if (charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); };
+const esc = s => (s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function postHTML(t) {
+  const when = (t.created_at||'').slice(0,16).replace('T',' ');
+  return `<div class="post">
+    <div class="meta"><span class="dot ${t.sentiment||'neutral'}"></span>
+      <b>@${esc(t.author)}</b> <span>${when}</span> <span>♥ ${t.likes||0}</span>
+      <span>${esc(t.source||'x')}</span>
+      ${t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">open ↗</a>` : ''}</div>
+    <div class="txt">${esc(t.text)}</div></div>`;
+}
+
+let BUCKET = 'day', LAST_ROWS = [];
+
+function setBucket(b) {
+  BUCKET = b;
+  document.getElementById('bDay').classList.toggle('on', b === 'day');
+  document.getElementById('bWeek').classList.toggle('on', b === 'week');
+  renderCharts(LAST_ROWS);
+}
+
+function bkey(iso) {
+  const day = (iso || '').slice(0, 10);
+  if (!day) return '';
+  if (BUCKET === 'day') return day;
+  const d = new Date(day + 'T00:00:00Z');                 // week starts Monday
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7);
+  return d.toISOString().slice(0, 10);
+}
+
+function renderCharts(rows) {
+  LAST_ROWS = rows;
+  const c = { bull:0, bear:0, neutral:0 };
+  rows.forEach(t => c[t.sentiment||'neutral']++);
+  mk('splitChart', { type:'doughnut',
+    data:{ labels:['bull','bear','neutral'], datasets:[{ data:[c.bull, c.bear, c.neutral],
+      backgroundColor:[css('--green'), css('--red'), css('--line2')], borderWidth:0 }]},
+    options:{ plugins:{ legend:{ position:'bottom' } } } });
+
+  const days = {};
+  for (const t of rows) {
+    const d = bkey(t.created_at);
+    if (!d) continue;
+    days[d] = days[d] || { bull:0, bear:0, neutral:0 };
+    days[d][t.sentiment||'neutral']++;
+  }
+  const ks = Object.keys(days).sort();
+  mk('timeChart', { type:'bar',
+    data:{ labels:ks.map(d => (BUCKET === 'week' ? 'wk ' : '') + d.slice(5)), datasets:[
+      { label:'bull', data:ks.map(d => days[d].bull), backgroundColor:css('--green') },
+      { label:'bear', data:ks.map(d => days[d].bear), backgroundColor:css('--red') },
+      { label:'neutral', data:ks.map(d => days[d].neutral), backgroundColor:css('--line2') }]},
+    options:{ scales:{ x:{ stacked:true }, y:{ stacked:true } } } });
+
+  const by = {};
+  rows.forEach(t => by[t.author] = (by[t.author]||0) + 1);
+  const top = Object.entries(by).sort((a,b) => b[1]-a[1]).slice(0,8);
+  mk('authorChart', { type:'bar',
+    data:{ labels:top.map(e => '@'+e[0]), datasets:[{ data:top.map(e => e[1]),
+      backgroundColor:css('--accent') }]},
+    options:{ indexAxis:'y', plugins:{ legend:{ display:false } } } });
+}
+
+async function loadArchive(q) {
+  const url = '/feed/x/history?limit=1000' + (q ? '&q=' + encodeURIComponent(q) : '');
+  const d = await (await fetch(url)).json();
+  const rows = d.tweets || [];
+  document.getElementById('archCount').textContent =
+    `${rows.length} shown · ${d.total||0} archived`;
+  document.getElementById('archive').innerHTML =
+    rows.map(postHTML).join('') || '<div class="post">nothing matched</div>';
+  if (!q) renderCharts(rows);
+}
+
+async function loadLive() {
+  const d = await (await fetch('/feed/x')).json();
+  const rows = d.tweets || [];
+  document.getElementById('liveSrc').textContent =
+    (d.source||'?') + (d.note ? ' · ' + d.note : '');
+  document.getElementById('live').innerHTML = rows.map(postHTML).join('');
+  const c = { bull:0, bear:0, neutral:0 };
+  rows.forEach(t => c[t.sentiment||'neutral']++);
+  document.getElementById('meta').innerHTML =
+    `live: <b class="pos">🟢${c.bull}</b> / <b class="neg">🔴${c.bear}</b> / ⚪${c.neutral}`;
+}
+
+document.getElementById('q').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loadArchive(e.target.value.trim());
+});
+loadArchive('');
+loadLive();
+setInterval(() => { loadArchive(document.getElementById('q').value.trim()); loadLive(); }, 5 * 60 * 1000);
+</script>
+</body>
+</html>
