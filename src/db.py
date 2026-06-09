@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS whale_ledger(
     flow TEXT, venue TEXT);
 CREATE TABLE IF NOT EXISTS addr_seen(
     addr TEXT PRIMARY KEY, times_seen INTEGER, total_usd INTEGER, last_seen TEXT);
+CREATE TABLE IF NOT EXISTS learned_labels(
+    addr TEXT PRIMARY KEY, venue TEXT, via TEXT, learned_at TEXT, source_tx TEXT);
 CREATE INDEX IF NOT EXISTS idx_whale_ts ON whale_ledger(ts);
 CREATE INDEX IF NOT EXISTS idx_journal_ts ON journal(logged_at);
 """
@@ -171,6 +173,36 @@ def addr_counts(addrs):
             f"SELECT addr, times_seen FROM addr_seen WHERE addr IN ({q})", addrs)
         found = dict(rows)
     return {a: found.get(a, 0) for a in addrs}
+
+
+# --- CIOH auto-labeling -------------------------------------------------------
+# Common Input Ownership Heuristic: every address spent as an input to one tx is
+# controlled by the same entity. So if a KNOWN exchange address co-spends with
+# unknown addresses, those unknowns belong to that exchange too. The seed list
+# grows itself — the foundational heuristic behind every chain-analytics firm.
+
+
+def learned_labels():
+    """All addresses learned via CIOH so far: {addr: venue}."""
+    try:
+        with connect() as con:
+            return dict(con.execute("SELECT addr, venue FROM learned_labels"))
+    except Exception as e:  # noqa: BLE001 - read-only, best-effort
+        logging.warning("db: learned_labels read failed: %s", e)
+        return {}
+
+
+@_safe
+def learn_labels(addrs, venue, source_tx, ts):
+    """Record co-spent addresses as belonging to `venue` (skip if already known)."""
+    addrs = [a for a in set(addrs) if a]
+    if not addrs or not venue:
+        return 0
+    with connect() as con:
+        cur = con.executemany(
+            "INSERT OR IGNORE INTO learned_labels VALUES(?,?,?,?,?)",
+            [(a, venue, "CIOH co-spend", ts, source_tx) for a in addrs])
+        return cur.rowcount
 
 
 # --- Backfill from the existing JSONL files (idempotent) ----------------------

@@ -303,9 +303,11 @@
     <div class="panel">
       <div class="panel-h"><h2>Verdict</h2><span class="tag">MODEL CALL · AUTO-GRADED IN JOURNAL</span></div>
       <div class="panel-b" id="verdictBody">awaiting signal engine…</div>
-      <div class="edu"><b>HOW IT'S MADE:</b> a deterministic read of the SIGNALS.md checklists —
-        BUY needs A≥3 + B≥2 confluence, SELL fires on froth signals, WAIT means the selloff cause
-        is still live. Every call is logged to the journal and graded against price at its horizon.
+      <div class="edu"><b>THREE ACTIONS ONLY:</b> <b>BUY</b> (composite ≥+4 with a B-trigger —
+        zone says where, capitulation says when), <b>SELL</b> (composite ≤-4 / froth), else
+        <b>HOLD</b>. The <b>stance</b> line carries the nuance: "defensive" = a selloff is still
+        live, so don't deploy <i>new</i> money even while you HOLD what you have. <b>bias</b> is the
+        model's directional lean — that's what gets graded at horizon, separate from the action.
         <b>Educational model, not financial advice.</b></div>
     </div>
     <div class="panel">
@@ -503,6 +505,7 @@ async function render() {
          <span class="kv">${V.score != null ? `score <b>${V.score > 0 ? '+' : ''}${V.score}</b> · ` : ''}confidence <b>${V.confidence_pct}%</b> · bias <b>${V.bias}</b> · horizon <b>${V.horizon_days}d</b></span>
        </div>
        ${comps ? `<div style="margin-top:7px;font-size:11px;line-height:1.9">${comps}</div>` : ''}
+       ${V.stance ? `<div style="margin-top:5px;font-size:11px"><b style="color:var(--amber)">stance:</b> ${V.stance}</div>` : ''}
        <div style="margin-top:4px;font-size:11px;color:var(--dim)">${V.thesis.replace('[auto] ', '')}</div>`;
   }
   const r5 = state.roc5 || {};
@@ -805,15 +808,28 @@ async function renderLedger() {
   try {
     const rows = await getJSON('/data/whale_ledger.jsonl');
     if (!rows.length) { el.textContent = 'no large transactions yet'; return; }
-    const icon = { buy: '🟢', sell: '🔴', transfer: '🐋' };
+    const icon = { buy: '🟢', sell: '🔴', inflow: '📥', outflow: '📤', shuffle: '♻️', transfer: '🐋' };
+    const CHAIN_LABEL = {
+      inflow:  { txt: v => `BTC → ${v || 'exchange'} (sell-side supply up)`,
+                 tip: 'Coins arrived at a known exchange wallet — often staged to sell. Bearish lean.' },
+      outflow: { txt: v => `BTC left ${v || 'exchange'} (to private custody)`,
+                 tip: 'Coins withdrawn from a known exchange wallet — accumulation lean.' },
+      shuffle: { txt: v => `exchange housekeeping${v ? ' (' + v + ')' : ''}`,
+                 tip: 'Both sides are exchange/service wallets — internal move, not a market signal.' },
+      unknown: { txt: () => 'wallet→wallet transfer (direction unknown)',
+                 tip: 'Neither address is a known exchange — could be a deposit, withdrawal, or shuffle. Watch whether the tape follows.' },
+    };
     el.innerHTML = rows.slice(-40).reverse().map(w => {
       const size = w.usd >= 1e6 ? '$' + (w.usd / 1e6).toFixed(1) + 'M' : '$' + Math.round(w.usd / 1e3) + 'K';
+      const flow = w.source === 'onchain' ? (w.flow || 'unknown') : w.side;
+      const chain = CHAIN_LABEL[flow] || CHAIN_LABEL.unknown;
       const what = w.source === 'onchain'
-        ? `${w.btc} BTC moved on-chain`
+        ? `${w.btc} ${chain.txt(w.venue)}`
         : `${w.side.toUpperCase()} ${w.btc} BTC @ $${(w.price || 0).toLocaleString()}`;
-      const inner = `<div class="meta">${icon[w.side] || ''} ${w.source.toUpperCase()} · ${(w.ts || '').slice(5, 16).replace('T', ' ')} UTC</div>
+      const tip = w.source === 'onchain' ? chain.tip : '';
+      const inner = `<div class="meta">${icon[flow] || '🐋'} ${w.source.toUpperCase()} · ${(w.ts || '').slice(5, 16).replace('T', ' ')} UTC</div>
         <b>${size}</b> — ${what}`;
-      return w.url ? `<a href="${w.url}" target="_blank" rel="noopener">${inner}</a>` : `<a>${inner}</a>`;
+      return w.url ? `<a href="${w.url}" target="_blank" rel="noopener" title="${tip}">${inner}</a>` : `<a title="${tip}">${inner}</a>`;
     }).join('');
   } catch { el.textContent = 'ledger not collected yet — populates on the next 5-min collector run'; }
 }

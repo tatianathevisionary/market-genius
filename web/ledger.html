@@ -124,8 +124,15 @@
       ⚡ <b>Capitulation sweep</b> — massive sells, price plunges, then a long lower wick on high volume: forced sellers
       met by whale bids. This is the B1 signature in SIGNALS.md — historically where bottoms get made.<br>
       🟣 <b>Exchange flows</b> — big on-chain transfers TO exchanges often precede selling (coins staged for sale);
-      big withdrawals suggest cold-storage accumulation. Our free chain feed can't see direction, so these log as
-      ON-CHAIN — read them alongside the tape, not instead of it.</p>
+      big withdrawals suggest cold-storage accumulation. The system now auto-classifies these by checking both sides
+      of every transfer against a book of known exchange wallets (Binance, Bitfinex, OKX, Crypto.com, BitMEX, gate.io…)
+      plus a behavioral check for repeat service wallets:<br>
+      &nbsp;&nbsp;<b class="neg">INFLOW</b> = coins arrived at a known exchange wallet → sell-side supply up.<br>
+      &nbsp;&nbsp;<b class="pos">OUTFLOW</b> = coins left a known exchange wallet → toward private custody.<br>
+      &nbsp;&nbsp;<span style="color:var(--dim)"><b>SHUFFLE</b></span> = exchange↔exchange or repeat service wallet → housekeeping, ignore.<br>
+      &nbsp;&nbsp;<b class="mid">UNKNOWN</b> = neither address recognized — most retail deposit addresses are fresh and
+      unlabel-able with free data, so unknowns stay honest unknowns. The labeled wallets live in
+      <code>data/exchange_addresses.json</code> — add any address to improve coverage.</p>
 
       <p style="margin-bottom:0"><b style="color:var(--amber)">WHERE B-GRADE ANALYSTS GET FOOLED:</b>
       one print is noise — read <i>dominance over hours</i>, not single events. An aggressive buy spike can be a
@@ -230,13 +237,32 @@ function renderCharts(rows) {
     options:{ plugins:{ legend:{ position:'bottom' } } } });
 }
 
+const FLOW_TIPS = {
+  buy: 'Aggressive market BUY on the exchange tape — direction known.',
+  sell: 'Aggressive market SELL on the exchange tape — direction known.',
+  inflow: 'Coins moved TO a known exchange wallet — sell-side supply increasing (bearish lean).',
+  outflow: 'Coins LEFT a known exchange wallet — withdrawal toward private custody (accumulation lean).',
+  shuffle: 'Exchange/service wallets on both sides — internal housekeeping, ignore.',
+  unknown: 'Wallet→wallet transfer; neither address is a known exchange — intent unreadable from free data.',
+};
+
+function flowOf(r) { return r.side === 'transfer' ? (r.flow || 'unknown') : r.side; }
+
+function flowCell(r) {
+  const f = flowOf(r);
+  const cls = { buy:'pos', sell:'neg', inflow:'neg', outflow:'pos', unknown:'mid' }[f] || '';
+  const style = f === 'shuffle' ? ' style="color:var(--dim)"' : '';
+  const venue = r.venue ? `<div style="font-size:9px;color:var(--dim);font-weight:400">${r.venue}</div>` : '';
+  return `<td class="side ${cls}"${style} title="${FLOW_TIPS[f] || ''}">${f}${venue}</td>`;
+}
+
 function renderTable() {
   const rows = LEDGER.filter(r => FILTER === 'all' || r.side === FILTER);
-  document.getElementById('count').textContent = `${rows.length} shown · newest first`;
+  document.getElementById('count').textContent = `${rows.length} shown · newest first · hover a type for what it means`;
   document.getElementById('rows').innerHTML = rows.slice().reverse().map(r => `
     <tr>
       <td>${(r.ts||'').replace('T',' ').replace('+00:00','')}</td>
-      <td class="side ${r.side==='buy'?'pos':r.side==='sell'?'neg':'mid'}">${r.side}</td>
+      ${flowCell(r)}
       <td><b>${usd(r.usd||0)}</b></td>
       <td>${r.btc ?? ''}</td>
       <td>${r.price ? '$'+r.price.toLocaleString() : '—'}</td>
@@ -263,9 +289,17 @@ function renderAutoRead(rows) {
   } else {
     read = `two-sided tape (${usd(buys)} buys / ${usd(sells)} sells) — no dominance, no signal. Patience is a position.`;
   }
-  if (chain > (buys + sells) && chain > 0)
-    read += ` On-chain movement (${usd(chain)}) is outpacing the exchange tape — coins are repositioning; watch
-      whether the tape follows.`;
+  const inflow = recent.filter(r => r.flow === 'inflow').reduce((s,r) => s+r.usd, 0);
+  const outflow = recent.filter(r => r.flow === 'outflow').reduce((s,r) => s+r.usd, 0);
+  if (inflow > outflow * 2 && inflow > 0)
+    read += ` <b class="neg">Exchange inflows</b> (${usd(inflow)}) far exceed outflows — sell-side supply is
+      being staged. Caution on longs until the tape absorbs it.`;
+  else if (outflow > inflow * 2 && outflow > 0)
+    read += ` <b class="pos">Exchange outflows</b> (${usd(outflow)}) far exceed inflows — coins are leaving
+      exchanges for cold storage. Classic accumulation footprint.`;
+  else if (chain > (buys + sells) && chain > 0)
+    read += ` On-chain movement (${usd(chain)}) is outpacing the exchange tape but isn't tipping either way —
+      coins are repositioning; watch whether the tape follows.`;
   document.getElementById('autoRead').innerHTML = `<b style="color:var(--amber)">CURRENT READ (24h):</b> ${read}`;
 }
 

@@ -306,20 +306,28 @@ def model_call(s):
                "exhaustion": 1.5, "froth": 1.0, "volume": 1.0}
     score = round(sum(comp[k] * weights[k] for k in comp), 1)
 
-    # Doctrine guardrail: valuation alone can't trigger BUY — zone says where,
-    # the B-score says when (needs at least one exhaustion signal).
+    # Three actions only — BUY / HOLD / SELL — so the call is never ambiguous.
+    # The old WAIT collapsed into HOLD (both meant "don't transact"). The nuance it
+    # carried — be defensive with NEW money during a live selloff — now rides in
+    # `stance`, a separate descriptor, not a phantom fourth action. `bias` is the
+    # model's directional lean (what gets graded), independent of the action.
+    # Doctrine guardrail: valuation alone can't trigger BUY — zone says where, the
+    # B-score says when (needs at least one exhaustion signal).
     if score >= 4 and b >= 1:
         d, bias = "BUY", "up"
     elif score <= -4:
         d, bias = "SELL", "down"
-    elif selloff and score < 0:
-        d, bias = "WAIT", "down"
     else:
-        d, bias = "HOLD", "up" if score > 0 else "neutral"
+        d, bias = "HOLD", "up" if score > 0 else "down" if score < 0 else "neutral"
+    stance = ("defensive — selloff still live; don't deploy new money yet"
+              if selloff and score < 0 else
+              "constructive — leaning toward adds once a B-trigger fires"
+              if score > 0 else
+              "neutral — no edge either way; let the triggers decide")
     conf = max(50, min(85, round(50 + abs(score) * 4)))
     why = ", ".join(f"{k} {v:+d}" for k, v in comp.items() if v)
     return {"direction": d, "bias": bias, "confidence_pct": conf,
-            "score": score, "components": comp,
+            "score": score, "components": comp, "stance": stance,
             "thesis": f"[auto] composite {score:+.1f} — {why or 'all components neutral'}",
             "horizon_days": 7,
             "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within ±2%"}
