@@ -50,6 +50,9 @@ CREATE TABLE IF NOT EXISTS whale_ledger(
     id TEXT PRIMARY KEY, ts TEXT, source TEXT, side TEXT,
     usd INTEGER, btc REAL, price REAL, url TEXT,
     flow TEXT, venue TEXT);
+CREATE TABLE IF NOT EXISTS btc_history(
+    day TEXT PRIMARY KEY, ts INTEGER, open REAL, high REAL, low REAL,
+    close REAL, volume REAL, source TEXT);
 CREATE TABLE IF NOT EXISTS addr_seen(
     addr TEXT PRIMARY KEY, times_seen INTEGER, total_usd INTEGER, last_seen TEXT);
 CREATE TABLE IF NOT EXISTS learned_labels(
@@ -147,6 +150,18 @@ def save_whales(entries):
               e.get("usd"), e.get("btc"), e.get("price"), e.get("url"),
               e.get("flow"), e.get("venue"))
              for e in entries])
+
+
+@_safe
+def save_btc_history(rows):
+    """Dual-write the deep daily OHLCV backfill (one row per UTC day)."""
+    if not rows:
+        return
+    with connect() as con:
+        con.executemany(
+            "INSERT OR REPLACE INTO btc_history VALUES(?,?,?,?,?,?,?,?)",
+            [(r["day"], r["ts"], r["open"], r["high"], r["low"],
+              r["close"], r["volume"], r.get("source")) for r in rows])
 
 
 @_safe
