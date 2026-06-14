@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-14T22:34:52+00:00",
-  "price": 65235.98046875,
+  "updated_at": "2026-06-14T23:35:01+00:00",
+  "price": 65624.0,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": true,
@@ -21,25 +21,25 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.342,
+  "corr_btc_nasdaq_30d": -0.339,
   "corr_btc_gold_30d": 0.864,
-  "btc_gold_ratio": 15.105,
+  "btc_gold_ratio": 15.249,
   "roc5": {
-    "btc": 5.83,
-    "brent": -10.97,
+    "btc": 6.46,
+    "brent": -11.06,
     "us10y": -1.08,
-    "nasdaq": 2.13,
-    "dxy": -0.59,
-    "gold": -0.4
+    "nasdaq": 1.96,
+    "dxy": -0.55,
+    "gold": -0.75
   },
-  "volume_vs_30d_avg": 0.61,
-  "ma50": 73911.0,
-  "ma200": 77643.0,
-  "dist_from_50d_pct": -11.7,
+  "volume_vs_30d_avg": 0.64,
+  "ma50": 73918.0,
+  "ma200": 77645.0,
+  "dist_from_50d_pct": -11.2,
   "verdict": {
-    "direction": "BUY",
+    "direction": "HOLD",
     "bias": "up",
-    "tier": "accumulation",
+    "tier": null,
     "confidence_pct": 60,
     "score": 2.5,
     "components": {
@@ -50,7 +50,7 @@
       "froth": 0,
       "volume": 0
     },
-    "stance": "accumulation \u2014 deep-value + macro releasing; scale in small ahead of B confirmation (knife-risk accepted)",
+    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
     "thesis": "[auto] composite +2.5 \u2014 valuation +1, trend -2, macro_release +2, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
