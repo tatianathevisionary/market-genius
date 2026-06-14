@@ -99,8 +99,35 @@ SHIM = r"""<script>
 """
 
 BANNER = ('<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,'
-          'monospace;text-align:center;padding:4px">READ-ONLY SNAPSHOT — built __BUILT__'
-          ' · live console runs locally · not financial advice</div>')
+          'monospace;text-align:center;padding:4px">SNAPSHOT — analysis built __BUILT__'
+          ' · price ticks live · not financial advice</div>')
+
+# Injected only into the dashboard: keep the headline price genuinely live by
+# polling Binance (Coinbase fallback) client-side. The framework analysis stays
+# the periodically-republished snapshot; only the price element is real-time.
+LIVE_PRICE = r"""<script>
+(function(){
+  function poll(){
+    var el = document.getElementById('price');
+    if(!el){ return setTimeout(poll, 1000); }
+    var last = null;
+    async function tick(){
+      var p = null;
+      try { p = parseFloat((await (await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')).json()).price); } catch(e){}
+      if(p==null||!isFinite(p)){ try { p = parseFloat((await (await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot')).json()).data.amount); } catch(e){} }
+      if(p==null||!isFinite(p)){ return; }
+      el.textContent = '$' + Math.round(p).toLocaleString();
+      el.title = 'live · Binance/Coinbase · ' + new Date().toISOString().slice(11,19) + ' UTC';
+      if(last!=null && p!==last){ el.style.color = p>last ? '#27c87f' : '#ff4f56';
+        setTimeout(function(){ el.style.color=''; }, 700); }
+      last = p;
+    }
+    tick(); setInterval(tick, 5000);
+  }
+  poll();
+})();
+</script>
+"""
 
 
 def _fetch_route(path):
@@ -129,6 +156,8 @@ def build(out=SITE_OUT):
         for route, page in NAV.items():
             html = html.replace(f"location.href='{route}'", f"location.href='{page}'")
             html = html.replace(f'href="{route}"', f'href="{page}"')
+        if dest == "index.html":          # live price ticker only on the dashboard
+            html = html.replace("</body>", LIVE_PRICE + "</body>", 1)
         (out / dest).write_text(html)
 
     # 2. data files the pages read (.jsonl -> JSON array, mirroring the listener)

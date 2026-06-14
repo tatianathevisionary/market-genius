@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.btcgenius.site-publish</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/tatianathevisionary/market-genius/src/build_site.py</string>
+        <string>--publish</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/tatianathevisionary/market-genius</string>
+
+    <!-- Refresh the public Pages snapshot every 15 min. build_site.py skips the
+         commit when nothing changed, so quiet periods don't spam history. The
+         headline price is already live client-side; this keeps the analysis,
+         intraday, and whale panels fresh. -->
+    <key>StartInterval</key>
+    <integer>900</integer>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/site_publish.stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/site_publish.stderr.log</string>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>
