@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-14T04:07:16+00:00",
-  "price": 64495.01953125,
+  "updated_at": "2026-06-14T05:07:26+00:00",
+  "price": 64345.48828125,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": true,
@@ -23,9 +23,9 @@
   },
   "corr_btc_nasdaq_30d": -0.341,
   "corr_btc_gold_30d": 0.862,
-  "btc_gold_ratio": 15.215,
+  "btc_gold_ratio": 15.18,
   "roc5": {
-    "btc": 2.23,
+    "btc": 1.99,
     "brent": -6.19,
     "us10y": -1.08,
     "nasdaq": 2.19,
@@ -33,9 +33,9 @@
     "gold": -2.27
   },
   "volume_vs_30d_avg": 0.51,
-  "ma50": 74160.0,
+  "ma50": 74157.0,
   "ma200": 77770.0,
-  "dist_from_50d_pct": -13.0,
+  "dist_from_50d_pct": -13.2,
   "verdict": {
     "direction": "BUY",
     "bias": "up",
