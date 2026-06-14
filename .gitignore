@@ -20,6 +20,7 @@ apps/**/coverage/
 
 # Scratch artifacts
 chart-exports.json
+_site/
 
 # macOS
 .DS_Store
