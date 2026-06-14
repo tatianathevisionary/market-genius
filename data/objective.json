@@ -1,0 +1,15 @@
+{
+  "goal": "Build a long-term BTC position in two tranches: $7k done, $7k reserved for a defined dip. Trade the checklist, not feelings.",
+  "position_btc": 0.116,
+  "cost_basis_usd": 7000,
+  "reserve_usd": 7000,
+  "started": "2026-06-01",
+  "investable_fund_usd": 300000,
+  "rules": [
+    "SIZING VALIDATED: $14k total = 4.7% of $300k fund — inside the 5% risk-asset cap. Do not exceed ~$15k (5%) total without re-checking.",
+    "Tranche 2 ($7k) fires on a DEFINED dip — not just any red candle: retest of the $60.8k low, OR a B-trigger (B1 capitulation volume / B6 failed new low)",
+    "If it never dips and instead reclaims $65,234 on volume, deploy tranche 2 as a breakout-confirm add instead — don't get left behind waiting for a dip that doesn't come",
+    "Tranche size: small enough to survive a leg to $40k without selling (-70% on $14k = -$9.8k = 3.3% of fund — survivable)",
+    "Scale out only on 2+ froth (X) signals"
+  ]
+}

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  var orig = window.fetch.bind(window);
+  function remap(p){
+    p = p.replace(/^\/+/, '');                 // absolute -> relative to this page
+    if (p === 'status') return 'status.json';
+    if (p === 'feed/news') return 'feed/news.json';
+    if (p.indexOf('feed/x') === 0) return 'feed/x.json';
+    if (p === 'reports/list') return 'reports/index.json';
+    if (p.indexOf('data/reports/') === 0) return 'reports/' + p.slice('data/reports/'.length);
+    return p;                                   // data/... etc. -> served statically
+  }
+  window.fetch = function(input, init){
+    var url = (typeof input === 'string') ? input : (input && input.url) || '';
+    if (url.charAt(0) === '/') {
+      var path = url.split('?')[0].split('#')[0];
+      return orig(remap(path), init);
+    }
+    return orig(input, init);
+  };
+})();
+</script>
+
+<meta charset="utf-8">
+<title>BTC GENIUS · WHALE LEDGER</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root { --bg:#06090d; --panel:#0b1016; --line:#1b2733; --line2:#2a3b4d;
+          --txt:#c9d7e3; --dim:#5e7387; --accent:#2ea8ff; --red:#ff4f56; --green:#27c87f;
+          --amber:#e3a008; --purple:#a78bfa; --mono:"SF Mono", ui-monospace, Menlo, monospace; }
+  body.light { --bg:#eef1f5; --panel:#ffffff; --line:#d4dbe3; --line2:#b9c4d0;
+               --txt:#1c2733; --dim:#5a6b7d; --accent:#0969da; --red:#d1242f; --green:#1a7f37;
+               --amber:#9a6700; --purple:#6f42c1; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:13px/1.45 var(--mono); padding:0 0 24px; }
+  .bar { display:flex; align-items:center; gap:16px; padding:10px 18px; border-bottom:1px solid var(--line);
+         background:var(--panel); position:sticky; top:0; z-index:5; flex-wrap:wrap; }
+  .logo { font-weight:700; letter-spacing:.14em; font-size:14px; } .logo span { color:var(--accent); }
+  .right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .toggle button { background:transparent; color:var(--dim); border:1px solid var(--line2);
+                   padding:4px 10px; font:11px var(--mono); cursor:pointer; }
+  .toggle button.on { color:var(--accent); border-color:var(--accent); }
+  .layout { max-width:1300px; margin:12px auto; padding:0 14px; display:flex; flex-direction:column; gap:12px; }
+  .row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .row2 { display:grid; grid-template-columns:2fr 1fr; gap:12px; }
+  @media (max-width:900px){ .row, .row2 { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); min-width:0; }
+  .panel-h { display:flex; align-items:baseline; gap:8px; padding:8px 12px; border-bottom:1px solid var(--line); }
+  .panel-h h2 { margin:0; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+  .panel-h .tag { font-size:10px; color:var(--dim); margin-left:auto; }
+  .panel-b { padding:10px 12px; }
+  canvas { max-height:260px; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; }
+  .stat { background:var(--panel); border:1px solid var(--line); padding:10px 14px; }
+  .stat .k { font-size:10px; color:var(--dim); letter-spacing:.1em; text-transform:uppercase; }
+  .stat .v { font-size:20px; font-weight:700; margin-top:2px; }
+  .pos { color:var(--green); } .neg { color:var(--red); } .mid { color:var(--purple); }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th { text-align:left; font-size:10px; color:var(--dim); letter-spacing:.1em; text-transform:uppercase;
+       padding:6px 8px; border-bottom:1px solid var(--line2); }
+  td { padding:6px 8px; border-bottom:1px solid var(--line); }
+  td a { color:var(--accent); text-decoration:none; }
+  .side { font-weight:700; text-transform:uppercase; font-size:11px; }
+  .edu { padding:7px 12px; border-top:1px dashed var(--line); font-size:11px; color:var(--dim); }
+  .edu b { color:var(--amber); }
+</style>
+</head>
+<body>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">READ-ONLY SNAPSHOT — built 2026-06-14 05:03 UTC · live console runs locally · not financial advice</div>
+
+<div class="bar">
+  <div class="logo">BTC<span>GENIUS</span> ▮ WHALE LEDGER</div>
+  <div class="right">
+    <div class="toggle">
+      <button id="bHour" class="on" onclick="setBucket('hour')">HOURLY</button>
+      <button id="bDay" onclick="setBucket('day')">DAILY</button>
+      <button id="bWeek" onclick="setBucket('week')">WEEKLY</button>
+    </div>
+    <div class="toggle">
+      <button id="fAll" class="on" onclick="setFilter('all')">ALL</button>
+      <button id="fBuy" onclick="setFilter('buy')">BUYS</button>
+      <button id="fSell" onclick="setFilter('sell')">SELLS</button>
+      <button id="fTransfer" onclick="setFilter('transfer')">ON-CHAIN</button>
+      <button id="btnTheme" onclick="toggleTheme()">☀ LIGHT</button>
+      <button onclick="location.href='index.html'">◀ CONSOLE</button>
+      <button onclick="location.href='social.html'">𝕏 SOCIAL</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="stats" id="stats"></div>
+
+  <div class="row">
+    <div class="panel">
+      <div class="panel-h"><h2>Buy vs Sell volume</h2><span class="tag" id="flowTag">hourly, USD</span></div>
+      <div class="panel-b"><canvas id="flowChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Cumulative net flow</h2><span class="tag">buys − sells</span></div>
+      <div class="panel-b"><canvas id="netChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Side split</h2><span class="tag">by USD</span></div>
+      <div class="panel-b"><canvas id="splitChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h"><h2>Ledger</h2><span class="tag" id="count"></span></div>
+    <div class="panel-b" style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Time (UTC)</th><th>Side</th><th>USD</th><th>BTC</th><th>Price</th><th>Source</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="edu"><b>HOW TO READ:</b> exchange prints ≥$250k are aggressive market orders — heavy
+      <span class="neg">SELL</span> dominance while price falls = distribution; heavy <span class="pos">BUY</span>
+      dominance near support = absorption. On-chain transfers ≥$1M are direction-unknown (deposit, withdrawal, or shuffle).</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h"><h2>Whale School</h2><span class="tag">WHY THIS PAGE EXISTS</span></div>
+    <div class="panel-b" style="font-size:12px; line-height:1.7">
+      <p id="autoRead" style="margin:0 0 10px; padding:8px 10px; border:1px dashed var(--line2);"></p>
+
+      <p><b style="color:var(--accent)">WHAT IS A WHALE?</b> Any entity whose single order is big enough to move
+      price by itself — funds, ETF market-makers, miners, corporate treasuries, exchanges rebalancing, and OG
+      holders. Bitcoin ownership is extremely concentrated: a small fraction of addresses controls most supply,
+      so what a handful of large players do matters more than what a million small wallets think.</p>
+
+      <p><b style="color:var(--accent)">WHY THEY MATTER.</b> Two reasons. <b>Mechanical:</b> a $5M market order
+      eats through the order book and moves price directly — clusters of large prints mark exactly where serious
+      money defends a level or unloads into one. <b>Informational:</b> large players often act on flows and research
+      you can't see; their aggregate footprint on the tape is the closest free proxy to "smart money" positioning.
+      Retail sentiment (see <a href="social.html" style="color:var(--accent)">SOCIAL</a>) tells you what the crowd
+      <i>feels</i>; the whale tape tells you what big money <i>does</i>. When the two disagree, trust the tape.</p>
+
+      <p><b style="color:var(--accent)">THE FOUR SIGNATURES.</b><br>
+      🟢 <b>Absorption</b> — heavy BUY prints at a support zone while price <i>holds</i>: someone is buying everything
+      panickers throw at them. Bullish; strongest when it lines up with a confluence-rated support on the console.<br>
+      🔴 <b>Distribution</b> — heavy SELL prints into rallies while price <i>stalls</i> at resistance: unloading into
+      strength. Bearish, and the polite cousin of a rug.<br>
+      ⚡ <b>Capitulation sweep</b> — massive sells, price plunges, then a long lower wick on high volume: forced sellers
+      met by whale bids. This is the B1 signature in SIGNALS.md — historically where bottoms get made.<br>
+      🟣 <b>Exchange flows</b> — big on-chain transfers TO exchanges often precede selling (coins staged for sale);
+      big withdrawals suggest cold-storage accumulation. The system now auto-classifies these by checking both sides
+      of every transfer against a book of known exchange wallets (Binance, Bitfinex, OKX, Crypto.com, BitMEX, gate.io…)
+      plus a behavioral check for repeat service wallets:<br>
+      &nbsp;&nbsp;<b class="neg">INFLOW</b> = coins arrived at a known exchange wallet → sell-side supply up.<br>
+      &nbsp;&nbsp;<b class="pos">OUTFLOW</b> = coins left a known exchange wallet → toward private custody.<br>
+      &nbsp;&nbsp;<span style="color:var(--dim)"><b>SHUFFLE</b></span> = exchange↔exchange or repeat service wallet → housekeeping, ignore.<br>
+      &nbsp;&nbsp;<b class="mid">UNKNOWN</b> = neither address recognized — most retail deposit addresses are fresh and
+      unlabel-able with free data, so unknowns stay honest unknowns. The labeled wallets live in
+      <code>data/exchange_addresses.json</code> — add any address to improve coverage.</p>
+
+      <p><b style="color:var(--accent)">THE BOOK GROWS ITSELF (CIOH).</b> The 21 seed wallets are just a starting
+      point. Every Bitcoin transaction reveals ownership for free via the <i>Common Input Ownership Heuristic</i>:
+      all the addresses spent as <i>inputs</i> to one transaction are controlled by the same entity (only one party
+      holds all the keys). So when a known Binance wallet co-spends alongside three unlabeled addresses, those three
+      <i>are</i> Binance — the system records them and they're labeled forever after. This is the exact foundation
+      every chain-analytics firm (Chainalysis, Arkham, Elementus) is built on; combined with the behavioral and
+      seed-list checks, stacked heuristics like these reach ~94% labeling accuracy in the forensics literature.
+      The seed list is cold wallets that move rarely, so learning is slow at first — but it compounds, and unlike a
+      static list it never goes stale.</p>
+
+      <p><b style="color:var(--accent)">HOW IT'S CAPTURED.</b> Exchange-wallet flows are caught in <b>real time</b>:
+      a websocket holds a live line to mempool.space and reacts the instant any labeled wallet transacts, so an
+      exchange deposit or withdrawal lands here within seconds — no 5-minute sampling gap. Transfers between two
+      <i>unlabeled</i> wallets (the UNKNOWN bucket) are still picked up by the 5-min sampler, since a complete free
+      firehose of every transaction no longer exists. So: exchange flow = real-time and complete; anonymous-to-anonymous
+      = sampled. The exchange flow is the part that carries signal, so that's the part we made airtight.</p>
+
+      <p style="margin-bottom:0"><b style="color:var(--amber)">WHERE B-GRADE ANALYSTS GET FOOLED:</b>
+      one print is noise — read <i>dominance over hours</i>, not single events. An aggressive buy spike can be a
+      short squeeze, not accumulation. An exchange withdrawal can be an internal wallet migration, not a customer
+      pulling coins. A-grade reads come from confluence: tape dominance <b>+</b> an S/R level <b>+</b> the regime on
+      the console — never one signal alone.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const THEME = localStorage.getItem('theme') || 'light';
+if (THEME === 'light') document.body.classList.add('light');
+function toggleTheme() { localStorage.setItem('theme', THEME === 'light' ? 'dark' : 'light'); location.reload(); }
+document.getElementById('btnTheme').textContent = THEME === 'light' ? '☾ DARK' : '☀ LIGHT';
+const css = n => getComputedStyle(document.body).getPropertyValue(n).trim();
+Chart.defaults.color = css('--dim');
+Chart.defaults.borderColor = css('--line');
+Chart.defaults.font.family = '"SF Mono", ui-monospace, Menlo, monospace';
+Chart.defaults.font.size = 10;
+
+let LEDGER = [], FILTER = 'all', BUCKET = 'hour';
+const charts = {};
+const mk = (id, cfg) => { if (charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); };
+const usd = v => '$' + (v >= 1e6 ? (v/1e6).toFixed(2)+'M' : Math.round(v/1e3)+'k');
+
+function setFilter(f) {
+  FILTER = f;
+  for (const [id, key] of [['fAll','all'],['fBuy','buy'],['fSell','sell'],['fTransfer','transfer']])
+    document.getElementById(id).classList.toggle('on', key === f);
+  renderTable();
+}
+
+function setBucket(b) {
+  BUCKET = b;
+  for (const [id, key] of [['bHour','hour'],['bDay','day'],['bWeek','week']])
+    document.getElementById(id).classList.toggle('on', key === b);
+  document.getElementById('flowTag').textContent =
+    { hour:'hourly, USD', day:'daily, USD', week:'weekly (w/c Mon), USD' }[b];
+  renderCharts(LEDGER);
+}
+
+function bkey(ts) {            // bucket key for a UTC ISO timestamp
+  if (BUCKET === 'hour') return ts.slice(0, 13);
+  if (BUCKET === 'day') return ts.slice(0, 10);
+  const d = new Date(ts.slice(0, 10) + 'T00:00:00Z');     // week starts Monday
+  d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7);
+  return d.toISOString().slice(0, 10);
+}
+
+function blabel(k) {
+  return BUCKET === 'hour' ? k.slice(5).replace('T', ' ') + 'h'
+       : BUCKET === 'day' ? k.slice(5)
+       : 'wk ' + k.slice(5);
+}
+
+function renderStats(rows) {
+  const buys = rows.filter(r => r.side === 'buy').reduce((s,r) => s+r.usd, 0);
+  const sells = rows.filter(r => r.side === 'sell').reduce((s,r) => s+r.usd, 0);
+  const chain = rows.filter(r => r.side === 'transfer').reduce((s,r) => s+r.usd, 0);
+  const largest = rows.reduce((m,r) => Math.max(m, r.usd), 0);
+  const net = buys - sells;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="k">Whale buys</div><div class="v pos">${usd(buys)}</div></div>
+    <div class="stat"><div class="k">Whale sells</div><div class="v neg">${usd(sells)}</div></div>
+    <div class="stat"><div class="k">Net flow</div><div class="v ${net>=0?'pos':'neg'}">${net>=0?'+':'−'}${usd(Math.abs(net))}</div></div>
+    <div class="stat"><div class="k">On-chain moved</div><div class="v mid">${usd(chain)}</div></div>
+    <div class="stat"><div class="k">Largest print</div><div class="v">${usd(largest)}</div></div>
+    <div class="stat"><div class="k">Events</div><div class="v">${rows.length}</div></div>`;
+}
+
+function renderCharts(rows) {
+  const buckets = {};
+  for (const r of rows) {
+    const h = bkey(r.ts);
+    buckets[h] = buckets[h] || { buy:0, sell:0, transfer:0 };
+    buckets[h][r.side] += r.usd;
+  }
+  const hours = Object.keys(buckets).sort();
+  const lbl = hours.map(blabel);
+  mk('flowChart', { type:'bar',
+    data:{ labels:lbl, datasets:[
+      { label:'buys', data:hours.map(h => buckets[h].buy), backgroundColor:css('--green') },
+      { label:'sells', data:hours.map(h => -buckets[h].sell), backgroundColor:css('--red') }]},
+    options:{ scales:{ x:{ stacked:true }, y:{ stacked:true,
+      ticks:{ callback:v => usd(Math.abs(v)) } } } } });
+
+  let cum = 0;
+  const net = hours.map(h => (cum += buckets[h].buy - buckets[h].sell));
+  mk('netChart', { type:'line',
+    data:{ labels:lbl, datasets:[{ data:net, borderColor:css('--accent'),
+      backgroundColor:'transparent', pointRadius:2, tension:.25, fill:false }]},
+    options:{ plugins:{ legend:{ display:false } },
+      scales:{ y:{ ticks:{ callback:v => (v<0?'−':'') + usd(Math.abs(v)) } } } } });
+
+  const tot = { buy:0, sell:0, transfer:0 };
+  rows.forEach(r => tot[r.side] += r.usd);
+  mk('splitChart', { type:'doughnut',
+    data:{ labels:['buys','sells','on-chain'],
+      datasets:[{ data:[tot.buy, tot.sell, tot.transfer],
+        backgroundColor:[css('--green'), css('--red'), css('--purple')], borderWidth:0 }]},
+    options:{ plugins:{ legend:{ position:'bottom' } } } });
+}
+
+const FLOW_TIPS = {
+  buy: 'Aggressive market BUY on the exchange tape — direction known.',
+  sell: 'Aggressive market SELL on the exchange tape — direction known.',
+  inflow: 'Coins moved TO a known exchange wallet — sell-side supply increasing (bearish lean).',
+  outflow: 'Coins LEFT a known exchange wallet — withdrawal toward private custody (accumulation lean).',
+  shuffle: 'Exchange/service wallets on both sides — internal housekeeping, ignore.',
+  unknown: 'Wallet→wallet transfer; neither address is a known exchange — intent unreadable from free data.',
+};
+
+function flowOf(r) { return r.side === 'transfer' ? (r.flow || 'unknown') : r.side; }
+
+function flowCell(r) {
+  const f = flowOf(r);
+  const cls = { buy:'pos', sell:'neg', inflow:'neg', outflow:'pos', unknown:'mid' }[f] || '';
+  const style = f === 'shuffle' ? ' style="color:var(--dim)"' : '';
+  const venue = r.venue ? `<div style="font-size:9px;color:var(--dim);font-weight:400">${r.venue}</div>` : '';
+  return `<td class="side ${cls}"${style} title="${FLOW_TIPS[f] || ''}">${f}${venue}</td>`;
+}
+
+function renderTable() {
+  const rows = LEDGER.filter(r => FILTER === 'all' || r.side === FILTER);
+  document.getElementById('count').textContent = `${rows.length} shown · newest first · hover a type for what it means`;
+  document.getElementById('rows').innerHTML = rows.slice().reverse().map(r => `
+    <tr>
+      <td>${(r.ts||'').replace('T',' ').replace('+00:00','')}</td>
+      ${flowCell(r)}
+      <td><b>${usd(r.usd||0)}</b></td>
+      <td>${r.btc ?? ''}</td>
+      <td>${r.price ? '$'+r.price.toLocaleString() : '—'}</td>
+      <td>${r.source||''}</td>
+      <td>${r.url ? `<a href="${r.url}" target="_blank" rel="noopener">tx ↗</a>` : ''}</td>
+    </tr>`).join('');
+}
+
+function renderAutoRead(rows) {
+  const day = Date.now() - 24 * 3600 * 1000;
+  const recent = rows.filter(r => new Date(r.ts).getTime() >= day);
+  const buys = recent.filter(r => r.side === 'buy').reduce((s,r) => s+r.usd, 0);
+  const sells = recent.filter(r => r.side === 'sell').reduce((s,r) => s+r.usd, 0);
+  const chain = recent.filter(r => r.side === 'transfer').reduce((s,r) => s+r.usd, 0);
+  let read;
+  if (!recent.length) {
+    read = 'no whale events in the last 24h — quiet tape, levels on the console matter more than flow right now.';
+  } else if (buys > sells * 2) {
+    read = `buys dominate (${usd(buys)} vs ${usd(sells)}) — if price is sitting on a support zone, this is the
+      <b class="pos">absorption</b> signature. Check the console: is it holding?`;
+  } else if (sells > buys * 2) {
+    read = `sells dominate (${usd(sells)} vs ${usd(buys)}) — into strength this is <b class="neg">distribution</b>;
+      into weakness it may be building toward a <b>capitulation sweep</b>. Watch volume and the lower wick.`;
+  } else {
+    read = `two-sided tape (${usd(buys)} buys / ${usd(sells)} sells) — no dominance, no signal. Patience is a position.`;
+  }
+  const inflow = recent.filter(r => r.flow === 'inflow').reduce((s,r) => s+r.usd, 0);
+  const outflow = recent.filter(r => r.flow === 'outflow').reduce((s,r) => s+r.usd, 0);
+  if (inflow > outflow * 2 && inflow > 0)
+    read += ` <b class="neg">Exchange inflows</b> (${usd(inflow)}) far exceed outflows — sell-side supply is
+      being staged. Caution on longs until the tape absorbs it.`;
+  else if (outflow > inflow * 2 && outflow > 0)
+    read += ` <b class="pos">Exchange outflows</b> (${usd(outflow)}) far exceed inflows — coins are leaving
+      exchanges for cold storage. Classic accumulation footprint.`;
+  else if (chain > (buys + sells) && chain > 0)
+    read += ` On-chain movement (${usd(chain)}) is outpacing the exchange tape but isn't tipping either way —
+      coins are repositioning; watch whether the tape follows.`;
+  document.getElementById('autoRead').innerHTML = `<b style="color:var(--amber)">CURRENT READ (24h):</b> ${read}`;
+}
+
+async function load() {
+  LEDGER = await (await fetch('/data/whale_ledger.jsonl')).json();
+  LEDGER.sort((a,b) => (a.ts||'').localeCompare(b.ts||''));
+  renderStats(LEDGER);
+  renderCharts(LEDGER);
+  renderTable();
+  renderAutoRead(LEDGER);
+}
+load();
+setInterval(load, 5 * 60 * 1000);
+</script>
+</body>
+</html>

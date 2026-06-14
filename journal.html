@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(){
+  var orig = window.fetch.bind(window);
+  function remap(p){
+    p = p.replace(/^\/+/, '');                 // absolute -> relative to this page
+    if (p === 'status') return 'status.json';
+    if (p === 'feed/news') return 'feed/news.json';
+    if (p.indexOf('feed/x') === 0) return 'feed/x.json';
+    if (p === 'reports/list') return 'reports/index.json';
+    if (p.indexOf('data/reports/') === 0) return 'reports/' + p.slice('data/reports/'.length);
+    return p;                                   // data/... etc. -> served statically
+  }
+  window.fetch = function(input, init){
+    var url = (typeof input === 'string') ? input : (input && input.url) || '';
+    if (url.charAt(0) === '/') {
+      var path = url.split('?')[0].split('#')[0];
+      return orig(remap(path), init);
+    }
+    return orig(input, init);
+  };
+})();
+</script>
+
+<meta charset="utf-8">
+<title>BTC GENIUS · CALL JOURNAL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#06090d; --panel:#0b1016; --line:#1b2733; --line2:#2a3b4d;
+          --txt:#c9d7e3; --dim:#5e7387; --accent:#2ea8ff; --red:#ff4f56; --green:#27c87f;
+          --amber:#e3a008; --mono:"SF Mono", ui-monospace, Menlo, monospace; }
+  body.light { --bg:#eef1f5; --panel:#ffffff; --line:#d4dbe3; --line2:#b9c4d0;
+               --txt:#1c2733; --dim:#5a6b7d; --accent:#0969da; --red:#d1242f; --green:#1a7f37;
+               --amber:#9a6700; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:13px/1.5 var(--mono); padding-bottom:40px; }
+  .bar { display:flex; align-items:center; gap:16px; padding:10px 18px;
+         border-bottom:1px solid var(--line); background:var(--panel); }
+  .logo { font-weight:700; letter-spacing:.14em; font-size:14px; }
+  .logo span { color:var(--accent); }
+  .bar a { color:var(--accent); text-decoration:none; font-size:12px; margin-left:auto; }
+  .wrap { max-width:980px; margin:14px auto; padding:0 14px; display:flex; flex-direction:column; gap:12px; }
+  .panel { background:var(--panel); border:1px solid var(--line); }
+  .panel-h { padding:8px 12px; border-bottom:1px solid var(--line); }
+  .panel-h h2 { margin:0; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+  .panel-h .sub { font-size:10px; color:var(--dim); }
+  .panel-b { padding:12px; }
+  table { width:100%; border-collapse:collapse; font-size:11px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--dim); font-weight:600; letter-spacing:.06em; }
+  .drv b { color:var(--amber); }
+  .form { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .form .full { grid-column:span 2; }
+  label { display:block; font-size:10px; color:var(--dim); letter-spacing:.08em; margin-bottom:3px; text-transform:uppercase; }
+  input, textarea, select { width:100%; background:var(--bg); color:var(--txt);
+    border:1px solid var(--line2); padding:7px; font:12px var(--mono); }
+  textarea { min-height:70px; resize:vertical; }
+  button.go { grid-column:span 2; background:var(--accent); color:#fff; border:0;
+    padding:10px; font:700 12px var(--mono); letter-spacing:.1em; cursor:pointer; }
+  .snap { font-size:11px; color:var(--dim); }
+  .snap b { color:var(--txt); }
+  .pos { color:var(--green); } .neg { color:var(--red); }
+  .pill { font-size:10px; padding:1px 7px; border:1px solid var(--line2); }
+  .edu { padding:7px 12px; border-top:1px dashed var(--line); font-size:11px; color:var(--dim); }
+  .edu b { color:var(--amber); }
+</style>
+</head>
+<body>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">READ-ONLY SNAPSHOT — built 2026-06-14 05:03 UTC · live console runs locally · not financial advice</div>
+<div class="bar">
+  <div class="logo">BTC<span>GENIUS</span> ▮ CALL JOURNAL</div>
+  <a href="index.html">← CONSOLE</a>
+</div>
+<div class="wrap">
+
+  <div class="panel">
+    <div class="panel-h"><h2>Why Bitcoin Moves — The Driver Model</h2>
+      <div class="sub">synthesized from BlackRock crypto-volatility research, market analyses &amp; current coverage (Jun 2026)</div></div>
+    <div class="panel-b">
+      <table class="drv">
+        <tr><th>Driver</th><th>Timescale</th><th>How it moves price</th><th>Watch via</th></tr>
+        <tr><td><b>1. Global liquidity &amp; rates</b></td><td>months–years</td>
+          <td>The big one. Cheap money → risk appetite → BTC up. Rate hikes / QT drain liquidity → BTC down. BTC pays no yield, so when safe yields rise, holding it costs more.</td>
+          <td>10Y yield, DXY, Fed odds (A-score)</td></tr>
+        <tr><td><b>2. Flows (ETF / institutions)</b></td><td>days–months</td>
+          <td>Since spot ETFs, big money enters/exits in measurable daily flows. One $1.26B block sale moved the whole market in May.</td>
+          <td>ETF net flows (B3)</td></tr>
+        <tr><td><b>3. Leverage cascades</b></td><td>minutes–days</td>
+          <td>Traders borrow to amplify bets. A small drop forces liquidations → forced selling → bigger drop → more liquidations. This is why BTC falls 10% in hours "on no news" ($1.8B wiped this week).</td>
+          <td>funding rates, open interest (B2)</td></tr>
+        <tr><td><b>4. Supply mechanics</b></td><td>years</td>
+          <td>Fixed 21M cap; halvings cut new issuance every 4y. Slow structural tailwind — sets the cycle rhythm, not the daily candle.</td>
+          <td>halving calendar</td></tr>
+        <tr><td><b>5. Narrative &amp; sentiment</b></td><td>weeks–months</td>
+          <td>BTC is a momentum asset: capital chases whatever story is hottest. Right now the AI/IPO narrative is draining speculative capital from crypto (the Schwab thesis).</td>
+          <td>Reddit buckets, dominance, news wire</td></tr>
+        <tr><td><b>6. Cost-basis behavior</b></td><td>weeks–months</td>
+          <td>Holders defend break-even: buyers above $90k capitulating now = late-bear signature; "made my money back, I'm out" selling caps rallies at prior highs.</td>
+          <td>on-chain cohorts (B4), S/R levels</td></tr>
+        <tr><td><b>7. Shocks (geo/regulatory)</b></td><td>instant</td>
+          <td>Strait of Hormuz, ETF approvals, exchange failures. Unpredictable by definition — the system reacts via the transmission chain rather than predicts.</td>
+          <td>news wire, oil (A1)</td></tr>
+      </table>
+    </div>
+    <div class="edu"><b>THE SYNTHESIS:</b> daily moves = leverage + flows + sentiment (layers 2,3,5).
+      Monthly trends = liquidity + narrative (1,5). Multi-year cycles = liquidity + supply (1,4).
+      When you see a move, ask which timescale it belongs to before reacting — most retail mistakes are
+      answering a days-layer move with a years-layer decision, or vice versa.</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h"><h2>Log a Call</h2>
+      <div class="sub">your thesis is recorded with a full snapshot of what the system showed when you made it</div></div>
+    <div class="panel-b">
+      <div class="snap" id="snap">loading current state…</div>
+      <br>
+      <form class="form" id="callForm" onsubmit="return submitCall(event)">
+        <div><label>Direction</label>
+          <select id="direction"><option>ACCUMULATE</option><option>WAIT</option><option>REDUCE</option><option>LONG (trade)</option><option>SHORT (trade)</option></select></div>
+        <div><label>Confidence %</label><input id="confidence" type="number" min="1" max="99" value="60"></div>
+        <div class="full"><label>Thesis — why? cite signals, not feelings</label>
+          <textarea id="thesis" placeholder="e.g. Mayer 0.8 = accumulation zone, but A:1/4 B:0/3 — first tranche only; oil still spiking so no full entry…"></textarea></div>
+        <div><label>Invalidation (price or condition)</label><input id="invalidation" placeholder="e.g. daily close < 60,000"></div>
+        <div><label>Horizon</label>
+          <select id="horizon"><option>days</option><option>weeks</option><option selected>months</option><option>years</option></select></div>
+        <button class="go">RECORD CALL + SNAPSHOT</button>
+      </form>
+    </div>
+    <div class="edu"><b>WHY THIS WORKS:</b> calibration. In 3 months you'll review: were your 70%-confidence
+      calls right ~70% of the time? Writing the invalidation <i>before</i> entering is what separates a thesis
+      from a hope.</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h"><h2>Call History</h2><div class="sub" id="histSub"></div></div>
+    <div class="panel-b"><table id="hist"><tr><th>Date</th><th>Call</th><th>Conf</th><th>Snapshot</th><th>Thesis</th><th>Since call</th></tr></table></div>
+  </div>
+</div>
+
+<script>
+if ((localStorage.getItem('theme') || 'light') === 'light') document.body.classList.add('light');
+let cur = null;
+async function getJSON(p){ const r = await fetch(p); if(!r.ok) throw new Error(p); return r.json(); }
+
+async function load() {
+  cur = await getJSON('/data/state.json');
+  const mayer = (cur.price / cur.ma200).toFixed(2);
+  document.getElementById('snap').innerHTML =
+    `WILL ATTACH → BTC <b>$${Math.round(cur.price).toLocaleString()}</b> · <b>${cur.regime}</b> · ` +
+    `A:<b>${cur.a_score}/${cur.a_max}</b> B:<b>${cur.b_score}/${cur.b_max}</b> · Mayer <b>${mayer}</b> · ` +
+    `corr·NQ <b>${cur.corr_btc_nasdaq_30d}</b> · vol <b>${cur.volume_vs_30d_avg}×</b>`;
+
+  let rows;
+  try { rows = await getJSON('/data/journal.jsonl'); } catch { rows = []; }
+  const t = document.getElementById('hist');
+  const stat = who => {
+    const done = rows.filter(r => (r.author || 'human') === who && r.outcome);
+    const hit = done.filter(r => r.outcome.correct).length;
+    return done.length ? `${who}: ${hit}/${done.length} correct (${Math.round(hit / done.length * 100)}%)` : `${who}: no graded calls yet`;
+  };
+  document.getElementById('histSub').textContent =
+    `${rows.length} calls · ${stat('model')} · ${stat('human')}`;
+  for (const r of rows.slice().reverse()) {
+    const s = r.snapshot || {}, c = r.call || {};
+    const who = r.author || 'human';
+    let result;
+    if (r.outcome) {
+      const o = r.outcome;
+      result = `<span class="${o.correct ? 'pos' : 'neg'}">${o.correct ? '✓' : '✗'} ${o.change_pct > 0 ? '+' : ''}${o.change_pct}%</span>`;
+    } else {
+      const move = s.price ? ((cur.price / s.price - 1) * 100).toFixed(1) : null;
+      result = move == null ? '—' :
+        `<span class="${move > 0 ? 'pos' : 'neg'}">${move > 0 ? '+' : ''}${move}%</span> <span class="snap">open</span>`;
+    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${(r.logged_at || '').slice(0, 10)}<br>
+        <span class="pill" style="${who === 'model' ? 'color:var(--accent);border-color:var(--accent)' : ''}">${who.toUpperCase()}</span></td>
+      <td><span class="pill">${c.direction || '—'}</span>${c.bias ? `<br><span class="snap">${c.bias}</span>` : ''}</td>
+      <td>${c.confidence_pct || '—'}%</td>
+      <td class="snap">$${s.price ? Math.round(s.price).toLocaleString() : '—'} · ${s.regime || ''}<br>
+          A:${s.a_score} B:${s.b_score} · Mayer ${s.mayer || '—'}</td>
+      <td>${(c.thesis || '').slice(0, 160)}<br><span class="snap">invalid: ${c.invalidation || '—'} · ${c.horizon_days ? c.horizon_days + 'd' : c.horizon || ''}</span></td>
+      <td>${result}</td>`;
+    t.appendChild(tr);
+  }
+}
+async function submitCall(e) {
+  e.preventDefault();
+  const body = {
+    direction: document.getElementById('direction').value,
+    confidence_pct: +document.getElementById('confidence').value,
+    thesis: document.getElementById('thesis').value.trim(),
+    invalidation: document.getElementById('invalidation').value.trim(),
+    horizon: document.getElementById('horizon').value,
+  };
+  if (!body.thesis) { alert('Write the thesis — that is the whole point.'); return false; }
+  if (!body.invalidation) { alert('Write the invalidation — a thesis without one is a hope.'); return false; }
+  await fetch('/journal/add', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(body) });
+  location.reload();
+  return false;
+}
+load();
+</script>
+</body>
+</html>
