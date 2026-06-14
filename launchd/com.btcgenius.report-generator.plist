@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.btcgenius.report-generator</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/tatianathevisionary/market-genius/src/report_generator.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/tatianathevisionary/market-genius</string>
+
+    <!-- Run once daily at 09:00 local time (launchd uses local clock). Builds
+         today's analyst-report skeleton; the scheduled cloud routine (when set
+         up) fills in the synthesis on top. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Periodic job, not a daemon: do not RunAtLoad, do not KeepAlive. -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/report_generator.stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/tatianathevisionary/market-genius/logs/report_generator.stderr.log</string>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>
