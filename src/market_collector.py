@@ -28,6 +28,7 @@ DATA_DIR = BASE_DIR / "data" / "market"
 SNAPSHOTS = DATA_DIR / "snapshots.jsonl"
 LATEST = DATA_DIR / "latest.json"
 WHALE_LEDGER = BASE_DIR / "data" / "whale_ledger.jsonl"
+LEDGER_LOCK = BASE_DIR / "data" / ".whale_ledger.lock"  # cross-process write lock
 LOG_FILE = BASE_DIR / "logs" / "market_collector.log"
 
 PRINT_MIN_USD = 250_000       # single Binance print -> ledger entry
@@ -117,29 +118,62 @@ SERVICE_ADDR_MIN_SEEN = 3   # an addr seen this often in whale txs = service wal
 
 
 def load_exchange_labels():
+    """Curated seed wallets ∪ addresses learned via CIOH co-spending."""
     try:
         labels = json.loads(EXCHANGE_LABELS_FILE.read_text())
-        return {k: v for k, v in labels.items() if not k.startswith("_")}
+        labels = {k: v for k, v in labels.items() if not k.startswith("_")}
     except (OSError, json.JSONDecodeError):
-        return {}
+        labels = {}
+    try:
+        learned = db.learned_labels()
+        for addr, venue in learned.items():
+            labels.setdefault(addr, venue)  # curated labels win on conflict
+    except Exception as e:  # noqa: BLE001 - learned set is best-effort
+        logging.warning("learned labels load failed: %s", e)
+    return labels
+
+
+def learn_from_cospend(in_addrs, labels, tx_hash, ts):
+    """CIOH: if any input is a known exchange wallet, every co-spent input is
+    the same entity. Teach the unknowns so the label book grows itself."""
+    known = next((labels[a] for a in in_addrs if a in labels), None)
+    if not known or len(in_addrs) < 2:
+        return
+    fresh = [a for a in in_addrs if a not in labels]
+    if not fresh:
+        return
+    n = db.learn_labels(fresh, known, tx_hash, ts)
+    if n:
+        for a in fresh:
+            labels[a] = known  # apply within this run too
+        logging.info("CIOH: learned %d new %s wallet(s) from %s", n, known, tx_hash[:12])
 
 
 def classify_transfer(in_addrs, out_addrs, labels):
     """Best-effort intent for an on-chain transfer.
 
-    inflow   - coins moving TO a labeled exchange wallet (sell-side supply up)
-    outflow  - coins LEAVING a labeled exchange wallet (custody/accumulation)
-    shuffle  - both sides labeled, or a high-frequency service wallet involved
+    inflow   - external coins arriving AT a labeled exchange (deposit; bearish)
+    outflow  - exchange coins leaving TO external addrs (withdrawal; bullish)
+    shuffle  - movement stays within exchange/service wallets (housekeeping)
     unknown  - no labeled/recognized address on either side
+
+    The direction is read from which SIDE the exchange is on, ignoring the
+    change-output that batch withdrawals return to themselves — so an exchange
+    paying out many customers reads as 'outflow', not a self-shuffle.
     """
     in_hit = next((labels[a] for a in in_addrs if a in labels), None)
     out_hit = next((labels[a] for a in out_addrs if a in labels), None)
-    if in_hit and out_hit:
-        return "shuffle", f"{in_hit} -> {out_hit}"
-    if out_hit:
+    ext_in = any(a not in labels for a in in_addrs)    # an external sender?
+    ext_out = any(a not in labels for a in out_addrs)  # an external recipient?
+
+    deposit = out_hit and ext_in     # outside money landing at an exchange
+    withdraw = in_hit and ext_out    # exchange money leaving to the outside
+    if deposit and not withdraw:
         return "inflow", out_hit
-    if in_hit:
+    if withdraw and not deposit:
         return "outflow", in_hit
+    if in_hit or out_hit:            # exchange-touching but not directional
+        return "shuffle", in_hit or out_hit
     try:  # behavioral: repeat players in the whale feed are service wallets
         counts = db.addr_counts(in_addrs + out_addrs)
         if counts and max(counts.values()) >= SERVICE_ADDR_MIN_SEEN:
@@ -149,55 +183,77 @@ def classify_transfer(in_addrs, out_addrs, labels):
     return "unknown", None
 
 
-def fetch_onchain_whales(btc_price):
-    """Large on-chain BTC transfers from blockchain.info's free mempool feed.
+def onchain_entry(tx, btc_price, labels, ts=None):
+    """Turn one mempool tx into a classified ledger entry (or None if sub-$1M).
 
-    Intent is inferred where possible: transfers touching known exchange
-    wallets (data/exchange_addresses.json) become inflow/outflow; repeat
-    service wallets become shuffles; the rest stay 'unknown'.
+    Accepts the blockchain.info shape used by both the REST mempool feed and
+    the websocket 'utx' stream: tx['inputs'][].prev_out.addr and tx['out'][].addr.
+    Side effects (CIOH learning, address frequency) run here so the batch
+    collector and the live stream stay byte-for-byte consistent.
     """
+    btc = sum(o.get("value", 0) for o in tx.get("out", [])) / 1e8
+    usd = btc * btc_price
+    if usd < ONCHAIN_MIN_USD:
+        return None
+    in_addrs = [i.get("prev_out", {}).get("addr") for i in tx.get("inputs", [])]
+    out_addrs = [o.get("addr") for o in tx.get("out", [])]
+    in_addrs = [a for a in in_addrs if a]
+    out_addrs = [a for a in out_addrs if a]
+    if ts is None:
+        ts = datetime.fromtimestamp(tx.get("time") or 0, timezone.utc).isoformat(timespec="seconds") \
+            if tx.get("time") else datetime.now(timezone.utc).isoformat(timespec="seconds")
+    learn_from_cospend(in_addrs, labels, tx["hash"], ts)  # grow the book first
+    flow, venue = classify_transfer(in_addrs, out_addrs, labels)
+    db.bump_addrs(in_addrs + out_addrs, usd, ts)
+    return {
+        "ts": ts,
+        "source": "onchain", "side": "transfer",
+        "flow": flow, "venue": venue,
+        "usd": round(usd), "btc": round(btc, 3),
+        "id": tx["hash"], "url": f"https://mempool.space/tx/{tx['hash']}",
+    }
+
+
+def fetch_onchain_whales(btc_price):
+    """Large on-chain BTC transfers from blockchain.info's free mempool feed."""
     d = get_json("https://blockchain.info/unconfirmed-transactions?format=json")
     labels = load_exchange_labels()
     out = []
     for tx in d.get("txs", []):
-        btc = sum(o.get("value", 0) for o in tx.get("out", [])) / 1e8
-        usd = btc * btc_price
-        if usd < ONCHAIN_MIN_USD:
-            continue
-        in_addrs = [i.get("prev_out", {}).get("addr") for i in tx.get("inputs", [])]
-        out_addrs = [o.get("addr") for o in tx.get("out", [])]
-        in_addrs = [a for a in in_addrs if a]
-        out_addrs = [a for a in out_addrs if a]
-        flow, venue = classify_transfer(in_addrs, out_addrs, labels)
-        ts = datetime.fromtimestamp(tx["time"], timezone.utc).isoformat(timespec="seconds")
-        out.append({
-            "ts": ts,
-            "source": "onchain", "side": "transfer",
-            "flow": flow, "venue": venue,
-            "usd": round(usd), "btc": round(btc, 3),
-            "id": tx["hash"], "url": f"https://mempool.space/tx/{tx['hash']}",
-        })
-        db.bump_addrs(in_addrs + out_addrs, usd, ts)
+        entry = onchain_entry(tx, btc_price, labels)
+        if entry:
+            out.append(entry)
     return out
 
 
 def append_ledger(entries):
-    """Append new (deduped by id) whale events; keep the file bounded."""
+    """Append new (deduped by id) whale events; keep the file bounded.
+
+    Guarded by an exclusive file lock so the 5-min collector and the always-on
+    whale_stream daemon can both write the same ledger without clobbering.
+    """
     if not entries:
         return
-    lines = WHALE_LEDGER.read_text().strip().splitlines() if WHALE_LEDGER.exists() else []
-    seen = set()
-    for ln in lines:
+    import fcntl
+    LEDGER_LOCK.parent.mkdir(parents=True, exist_ok=True)
+    with open(LEDGER_LOCK, "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
         try:
-            seen.add(json.loads(ln).get("id"))
-        except json.JSONDecodeError:
-            continue
-    fresh = [e for e in entries if e["id"] not in seen]
-    if not fresh:
-        return
-    lines = (lines + [json.dumps(e) for e in sorted(fresh, key=lambda e: e["ts"])])
-    WHALE_LEDGER.write_text("\n".join(lines[-LEDGER_MAX_LINES:]) + "\n")
-    logging.info("whale ledger: +%d entries", len(fresh))
+            lines = WHALE_LEDGER.read_text().strip().splitlines() if WHALE_LEDGER.exists() else []
+            seen = set()
+            for ln in lines:
+                try:
+                    seen.add(json.loads(ln).get("id"))
+                except json.JSONDecodeError:
+                    continue
+            fresh = [e for e in entries if e["id"] not in seen]
+            if not fresh:
+                return
+            lines = lines + [json.dumps(e) for e in sorted(fresh, key=lambda e: e["ts"])]
+            WHALE_LEDGER.write_text("\n".join(lines[-LEDGER_MAX_LINES:]) + "\n")
+            logging.info("whale ledger: +%d entries", len(fresh))
+        finally:
+            fcntl.flock(lk, fcntl.LOCK_UN)
 
 
 # --- Macro: Yahoo chart meta ---------------------------------------------------

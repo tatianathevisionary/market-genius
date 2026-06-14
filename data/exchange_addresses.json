@@ -20,5 +20,7 @@
   "bc1qx2x5cqhymfcnjtg902ky6u5t5htmt7fvqztdsm028hkrvxcl4t2sjtpd9l": "Bitbank cold",
   "162bzZT2hJfv5Gm3ZmWfWfHJjCtMD6rHhw": "gate.io cold",
   "bc1qchctnvmdva5z9vrpxkkxck64v7nmzdtyxsrq64": "BitMEX",
-  "bc1qjasf9z3h7w3jspkhtgatgpyvvzgpa2wwd2lr0eh5tx44reyn2k7sfc27a4": "Tether treasury"
+  "bc1qjasf9z3h7w3jspkhtgatgpyvvzgpa2wwd2lr0eh5tx44reyn2k7sfc27a4": "Tether treasury",
+  "_hot_source": "verified on-chain 2026-06-08: 2.24M txs, 58.9M BTC lifetime — canonical Binance hot wallet, the active seed that drives CIOH learning",
+  "bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h": "Binance hot"
 }
