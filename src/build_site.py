@@ -3,15 +3,22 @@
 BTC Genius — static site builder for GitHub Pages.
 
 The live console at :8787 is backed by the Python listener; it can't run on
-Pages. This builds a self-contained, READ-ONLY static snapshot — the rendered
-dashboard plus the analyst-report archive — that needs no backend.
+Pages. This publishes the REAL console pages (dashboard with charts, journal,
+ledger, social, reports) as a self-contained READ-ONLY snapshot by:
+
+  1. copying web/*.html and injecting a tiny fetch-shim that reroutes the
+     backend calls (/data/..., /status, /feed/x, /feed/news, /reports/list)
+     to static files committed alongside the HTML;
+  2. snapshotting every data file the pages read, plus the three dynamic
+     listener routes (/status, /feed/x, /feed/news) from the running server;
+  3. rewriting the nav links (/dashboard, /journal, …) to the static pages.
 
 Workflow (main = source, site = published branch):
   python3 src/build_site.py                 # build into _site/ (gitignored)
   python3 src/build_site.py --publish        # build + push to the `site` branch
 
-GitHub Pages is then served from the `site` branch (root). The daily launchd
-job can call `--publish` to keep the snapshot fresh.
+GitHub Pages is served from the `site` branch (root). The daily launchd job
+can call --publish to keep the snapshot fresh.
 
 Stdlib only; Python 3.9+.
 """
@@ -21,156 +28,118 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
+WEB_DIR = BASE_DIR / "web"
 REPORTS = DATA_DIR / "reports"
 SITE_OUT = BASE_DIR / "_site"
 SITE_BRANCH = "site"
+LISTENER = "http://localhost:8787"
 
-PAGE = r"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>BTC GENIUS · console (snapshot)</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-  :root { --bg:#06090d; --panel:#0b1016; --line:#1b2733; --line2:#2a3b4d;
-          --txt:#c9d7e3; --dim:#5e7387; --accent:#2ea8ff; --red:#ff4f56; --green:#27c87f;
-          --amber:#e3a008; --mono:"SF Mono", ui-monospace, Menlo, monospace; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--txt); font:13px/1.55 var(--mono); }
-  .bar { display:flex; align-items:center; gap:16px; padding:10px 18px;
-         border-bottom:1px solid var(--line); background:var(--panel);
-         position:sticky; top:0; z-index:5; flex-wrap:wrap; }
-  .logo { font-weight:700; letter-spacing:.14em; font-size:14px; }
-  .logo span { color:var(--accent); }
-  .snap { color:var(--amber); font-size:11px; border:1px solid var(--line2); padding:2px 8px; }
-  .tabs { margin-left:auto; display:flex; gap:6px; }
-  .tabs button { background:transparent; color:var(--dim); border:1px solid var(--line2);
-                 padding:4px 12px; font:11px var(--mono); cursor:pointer; }
-  .tabs button.on { color:var(--accent); border-color:var(--accent); }
-  .wrap { max-width:1040px; margin:14px auto; padding:0 14px; }
-  .layout { display:grid; grid-template-columns:200px minmax(0,1fr); gap:12px; }
-  @media (max-width:760px){ .layout { grid-template-columns:1fr; } }
-  .panel { background:var(--panel); border:1px solid var(--line); }
-  .panel-h { padding:8px 12px; border-bottom:1px solid var(--line); font-size:11px;
-             font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
-  .list a { display:block; padding:8px 12px; border-bottom:1px solid var(--line);
-            color:var(--txt); text-decoration:none; font-size:12px; cursor:pointer; }
-  .list a:hover, .list a.on { color:var(--accent); }
-  .doc { padding:18px 22px; }
-  .doc h1 { font-size:16px; letter-spacing:.06em; border-bottom:1px solid var(--line2); padding-bottom:8px; }
-  .doc h2 { font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-top:22px; }
-  .doc table { border-collapse:collapse; width:100%; margin:10px 0; font-size:12px; }
-  .doc th, .doc td { border:1px solid var(--line); padding:5px 8px; text-align:left; }
-  .doc th { color:var(--dim); text-transform:uppercase; font-size:10px; letter-spacing:.08em; }
-  .doc blockquote { border-left:3px solid var(--amber); margin:10px 0; padding:4px 12px; color:var(--dim); }
-  .doc code { background:var(--line); padding:1px 4px; }
-  .doc hr { border:none; border-top:1px dashed var(--line2); margin:18px 0; }
-  .doc em { color:var(--dim); }
-  .doc img { max-width:100%; border:1px solid var(--line); margin:8px 0; display:block; }
-  .doc pre { background:var(--bg); border:1px solid var(--line); padding:10px 14px;
-             overflow-x:auto; font-size:11px; line-height:1.6; color:var(--dim); }
-  .foot { color:var(--dim); font-size:11px; text-align:center; margin:24px 0; }
-</style>
-</head>
-<body>
-<div class="bar">
-  <div class="logo">BTC<span>GENIUS</span> ▮ CONSOLE</div>
-  <div class="snap" id="snap">static snapshot</div>
-  <div class="tabs">
-    <button id="tab-dash" class="on" onclick="showTab('dash')">DASHBOARD</button>
-    <button id="tab-reports" onclick="showTab('reports')">REPORTS</button>
-  </div>
-</div>
+# web/<source> -> <name on the static site>. dashboard becomes the landing page.
+PAGES = {
+    "dashboard.html": "index.html",
+    "journal.html": "journal.html",
+    "ledger.html": "ledger.html",
+    "social.html": "social.html",
+    "reports.html": "reports.html",
+}
 
-<div class="wrap">
-  <div id="view-dash" class="panel"><div class="doc" id="dash">loading…</div></div>
-  <div id="view-reports" class="layout" style="display:none">
-    <div class="panel"><div class="panel-h">Archive</div><div class="list" id="rlist">…</div></div>
-    <div class="panel"><div class="doc" id="report">select a report</div></div>
-  </div>
-  <div class="foot">Read-only snapshot built __BUILT__ · the live console runs locally
-    via launchd. Educational — not financial advice.</div>
-</div>
+# data files the pages fetch, copied to the same relative path the shim expects.
+DATA_COPIES = [
+    "series.json", "series_long.json", "state.json", "signals_history.jsonl",
+    "objective.json", "whale_ledger.jsonl", "journal.jsonl", "dashboard.md",
+    "market/snapshots.jsonl",
+]
 
-<script>
-function md(src) {
-  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const inline = s => s
-    .replace(/`([^`]+)`/g, (_,c)=>'<code>'+c+'</code>')
-    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
-    .replace(/\*([^*]+)\*/g,'<em>$1</em>')
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img src="$2" alt="$1" loading="lazy">')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
-  const lines = esc(src).split('\n'); const out=[]; let list=false, para=[];
-  const flush=()=>{ if(para.length){out.push('<p>'+inline(para.join(' '))+'</p>');para=[];} };
-  const endList=()=>{ if(list){out.push('</ul>');list=false;} };
-  for(let i=0;i<lines.length;i++){ const L=lines[i];
-    if(/^```/.test(L)){ flush();endList();const buf=[];i++;
-      while(i<lines.length&&!/^```/.test(lines[i]))buf.push(lines[i++]);
-      out.push('<pre>'+buf.join('\n')+'</pre>'); }
-    else if(/^\|/.test(L)){ flush();endList();const rows=[];
-      while(i<lines.length&&/^\|/.test(lines[i]))rows.push(lines[i++]); i--;
-      out.push('<table>'+rows.filter(r=>!/^\|[\s\-|]+\|$/.test(r)).map((r,ri)=>{
-        const cells=r.split('|').slice(1,-1).map(c=>inline(c.trim()));
-        const tag=ri===0?'th':'td';
-        return '<tr>'+cells.map(c=>`<${tag}>${c}</${tag}>`).join('')+'</tr>';
-      }).join('')+'</table>'); }
-    else if(/^### /.test(L)){ flush();endList();out.push('<h3>'+inline(L.slice(4))+'</h3>'); }
-    else if(/^## /.test(L)){ flush();endList();out.push('<h2>'+inline(L.slice(3))+'</h2>'); }
-    else if(/^# /.test(L)){ flush();endList();out.push('<h1>'+inline(L.slice(2))+'</h1>'); }
-    else if(/^---+$/.test(L.trim())){ flush();endList();out.push('<hr>'); }
-    else if(/^[-*] /.test(L)){ flush(); if(!list){out.push('<ul>');list=true;} out.push('<li>'+inline(L.slice(2))+'</li>'); }
-    else if(/^&gt; /.test(L)){ flush();endList();out.push('<blockquote>'+inline(L.slice(5))+'</blockquote>'); }
-    else if(L.trim()===''){ flush();endList(); }
-    else if(list){ out[out.length-1]=out[out.length-1].replace(/<\/li>$/,' '+inline(L.trim())+'</li>'); }
-    else para.push(L.trim());
+# dynamic listener routes -> static snapshot file (best-effort; needs :8787 up).
+ROUTE_SNAPSHOTS = {"/status": "status.json", "/feed/news": "feed/news.json",
+                   "/feed/x": "feed/x.json"}
+
+# nav targets -> static page (both location.href='…' and href="…" forms).
+NAV = {
+    "/dashboard": "index.html", "/journal": "journal.html",
+    "/reports": "reports.html", "/ledger": "ledger.html",
+    "/social": "social.html", "/": "index.html",
+}
+
+# Reroute the page's backend calls to static files. Runs before page scripts
+# (injected at the top of <head>) so it wraps fetch before anything calls it.
+SHIM = r"""<script>
+(function(){
+  var orig = window.fetch.bind(window);
+  function remap(p){
+    p = p.replace(/^\/+/, '');                 // absolute -> relative to this page
+    if (p === 'status') return 'status.json';
+    if (p === 'feed/news') return 'feed/news.json';
+    if (p.indexOf('feed/x') === 0) return 'feed/x.json';
+    if (p === 'reports/list') return 'reports/index.json';
+    if (p.indexOf('data/reports/') === 0) return 'reports/' + p.slice('data/reports/'.length);
+    return p;                                   // data/... etc. -> served statically
   }
-  flush();endList(); return out.join('\n');
-}
-function showTab(t){
-  document.getElementById('view-dash').style.display = t==='dash'?'':'none';
-  document.getElementById('view-reports').style.display = t==='reports'?'':'none';
-  document.getElementById('tab-dash').classList.toggle('on', t==='dash');
-  document.getElementById('tab-reports').classList.toggle('on', t==='reports');
-}
-async function txt(u){ const r=await fetch(u); return r.ok? r.text():''; }
-(async ()=>{
-  document.getElementById('dash').innerHTML = md(await txt('data/dashboard.md') || '# No dashboard snapshot');
-  let names=[]; try{ names=await (await fetch('reports/index.json')).json(); }catch(e){}
-  const rl=document.getElementById('rlist');
-  if(!names.length){ rl.textContent='no reports'; }
-  else { rl.innerHTML = names.slice().reverse().map(n=>
-      `<a onclick="showReport('${n}',this)">${n.replace('.md','')}</a>`).join('');
-    window.showReport=async (n,el)=>{ document.querySelectorAll('#rlist a').forEach(a=>a.classList.remove('on'));
-      if(el)el.classList.add('on');
-      document.getElementById('report').innerHTML = md(await txt('reports/'+n)); };
-    showReport(names[names.length-1]); }
+  window.fetch = function(input, init){
+    var url = (typeof input === 'string') ? input : (input && input.url) || '';
+    if (url.charAt(0) === '/') {
+      var path = url.split('?')[0].split('#')[0];
+      return orig(remap(path), init);
+    }
+    return orig(input, init);
+  };
 })();
 </script>
-</body>
-</html>
 """
+
+BANNER = ('<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,'
+          'monospace;text-align:center;padding:4px">READ-ONLY SNAPSHOT — built __BUILT__'
+          ' · live console runs locally · not financial advice</div>')
+
+
+def _fetch_route(path):
+    try:
+        req = urllib.request.Request(LISTENER + path, headers={"User-Agent": "btc-genius/site"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.read()
+    except Exception as e:  # noqa: BLE001 - listener may be down; use a safe stub
+        print(f"  warn: {path} unavailable ({e}); writing empty stub")
+        return b"[]" if path == "/feed/news" else b"{}"
 
 
 def build(out=SITE_OUT):
-    """Generate the static snapshot into `out` (replacing any prior build)."""
     if out.exists():
         shutil.rmtree(out)
-    (out / "data").mkdir(parents=True)
+    (out / "data" / "market").mkdir(parents=True)
+    (out / "feed").mkdir(parents=True)
     (out / "reports").mkdir(parents=True)
 
-    # dashboard + state snapshots (best-effort: site still renders without them)
-    for name in ("dashboard.md", "state.json"):
-        src = DATA_DIR / name
-        if src.exists():
-            shutil.copy2(src, out / "data" / name)
+    # 1. pages: inject shim + banner, rewrite nav links
+    built = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    for src, dest in PAGES.items():
+        html = (WEB_DIR / src).read_text()
+        html = html.replace("<head>", "<head>\n" + SHIM, 1)
+        html = html.replace("<body>", "<body>\n" + BANNER.replace("__BUILT__", built), 1)
+        for route, page in NAV.items():
+            html = html.replace(f"location.href='{route}'", f"location.href='{page}'")
+            html = html.replace(f'href="{route}"', f'href="{page}"')
+        (out / dest).write_text(html)
 
-    # report archive + its index
+    # 2. data files the pages read
+    for rel in DATA_COPIES:
+        src = DATA_DIR / rel
+        if src.exists():
+            dst = out / "data" / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dst)
+
+    # 3. dynamic routes -> static snapshots
+    for route, fname in ROUTE_SNAPSHOTS.items():
+        (out / fname).parent.mkdir(parents=True, exist_ok=True)
+        (out / fname).write_bytes(_fetch_route(route))
+
+    # 4. report archive (+ frozen chart assets) and its index
     report_files = sorted(p.name for p in REPORTS.glob("*.md")) if REPORTS.exists() else []
     for fn in report_files:
         shutil.copy2(REPORTS / fn, out / "reports" / fn)
@@ -179,10 +148,9 @@ def build(out=SITE_OUT):
             shutil.copytree(assets, out / "reports" / "assets" / fn[:-3])
     (out / "reports" / "index.json").write_text(json.dumps(report_files))
 
-    built = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    (out / "index.html").write_text(PAGE.replace("__BUILT__", built))
-    (out / ".nojekyll").write_text("")   # serve files as-is, skip Jekyll
-    print(f"built {len(report_files)} report(s) + dashboard → {out.relative_to(BASE_DIR)}")
+    (out / ".nojekyll").write_text("")
+    print(f"built {len(PAGES)} pages + {len(report_files)} report(s) → "
+          f"{out.relative_to(BASE_DIR)}")
     return out
 
 
@@ -192,22 +160,18 @@ def _git(*args, cwd):
 
 
 def publish():
-    """Build, then sync the result onto the `site` branch and push it."""
     build(SITE_OUT)
     wt = Path(tempfile.mkdtemp(prefix="mg-site-"))
     try:
-        # check whether origin/site already exists
         ls = subprocess.run(["git", "ls-remote", "--heads", "origin", SITE_BRANCH],
                             cwd=BASE_DIR, capture_output=True, text=True)
-        exists = bool(ls.stdout.strip())
-        if exists:
+        if ls.stdout.strip():
             _git("fetch", "origin", SITE_BRANCH, cwd=BASE_DIR)
             _git("worktree", "add", str(wt), f"origin/{SITE_BRANCH}", cwd=BASE_DIR)
             _git("checkout", "-B", SITE_BRANCH, cwd=wt)
         else:
             _git("worktree", "add", "--orphan", "-b", SITE_BRANCH, str(wt), cwd=BASE_DIR)
 
-        # replace tracked content with the fresh build (keep .git)
         for child in wt.iterdir():
             if child.name == ".git":
                 continue
@@ -217,9 +181,8 @@ def publish():
             shutil.copytree(child, dest) if child.is_dir() else shutil.copy2(child, dest)
 
         _git("add", "-A", cwd=wt)
-        status = subprocess.run(["git", "status", "--porcelain"], cwd=wt,
-                                capture_output=True, text=True).stdout.strip()
-        if not status:
+        if not subprocess.run(["git", "status", "--porcelain"], cwd=wt,
+                              capture_output=True, text=True).stdout.strip():
             print("site already up to date — nothing to publish")
             return
         stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
