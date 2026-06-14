@@ -56,6 +56,11 @@ DATA_COPIES = [
     "market/snapshots.jsonl",
 ]
 
+# The listener serves *.jsonl as a JSON array (clients call .json()), so the
+# static snapshot must do the same transform rather than ship raw JSONL.
+JSONL_AS_ARRAY = {"signals_history.jsonl", "whale_ledger.jsonl",
+                  "journal.jsonl", "market/snapshots.jsonl"}
+
 # dynamic listener routes -> static snapshot file (best-effort; needs :8787 up).
 ROUTE_SNAPSHOTS = {"/status": "status.json", "/feed/news": "feed/news.json",
                    "/feed/x": "feed/x.json"}
@@ -126,12 +131,24 @@ def build(out=SITE_OUT):
             html = html.replace(f'href="{route}"', f'href="{page}"')
         (out / dest).write_text(html)
 
-    # 2. data files the pages read
+    # 2. data files the pages read (.jsonl -> JSON array, mirroring the listener)
     for rel in DATA_COPIES:
         src = DATA_DIR / rel
-        if src.exists():
-            dst = out / "data" / rel
-            dst.parent.mkdir(parents=True, exist_ok=True)
+        if not src.exists():
+            continue
+        dst = out / "data" / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if rel in JSONL_AS_ARRAY:
+            rows = []
+            for line in src.read_text().splitlines():
+                line = line.strip()
+                if line:
+                    try:
+                        rows.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+            dst.write_text(json.dumps(rows))
+        else:
             shutil.copy2(src, dst)
 
     # 3. dynamic routes -> static snapshots
