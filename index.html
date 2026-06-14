@@ -101,7 +101,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">READ-ONLY SNAPSHOT — built 2026-06-14 06:06 UTC · live console runs locally · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-06-14 06:15 UTC · price ticks live · not financial advice</div>
 
 <div class="bar">
   <div class="logo">BTC<span>GENIUS</span> ▮ INTELLIGENCE CONSOLE</div>
@@ -983,6 +983,28 @@ setInterval(() => { render().catch(() => {}); renderTrack().catch(() => {}); }, 
 setInterval(renderNews, 300_000);
 setInterval(() => renderLedger().catch(() => {}), 300_000);
 setInterval(renderX, 1_800_000);
+</script>
+<script>
+(function(){
+  function poll(){
+    var el = document.getElementById('price');
+    if(!el){ return setTimeout(poll, 1000); }
+    var last = null;
+    async function tick(){
+      var p = null;
+      try { p = parseFloat((await (await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')).json()).price); } catch(e){}
+      if(p==null||!isFinite(p)){ try { p = parseFloat((await (await fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot')).json()).data.amount); } catch(e){} }
+      if(p==null||!isFinite(p)){ return; }
+      el.textContent = '$' + Math.round(p).toLocaleString();
+      el.title = 'live · Binance/Coinbase · ' + new Date().toISOString().slice(11,19) + ' UTC';
+      if(last!=null && p!==last){ el.style.color = p>last ? '#27c87f' : '#ff4f56';
+        setTimeout(function(){ el.style.color=''; }, 700); }
+      last = p;
+    }
+    tick(); setInterval(tick, 5000);
+  }
+  poll();
+})();
 </script>
 </body>
 </html>
