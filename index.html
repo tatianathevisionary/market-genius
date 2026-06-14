@@ -101,7 +101,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">READ-ONLY SNAPSHOT — built 2026-06-14 05:42 UTC · live console runs locally · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">READ-ONLY SNAPSHOT — built 2026-06-14 06:06 UTC · live console runs locally · not financial advice</div>
 
 <div class="bar">
   <div class="logo">BTC<span>GENIUS</span> ▮ INTELLIGENCE CONSOLE</div>
@@ -690,7 +690,7 @@ async function render() {
   if (wh.length) {
     mkChart('whaleChart', {
       type: 'bar',
-      data: { labels: wh.map(s => s.fetched_at.slice(11, 16)), datasets: [
+      data: { labels: wh.map(s => s.fetched_at.slice(5, 16).replace('T', ' ')), datasets: [
         { label: 'big buys $M', data: wh.map(s => s.whales.big_buy_usd / 1e6), backgroundColor: '#27c87f' },
         { label: 'big sells $M', data: wh.map(s => s.whales.big_sell_usd / 1e6), backgroundColor: '#ff4f56' },
       ]},
@@ -750,7 +750,7 @@ async function render() {
   const intr = market.filter(s => s.btc && s.btc.price);
   mkChart('intradayChart', {
     type: 'line',
-    data: { labels: intr.map(s => s.fetched_at.slice(11, 16)),
+    data: { labels: intr.map(s => s.fetched_at.slice(5, 16).replace('T', ' ')),
       datasets: [{ data: intr.map(s => s.btc.price), borderColor: '#2ea8ff', borderWidth: 1.5, pointRadius: 0 }] },
     options: { animation: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxTicksLimit: 8 } } } },
   });
