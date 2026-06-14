@@ -311,22 +311,39 @@ def model_call(s):
     # carried — be defensive with NEW money during a live selloff — now rides in
     # `stance`, a separate descriptor, not a phantom fourth action. `bias` is the
     # model's directional lean (what gets graded), independent of the action.
-    # Doctrine guardrail: valuation alone can't trigger BUY — zone says where, the
-    # B-score says when (needs at least one exhaustion signal).
+    #
+    # Two BUY tiers:
+    #   confirmed    — the strict doctrine: a constructive composite (>=4) WITH at
+    #                  least one seller-exhaustion signal (B>=1). Zone says where,
+    #                  capitulation says when.
+    #   accumulation — a deliberately more aggressive starter tier: when BTC is
+    #                  deep-value cheap (Mayer < 0.85) AND the macro cause is
+    #                  releasing (A>=3) AND there's no froth, scale in a small
+    #                  tranche even before B confirms. The relaxation is gated on
+    #                  the macro release (so it's value+macro, never "valuation
+    #                  alone") and refused if any exit signal is live. This trades
+    #                  some knife-risk for a better average entry — the lesson of
+    #                  the June low, where the strict tier sat in HOLD through a
+    #                  +6% bottom. Backtested in src/backtest.py.
+    deep_value = mayer is not None and mayer < 0.85
     if score >= 4 and b >= 1:
-        d, bias = "BUY", "up"
+        d, bias, tier = "BUY", "up", "confirmed"
+    elif deep_value and a >= 3 and froth == 0 and score >= 2:
+        d, bias, tier = "BUY", "up", "accumulation"
     elif score <= -4:
-        d, bias = "SELL", "down"
+        d, bias, tier = "SELL", "down", "confirmed"
     else:
-        d, bias = "HOLD", "up" if score > 0 else "down" if score < 0 else "neutral"
-    stance = ("defensive — selloff still live; don't deploy new money yet"
+        d, bias, tier = "HOLD", "up" if score > 0 else "down" if score < 0 else "neutral", None
+    stance = ("accumulation — deep-value + macro releasing; scale in small ahead "
+              "of B confirmation (knife-risk accepted)" if tier == "accumulation" else
+              "defensive — selloff still live; don't deploy new money yet"
               if selloff and score < 0 else
               "constructive — leaning toward adds once a B-trigger fires"
               if score > 0 else
               "neutral — no edge either way; let the triggers decide")
     conf = max(50, min(85, round(50 + abs(score) * 4)))
     why = ", ".join(f"{k} {v:+d}" for k, v in comp.items() if v)
-    return {"direction": d, "bias": bias, "confidence_pct": conf,
+    return {"direction": d, "bias": bias, "tier": tier, "confidence_pct": conf,
             "score": score, "components": comp, "stance": stance,
             "thesis": f"[auto] composite {score:+.1f} — {why or 'all components neutral'}",
             "horizon_days": 7,
