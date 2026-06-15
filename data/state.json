@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-15T02:35:34+00:00",
-  "price": 65568.890625,
+  "updated_at": "2026-06-15T18:12:48+00:00",
+  "price": 66691.0078125,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": true,
@@ -21,25 +21,25 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.345,
+  "corr_btc_nasdaq_30d": -0.353,
   "corr_btc_gold_30d": 0.863,
-  "btc_gold_ratio": 15.068,
+  "btc_gold_ratio": 15.364,
   "roc5": {
-    "btc": 6.37,
-    "brent": -11.37,
-    "us10y": -1.08,
-    "nasdaq": 2.51,
+    "btc": 8.53,
+    "brent": -11.61,
+    "us10y": -1.87,
+    "nasdaq": 4.73,
     "dxy": -0.46,
-    "gold": 0.36
+    "gold": 0.11
   },
-  "volume_vs_30d_avg": 0.69,
-  "ma50": 73917.0,
-  "ma200": 77645.0,
-  "dist_from_50d_pct": -11.3,
+  "volume_vs_30d_avg": 0.71,
+  "ma50": 73681.0,
+  "ma200": 77523.0,
+  "dist_from_50d_pct": -9.5,
   "verdict": {
-    "direction": "BUY",
+    "direction": "HOLD",
     "bias": "up",
-    "tier": "accumulation",
+    "tier": null,
     "confidence_pct": 60,
     "score": 2.5,
     "components": {
@@ -50,12 +50,16 @@
       "froth": 0,
       "volume": 0
     },
-    "stance": "accumulation \u2014 deep-value + macro releasing; scale in small ahead of B confirmation (knife-risk accepted)",
+    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
     "thesis": "[auto] composite +2.5 \u2014 valuation +1, trend -2, macro_release +2, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
   "supports": [
+    {
+      "level": 65639,
+      "strength": 2
+    },
     {
       "level": 64972,
       "strength": 2
@@ -63,24 +67,20 @@
     {
       "level": 62553,
       "strength": 1
-    },
-    {
-      "level": 59109,
-      "strength": 2
     }
   ],
   "resistances": [
     {
-      "level": 65639,
-      "strength": 2
-    },
-    {
-      "level": 70939,
-      "strength": 2
-    },
-    {
       "level": 71986,
       "strength": 1
+    },
+    {
+      "level": 74052,
+      "strength": 3
+    },
+    {
+      "level": 74959,
+      "strength": 2
     }
   ]
 }
