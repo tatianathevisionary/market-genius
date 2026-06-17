@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-06-17T01:21:33+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-06-17T02:21:43+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Trending` | A: 4/4 | B: 1/3
 
-**BTC $65,493** | 5d +3.0% | vol 0.7x avg | -10.8% vs 50d MA ($73,435)
+**BTC $65,879** | 5d +3.6% | vol 0.7x avg | -10.3% vs 50d MA ($73,443)
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -12,14 +12,14 @@ _Updated 2026-06-17T01:21:33+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -13.3% | shock originator |
+| Brent | -13.6% | shock originator |
 | US 10Y | -2.7% | transmission |
-| DXY | -0.5% | denominator |
-| Nasdaq fut | +4.4% | risk appetite |
-| Gold | +2.5% | hedge competitor |
-| **BTC** | **+3.0%** | subject |
+| DXY | -0.4% | denominator |
+| Nasdaq fut | +4.6% | risk appetite |
+| Gold | +2.4% | hedge competitor |
+| **BTC** | **+3.6%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.338** | BTC↔Gold **0.873** | BTC/Gold ratio 14.993
+Correlations (30d): BTC↔Nasdaq **-0.338** | BTC↔Gold **0.874** | BTC/Gold ratio 15.106
 
 ## A-score — macro pressure release
 
@@ -40,13 +40,13 @@ Correlations (30d): BTC↔Nasdaq **-0.338** | BTC↔Gold **0.873** | BTC/Gold ra
 
 | Side | Level | Methods | Strength |
 |---|---|---|---|
+| resistance | $74,959 | R1 x1, R3 $75,000 | 2 |
 | resistance | $74,052 | R1 x1, R3 $75,000, R4 50d MA | 3 |
 | resistance | $71,986 | R1 x1 | 1 |
-| resistance | $65,639 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$65,493** | | |
+| **price** | **$65,879** | | |
+| support | $65,639 | R1 x1, R3 $65,000 | 2 |
 | support | $64,972 | R1 x1, R3 $65,000 | 2 |
 | support | $62,553 | R1 x1 | 1 |
-| support | $59,109 | R1 x1, R3 $60,000 | 2 |
 
 ## Reddit sentiment
 
@@ -55,7 +55,7 @@ Correlations (30d): BTC↔Nasdaq **-0.338** | BTC↔Gold **0.873** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-06-17T01:12:25+00:00_
+- _as of 2026-06-17T02:13:49+00:00_
 
 ## Recent TradingView alerts
 
