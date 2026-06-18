@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-06-18T17:08:26+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-06-18T18:44:34+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Trending` | A: 3/4 | B: 1/3
 
-**BTC $62,496** | 5d -3.0% | vol 1.02x avg | -14.3% vs 50d MA ($72,933)
+**BTC $62,692** | 5d -2.7% | vol 1.0x avg | -14.0% vs 50d MA ($72,937)
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -12,14 +12,14 @@ _Updated 2026-06-18T17:08:26+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -13.6% | shock originator |
+| Brent | -11.8% | shock originator |
 | US 10Y | -2.4% | transmission |
 | DXY | +0.9% | denominator |
-| Nasdaq fut | +4.1% | risk appetite |
-| Gold | +3.5% | hedge competitor |
-| **BTC** | **-3.0%** | subject |
+| Nasdaq fut | +4.2% | risk appetite |
+| Gold | +3.7% | hedge competitor |
+| **BTC** | **-2.7%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.266** | BTC↔Gold **0.883** | BTC/Gold ratio 14.758
+Correlations (30d): BTC↔Nasdaq **-0.265** | BTC↔Gold **0.883** | BTC/Gold ratio 14.78
 
 ## A-score — macro pressure release
 
@@ -40,10 +40,11 @@ Correlations (30d): BTC↔Nasdaq **-0.266** | BTC↔Gold **0.883** | BTC/Gold ra
 
 | Side | Level | Methods | Strength |
 |---|---|---|---|
+| resistance | $71,986 | R1 x1, R4 50d MA | 2 |
 | resistance | $65,639 | R1 x1, R3 $65,000 | 2 |
 | resistance | $64,972 | R1 x1, R3 $65,000 | 2 |
-| resistance | $62,553 | R1 x1 | 1 |
-| **price** | **$62,496** | | |
+| **price** | **$62,692** | | |
+| support | $62,553 | R1 x1 | 1 |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 
 ## Reddit sentiment
@@ -53,7 +54,7 @@ Correlations (30d): BTC↔Nasdaq **-0.266** | BTC↔Gold **0.883** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-06-18T16:49:47+00:00_
+- _as of 2026-06-18T18:27:10+00:00_
 
 ## Recent TradingView alerts
 
