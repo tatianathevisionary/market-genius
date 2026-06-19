@@ -1,1 +1,1 @@
-{"market_collector": {"state": "ok", "age_s": 46}, "signal_engine": {"state": "stale", "age_s": 32071}, "reddit_tracker": {"state": "ok", "age_s": 65}, "tv_alerts": {"state": "ok", "age_s": 1304667}}
+{"market_collector": {"state": "ok", "age_s": 34}, "signal_engine": {"state": "ok", "age_s": 95}, "reddit_tracker": {"state": "ok", "age_s": 971}, "tv_alerts": {"state": "ok", "age_s": 1305572}}
