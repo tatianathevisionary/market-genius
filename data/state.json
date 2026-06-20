@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-06-20T05:25:23+00:00",
-  "price": 63667.0390625,
-  "regime": "Basing",
+  "updated_at": "2026-06-20T06:25:33+00:00",
+  "price": 63637.140625,
+  "regime": "Crypto-specific selloff",
   "A": {
     "A1_oil_rolls_over": true,
     "A2_yields_peak": true,
@@ -21,37 +21,37 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.265,
-  "corr_btc_gold_30d": 0.883,
-  "btc_gold_ratio": 15.257,
+  "corr_btc_nasdaq_30d": -0.258,
+  "corr_btc_gold_30d": 0.879,
+  "btc_gold_ratio": 15.25,
   "roc5": {
-    "btc": -1.17,
+    "btc": -3.16,
     "brent": -7.72,
     "us10y": -1.08,
     "nasdaq": 3.32,
     "dxy": 0.99,
     "gold": -1.0
   },
-  "volume_vs_30d_avg": 0.65,
-  "ma50": 72956.0,
-  "ma200": 77128.0,
-  "dist_from_50d_pct": -12.7,
+  "volume_vs_30d_avg": 0.64,
+  "ma50": 72701.0,
+  "ma200": 77014.0,
+  "dist_from_50d_pct": -12.5,
   "verdict": {
-    "direction": "BUY",
+    "direction": "HOLD",
     "bias": "up",
-    "tier": "accumulation",
-    "confidence_pct": 60,
-    "score": 2.5,
+    "tier": null,
+    "confidence_pct": 56,
+    "score": 1.5,
     "components": {
       "valuation": 1,
       "trend": -2,
       "macro_release": 2,
       "exhaustion": 1,
       "froth": 0,
-      "volume": 0
+      "volume": -1
     },
-    "stance": "accumulation \u2014 deep-value + macro releasing; scale in small ahead of B confirmation (knife-risk accepted)",
-    "thesis": "[auto] composite +2.5 \u2014 valuation +1, trend -2, macro_release +2, exhaustion +1",
+    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
+    "thesis": "[auto] composite +1.5 \u2014 valuation +1, trend -2, macro_release +2, exhaustion +1, volume -1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
