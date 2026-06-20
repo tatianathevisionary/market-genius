@@ -1,6 +1,6 @@
 # BTC Genius Dashboard
 
-_Updated 2026-06-20T19:28:16+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-06-20T20:35:33+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Trending` | A: 3/4 | B: 1/3
 
@@ -54,7 +54,7 @@ Correlations (30d): BTC↔Nasdaq **-0.258** | BTC↔Gold **0.879** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-06-20T19:00:50+00:00_
+- _as of 2026-06-20T20:12:06+00:00_
 
 ## Recent TradingView alerts
 
