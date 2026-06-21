@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-20T23:36:49+00:00",
-  "price": 64207.28125,
+  "updated_at": "2026-06-21T00:36:59+00:00",
+  "price": 64208.0,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": true,
@@ -32,7 +32,7 @@
     "dxy": 0.99,
     "gold": -1.0
   },
-  "volume_vs_30d_avg": 0.54,
+  "volume_vs_30d_avg": 0.52,
   "ma50": 72712.0,
   "ma200": 77017.0,
   "dist_from_50d_pct": -11.7,
