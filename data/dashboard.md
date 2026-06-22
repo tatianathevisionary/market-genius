@@ -1,12 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-06-22T12:58:19+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-06-22T13:58:28+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Basing` | A: 2/4 | B: 1/3
+## `Trending` | A: 2/4 | B: 1/3
 
-**BTC $65,088** | 5d +1.0% | vol 0.67x avg | -9.4% vs 50d MA ($71,830)
-
-> Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
+**BTC $65,451** | 5d +1.6% | vol 0.73x avg | -8.9% vs 50d MA ($71,837)
 
 > 1 froth/exit signal(s) active — see §4 before adding risk.
 
@@ -16,14 +14,14 @@ _Updated 2026-06-22T12:58:19+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -9.9% | shock originator |
-| US 10Y | +0.1% | transmission |
-| DXY | +1.1% | denominator |
-| Nasdaq fut | +3.9% | risk appetite |
+| Brent | -11.1% | shock originator |
+| US 10Y | +0.4% | transmission |
+| DXY | +1.2% | denominator |
+| Nasdaq fut | +4.1% | risk appetite |
 | Gold | +0.1% | hedge competitor |
-| **BTC** | **+1.0%** | subject |
+| **BTC** | **+1.6%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.226** | BTC↔Gold **0.877** | BTC/Gold ratio 15.427
+Correlations (30d): BTC↔Nasdaq **-0.225** | BTC↔Gold **0.875** | BTC/Gold ratio 15.519
 
 ## A-score — macro pressure release
 
@@ -47,7 +45,7 @@ Correlations (30d): BTC↔Nasdaq **-0.226** | BTC↔Gold **0.877** | BTC/Gold ra
 | resistance | $71,986 | R1 x1, R4 50d MA | 2 |
 | resistance | $67,248 | R1 x1 | 1 |
 | resistance | $65,639 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$65,088** | | |
+| **price** | **$65,451** | | |
 | support | $64,972 | R1 x1, R3 $65,000 | 2 |
 | support | $62,553 | R1 x1 | 1 |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
@@ -59,7 +57,7 @@ Correlations (30d): BTC↔Nasdaq **-0.226** | BTC↔Gold **0.877** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-06-22T12:55:30+00:00_
+- _as of 2026-06-22T13:56:54+00:00_
 
 ## Recent TradingView alerts
 
