@@ -1,10 +1,12 @@
 # BTC Genius Dashboard
 
-_Updated 2026-06-21T22:52:00+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-06-21T23:52:10+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Trending` | A: 3/4 | B: 1/3
+## `Macro-driven selloff` | A: 3/4 | B: 1/3
 
-**BTC $63,673** | 5d -2.9% | vol 0.47x avg | -11.7% vs 50d MA ($72,107)
+**BTC $63,288** | 5d -3.5% | vol 0.49x avg | -12.2% vs 50d MA ($72,100)
+
+> Macro pressure releasing but no seller-exhaustion evidence yet — watch for B1/B6 events at the support zones below.
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -12,14 +14,14 @@ _Updated 2026-06-21T22:52:00+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -6.7% | shock originator |
+| Brent | -6.5% | shock originator |
 | US 10Y | -0.3% | transmission |
 | DXY | +1.1% | denominator |
-| Nasdaq fut | +3.0% | risk appetite |
-| Gold | -1.1% | hedge competitor |
-| **BTC** | **-2.9%** | subject |
+| Nasdaq fut | +2.4% | risk appetite |
+| Gold | -1.3% | hedge competitor |
+| **BTC** | **-3.5%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.227** | BTC↔Gold **0.877** | BTC/Gold ratio 15.276
+Correlations (30d): BTC↔Nasdaq **-0.221** | BTC↔Gold **0.878** | BTC/Gold ratio 15.213
 
 ## A-score — macro pressure release
 
@@ -43,7 +45,7 @@ Correlations (30d): BTC↔Nasdaq **-0.227** | BTC↔Gold **0.877** | BTC/Gold ra
 | resistance | $67,248 | R1 x1 | 1 |
 | resistance | $65,639 | R1 x1, R3 $65,000 | 2 |
 | resistance | $64,972 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$63,673** | | |
+| **price** | **$63,288** | | |
 | support | $62,553 | R1 x1 | 1 |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 
@@ -54,7 +56,7 @@ Correlations (30d): BTC↔Nasdaq **-0.227** | BTC↔Gold **0.877** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-06-21T22:32:01+00:00_
+- _as of 2026-06-21T23:33:22+00:00_
 
 ## Recent TradingView alerts
 
