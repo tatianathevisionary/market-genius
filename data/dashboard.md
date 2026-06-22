@@ -1,10 +1,12 @@
 # BTC Genius Dashboard
 
-_Updated 2026-06-22T13:58:28+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-06-22T14:58:38+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Trending` | A: 2/4 | B: 1/3
+## `Basing` | A: 2/4 | B: 1/3
 
-**BTC $65,451** | 5d +1.6% | vol 0.73x avg | -8.9% vs 50d MA ($71,837)
+**BTC $64,902** | 5d +0.8% | vol 0.77x avg | -9.6% vs 50d MA ($71,826)
+
+> Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
 > 1 froth/exit signal(s) active — see §4 before adding risk.
 
@@ -14,14 +16,14 @@ _Updated 2026-06-22T13:58:28+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -11.1% | shock originator |
-| US 10Y | +0.4% | transmission |
-| DXY | +1.2% | denominator |
-| Nasdaq fut | +4.1% | risk appetite |
+| Brent | -10.3% | shock originator |
+| US 10Y | +0.3% | transmission |
+| DXY | +1.1% | denominator |
+| Nasdaq fut | +3.3% | risk appetite |
 | Gold | +0.1% | hedge competitor |
-| **BTC** | **+1.6%** | subject |
+| **BTC** | **+0.8%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.225** | BTC↔Gold **0.875** | BTC/Gold ratio 15.519
+Correlations (30d): BTC↔Nasdaq **-0.223** | BTC↔Gold **0.877** | BTC/Gold ratio 15.379
 
 ## A-score — macro pressure release
 
@@ -42,11 +44,10 @@ Correlations (30d): BTC↔Nasdaq **-0.225** | BTC↔Gold **0.875** | BTC/Gold ra
 
 | Side | Level | Methods | Strength |
 |---|---|---|---|
-| resistance | $71,986 | R1 x1, R4 50d MA | 2 |
 | resistance | $67,248 | R1 x1 | 1 |
 | resistance | $65,639 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$65,451** | | |
-| support | $64,972 | R1 x1, R3 $65,000 | 2 |
+| resistance | $64,972 | R1 x1, R3 $65,000 | 2 |
+| **price** | **$64,902** | | |
 | support | $62,553 | R1 x1 | 1 |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 
@@ -57,7 +58,7 @@ Correlations (30d): BTC↔Nasdaq **-0.225** | BTC↔Gold **0.875** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-06-22T13:56:54+00:00_
+- _as of 2026-06-22T14:37:50+00:00_
 
 ## Recent TradingView alerts
 
