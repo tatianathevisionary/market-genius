@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-06-23T05:52:03+00:00",
-  "price": 63332.6484375,
-  "regime": "Trending",
+  "updated_at": "2026-06-24T03:52:18+00:00",
+  "price": 62697.4609375,
+  "regime": "Basing",
   "A": {
-    "A1_oil_rolls_over": true,
-    "A2_yields_peak": true,
+    "A1_oil_rolls_over": false,
+    "A2_yields_peak": false,
     "A4_dxy_tops": false,
     "A5_equities_stable": true
   },
-  "a_score": 3,
+  "a_score": 1,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -21,44 +21,44 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.209,
-  "corr_btc_gold_30d": 0.876,
-  "btc_gold_ratio": 15.296,
+  "corr_btc_nasdaq_30d": -0.2,
+  "corr_btc_gold_30d": 0.867,
+  "btc_gold_ratio": 15.358,
   "roc5": {
-    "btc": -1.69,
-    "brent": -7.14,
-    "us10y": -0.27,
-    "nasdaq": -1.41,
-    "dxy": 1.45,
-    "gold": -4.33
+    "btc": -0.32,
+    "brent": -3.47,
+    "us10y": 0.13,
+    "nasdaq": -0.83,
+    "dxy": 1.93,
+    "gold": -5.74
   },
-  "volume_vs_30d_avg": 0.75,
-  "ma50": 71795.0,
-  "ma200": 76580.0,
-  "dist_from_50d_pct": -11.8,
+  "volume_vs_30d_avg": 0.94,
+  "ma50": 71464.0,
+  "ma200": 76449.0,
+  "dist_from_50d_pct": -12.3,
   "verdict": {
-    "direction": "BUY",
-    "bias": "up",
-    "tier": "accumulation",
-    "confidence_pct": 60,
-    "score": 2.5,
+    "direction": "HOLD",
+    "bias": "down",
+    "tier": null,
+    "confidence_pct": 52,
+    "score": -0.5,
     "components": {
       "valuation": 1,
       "trend": -2,
-      "macro_release": 2,
+      "macro_release": 0,
       "exhaustion": 1,
       "froth": 0,
       "volume": 0
     },
-    "stance": "accumulation \u2014 deep-value + macro releasing; scale in small ahead of B confirmation (knife-risk accepted)",
-    "thesis": "[auto] composite +2.5 \u2014 valuation +1, trend -2, macro_release +2, exhaustion +1",
+    "stance": "neutral \u2014 no edge either way; let the triggers decide",
+    "thesis": "[auto] composite -0.5 \u2014 valuation +1, trend -2, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
   "supports": [
     {
-      "level": 62553,
-      "strength": 1
+      "level": 62377,
+      "strength": 2
     },
     {
       "level": 59109,
