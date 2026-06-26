@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-26T02:37:59+00:00",
-  "price": 58698.75,
+  "updated_at": "2026-06-26T12:19:47+00:00",
+  "price": 59458.0,
   "regime": "Crypto-specific selloff",
   "A": {
     "A1_oil_rolls_over": true,
@@ -21,21 +21,21 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.063,
-  "corr_btc_gold_30d": 0.854,
-  "btc_gold_ratio": 14.599,
+  "corr_btc_nasdaq_30d": -0.038,
+  "corr_btc_gold_30d": 0.848,
+  "btc_gold_ratio": 14.635,
   "roc5": {
-    "btc": -8.63,
-    "brent": -6.02,
-    "us10y": -2.12,
-    "nasdaq": -0.98,
-    "dxy": 0.71,
-    "gold": -7.76
+    "btc": -5.98,
+    "brent": -8.39,
+    "us10y": -0.27,
+    "nasdaq": -2.81,
+    "dxy": 0.38,
+    "gold": -3.82
   },
-  "volume_vs_30d_avg": 1.21,
-  "ma50": 70611.0,
-  "ma200": 76149.0,
-  "dist_from_50d_pct": -16.9,
+  "volume_vs_30d_avg": 1.44,
+  "ma50": 70220.0,
+  "ma200": 75998.0,
+  "dist_from_50d_pct": -15.3,
   "verdict": {
     "direction": "HOLD",
     "bias": "up",
@@ -55,12 +55,13 @@
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
-  "supports": [],
-  "resistances": [
+  "supports": [
     {
       "level": 59109,
       "strength": 2
-    },
+    }
+  ],
+  "resistances": [
     {
       "level": 64972,
       "strength": 2
@@ -68,6 +69,10 @@
     {
       "level": 65639,
       "strength": 2
+    },
+    {
+      "level": 67248,
+      "strength": 1
     }
   ]
 }
