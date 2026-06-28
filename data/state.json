@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-28T05:58:50+00:00",
-  "price": 59886.71875,
+  "updated_at": "2026-06-28T06:58:59+00:00",
+  "price": 59914.55859375,
   "regime": "Macro-driven selloff",
   "A": {
     "A1_oil_rolls_over": true,
@@ -23,19 +23,19 @@
   },
   "corr_btc_nasdaq_30d": -0.037,
   "corr_btc_gold_30d": 0.847,
-  "btc_gold_ratio": 14.62,
+  "btc_gold_ratio": 14.627,
   "roc5": {
-    "btc": -6.36,
+    "btc": -4.39,
     "brent": -9.08,
-    "us10y": -0.27,
+    "us10y": -1.77,
     "nasdaq": -2.96,
     "dxy": 1.34,
     "gold": -3.03
   },
-  "volume_vs_30d_avg": 0.46,
-  "ma50": 69825.0,
-  "ma200": 75837.0,
-  "dist_from_50d_pct": -14.2,
+  "volume_vs_30d_avg": 0.44,
+  "ma50": 69411.0,
+  "ma200": 75677.0,
+  "dist_from_50d_pct": -13.7,
   "verdict": {
     "direction": "HOLD",
     "bias": "up",
