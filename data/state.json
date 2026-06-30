@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-06-29T01:07:58+00:00",
-  "price": 59481.359375,
-  "regime": "Crypto-specific selloff",
+  "updated_at": "2026-06-30T01:03:30+00:00",
+  "price": 59705.0,
+  "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": true,
     "A2_yields_peak": true,
-    "A4_dxy_tops": false,
-    "A5_equities_stable": false
+    "A4_dxy_tops": true,
+    "A5_equities_stable": true
   },
-  "a_score": 2,
+  "a_score": 4,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -21,37 +21,37 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.007,
-  "corr_btc_gold_30d": 0.837,
-  "btc_gold_ratio": 14.56,
+  "corr_btc_nasdaq_30d": -0.043,
+  "corr_btc_gold_30d": 0.835,
+  "btc_gold_ratio": 14.909,
   "roc5": {
-    "btc": -5.08,
-    "brent": -6.1,
-    "us10y": -1.77,
-    "nasdaq": -3.8,
-    "dxy": 0.32,
-    "gold": -2.31
+    "btc": -2.12,
+    "brent": -5.61,
+    "us10y": -2.99,
+    "nasdaq": -2.13,
+    "dxy": -0.19,
+    "gold": -4.24
   },
-  "volume_vs_30d_avg": 0.52,
-  "ma50": 69402.0,
-  "ma200": 75675.0,
-  "dist_from_50d_pct": -14.3,
+  "volume_vs_30d_avg": 0.94,
+  "ma50": 68955.0,
+  "ma200": 75511.0,
+  "dist_from_50d_pct": -13.4,
   "verdict": {
-    "direction": "HOLD",
+    "direction": "BUY",
     "bias": "up",
-    "tier": null,
-    "confidence_pct": 54,
-    "score": 1.0,
+    "tier": "accumulation",
+    "confidence_pct": 64,
+    "score": 3.5,
     "components": {
       "valuation": 2,
       "trend": -2,
-      "macro_release": 1,
+      "macro_release": 2,
       "exhaustion": 1,
       "froth": 0,
-      "volume": -1
+      "volume": 0
     },
-    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +1.0 \u2014 valuation +2, trend -2, macro_release +1, exhaustion +1, volume -1",
+    "stance": "accumulation \u2014 deep-value + macro releasing; scale in small ahead of B confirmation (knife-risk accepted)",
+    "thesis": "[auto] composite +3.5 \u2014 valuation +2, trend -2, macro_release +2, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
