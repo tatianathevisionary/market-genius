@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-01T06:21:43+00:00",
-  "price": 58766.3984375,
+  "updated_at": "2026-07-01T07:28:28+00:00",
+  "price": 58701.69140625,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": false,
@@ -21,21 +21,21 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.032,
-  "corr_btc_gold_30d": 0.837,
-  "btc_gold_ratio": 14.762,
+  "corr_btc_nasdaq_30d": -0.002,
+  "corr_btc_gold_30d": 0.838,
+  "btc_gold_ratio": 14.76,
   "roc5": {
-    "btc": -1.6,
-    "brent": -0.84,
+    "btc": -2.19,
+    "brent": -0.85,
     "us10y": -1.77,
-    "nasdaq": 3.08,
-    "dxy": -0.28,
-    "gold": -0.24
+    "nasdaq": 2.66,
+    "dxy": -0.23,
+    "gold": -0.33
   },
-  "volume_vs_30d_avg": 1.04,
-  "ma50": 68504.0,
-  "ma200": 75356.0,
-  "dist_from_50d_pct": -14.2,
+  "volume_vs_30d_avg": 1.05,
+  "ma50": 68065.0,
+  "ma200": 75197.0,
+  "dist_from_50d_pct": -13.8,
   "verdict": {
     "direction": "BUY",
     "bias": "up",
@@ -55,7 +55,12 @@
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
-  "supports": [],
+  "supports": [
+    {
+      "level": 58076,
+      "strength": 1
+    }
+  ],
   "resistances": [
     {
       "level": 59109,
