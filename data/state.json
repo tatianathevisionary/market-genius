@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-07-01T08:35:09+00:00",
-  "price": 58483.44140625,
-  "regime": "Trending",
+  "updated_at": "2026-07-01T17:14:18+00:00",
+  "price": 59818.140625,
+  "regime": "Basing",
   "A": {
     "A1_oil_rolls_over": false,
     "A2_yields_peak": true,
@@ -21,29 +21,29 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.006,
-  "corr_btc_gold_30d": 0.839,
-  "btc_gold_ratio": 14.648,
+  "corr_btc_nasdaq_30d": 0.01,
+  "corr_btc_gold_30d": 0.836,
+  "btc_gold_ratio": 14.643,
   "roc5": {
-    "btc": -2.55,
-    "brent": -1.59,
-    "us10y": -1.77,
-    "nasdaq": 2.82,
-    "dxy": -0.26,
-    "gold": 0.06
+    "btc": -0.33,
+    "brent": -3.39,
+    "us10y": -0.89,
+    "nasdaq": 2.25,
+    "dxy": -0.25,
+    "gold": 2.38
   },
-  "volume_vs_30d_avg": 1.05,
-  "ma50": 68060.0,
-  "ma200": 75196.0,
-  "dist_from_50d_pct": -14.1,
+  "volume_vs_30d_avg": 1.08,
+  "ma50": 68087.0,
+  "ma200": 75202.0,
+  "dist_from_50d_pct": -12.1,
   "verdict": {
     "direction": "BUY",
     "bias": "up",
     "tier": "confirmed",
-    "confidence_pct": 70,
-    "score": 5.0,
+    "confidence_pct": 66,
+    "score": 4.0,
     "components": {
-      "valuation": 2,
+      "valuation": 1,
       "trend": -2,
       "macro_release": 2,
       "exhaustion": 2,
@@ -51,11 +51,15 @@
       "volume": 0
     },
     "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +5.0 \u2014 valuation +2, trend -2, macro_release +2, exhaustion +2",
+    "thesis": "[auto] composite +4.0 \u2014 valuation +1, trend -2, macro_release +2, exhaustion +2",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
   "supports": [
+    {
+      "level": 59109,
+      "strength": 2
+    },
     {
       "level": 58076,
       "strength": 1
@@ -63,15 +67,15 @@
   ],
   "resistances": [
     {
-      "level": 59109,
-      "strength": 2
-    },
-    {
       "level": 64972,
       "strength": 2
     },
     {
       "level": 65639,
+      "strength": 2
+    },
+    {
+      "level": 67248,
       "strength": 2
     }
   ]
