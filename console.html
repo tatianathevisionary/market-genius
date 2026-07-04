@@ -128,7 +128,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 22:24 UTC · price ticks live · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 22:39 UTC · price ticks live · not financial advice</div>
 
 <div class="bar">
   <div class="logo">⚡ BTC <span>GENIUS</span> · CONSOLE</div>
@@ -171,14 +171,15 @@
         </div>
       </div>
       <div class="panel">
-        <div class="panel-h"><h2>◎ Signal Engine</h2><span class="tag" id="sUpd"></span></div>
+        <div class="panel-h"><h2>▥ Macro Pulse · 5D ROC</h2></div>
         <div class="panel-b">
-          <div class="verdict-line">
-            <span class="verdict-dir" id="vDir">—</span>
-            <div class="confbar"><i id="vConf" style="width:0%"></i></div>
-            <span class="kv" id="vConfTxt"></span>
+          <canvas id="rocBars" class="chart" height="120"></canvas>
+          <div class="statgrid" style="margin-top:8px">
+            <span class="k">CORR BTC·NDQ</span><span class="v" id="mCorrNq">—</span>
+            <span class="k">CORR BTC·GOLD</span><span class="v" id="mCorrAu">—</span>
+            <span class="k">VOL VS 30D</span><span class="v" id="mVol">—</span>
+            <span class="k">DIST 50D MA</span><span class="v" id="mDist">—</span>
           </div>
-          <div class="checks" id="vChecks">loading…</div>
         </div>
       </div>
     </div>
@@ -201,15 +202,12 @@
         </div>
       </div>
       <div class="panel">
-        <div class="panel-h"><h2>▥ Macro Pulse · 5D ROC</h2></div>
-        <div class="panel-b">
-          <canvas id="rocBars" class="chart" height="120"></canvas>
-          <div class="statgrid" style="margin-top:8px">
-            <span class="k">CORR BTC·NDQ</span><span class="v" id="mCorrNq">—</span>
-            <span class="k">CORR BTC·GOLD</span><span class="v" id="mCorrAu">—</span>
-            <span class="k">VOL VS 30D</span><span class="v" id="mVol">—</span>
-            <span class="k">DIST 50D MA</span><span class="v" id="mDist">—</span>
-          </div>
+        <div class="panel-h"><h2>≡ Recent Bets</h2><span class="tag">5-min up/down · paper</span></div>
+        <div class="panel-b" style="max-height:300px; overflow-y:auto">
+          <table class="bets">
+            <thead><tr><th>time</th><th>dir</th><th>entry</th><th>exit</th><th>stake</th><th>pnl</th><th>res</th></tr></thead>
+            <tbody id="betsBody"><tr><td colspan="7" class="dimc">loading…</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
