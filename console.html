@@ -93,7 +93,10 @@
   .confbar { flex:1; height:8px; background:var(--line); position:relative; }
   .confbar i { position:absolute; inset:0 auto 0 0; background:var(--accent);
                box-shadow:0 0 10px var(--accent); }
-  .checks { font-size:11px; line-height:1.9; }
+  .checks { font-size:11px; line-height:1.9; display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:0 16px; }
+  .sig { color:var(--pink); font-weight:700; letter-spacing:.1em; font-size:12px;
+         text-shadow:0 0 12px rgba(225,78,202,.65); }
   .checks .dot { display:inline-block; width:7px; height:7px; border-radius:50%;
                  margin-right:6px; background:var(--line2); vertical-align:1px; }
   .checks .on { background:var(--green); box-shadow:0 0 8px var(--green); }
@@ -128,7 +131,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 23:25 UTC · price ticks live · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 23:40 UTC · price ticks live · not financial advice</div>
 
 <div class="bar">
   <div class="logo">⚡ BTC <span>GENIUS</span> · CONSOLE</div>
@@ -139,6 +142,7 @@
   <div class="kv">WIN <b id="hWin">—</b></div>
   <div class="kv">REGIME <b id="hRegime">—</b></div>
   <div class="right">
+    <span class="sig">⚡ GENIUS_001</span>
     <div class="clock" id="clock">--:--:--</div>
     <div class="nav">
       <button onclick="location.href='index.html'">▦ DASHBOARD</button>
@@ -250,12 +254,14 @@
       </div>
     </div>
     <div class="panel">
-      <div class="panel-h"><h2>≡ Recent Bets</h2><span class="tag">5-min up/down · paper</span></div>
-      <div class="panel-b" style="max-height:260px; overflow-y:auto">
-        <table class="bets">
-          <thead><tr><th>time</th><th>dir</th><th>entry</th><th>exit</th><th>stake</th><th>pnl</th><th>res</th></tr></thead>
-          <tbody id="betsBody"><tr><td colspan="7" class="dimc">loading…</td></tr></tbody>
-        </table>
+      <div class="panel-h"><h2>◎ Signal Engine</h2><span class="tag" id="sUpd"></span></div>
+      <div class="panel-b">
+        <div class="verdict-line">
+          <span class="verdict-dir" id="vDir">—</span>
+          <div class="confbar"><i id="vConf" style="width:0%"></i></div>
+          <span class="kv" id="vConfTxt"></span>
+        </div>
+        <div class="checks" id="vChecks">loading…</div>
       </div>
     </div>
   </div>
@@ -292,6 +298,15 @@ function sizeCanvas(cv){
   const g = cv.getContext('2d');
   g.setTransform(dpr,0,0,dpr,0,0);
   return [g, r.width, h];
+}
+function watermark(g, W, H){        // ⚡ GENIUS_001 chart signature
+  g.save();
+  g.font = '700 15px ' + css('--mono');
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = 'rgba(225,78,202,.15)';
+  g.shadowColor = 'rgba(225,78,202,.35)'; g.shadowBlur = 14;
+  g.fillText('⚡ GENIUS_001', W/2, H/2 - 6);
+  g.restore();
 }
 const tip = $('tip');
 function showTip(x,y,html){ tip.style.display='block'; tip.innerHTML=html;
@@ -361,6 +376,7 @@ function drawCandles(){
   if (!candles.length) return;
   const [g, W, H] = sizeCanvas(cv);
   g.clearRect(0,0,W,H);
+  watermark(g, W, H);
   const padL = 8, padR = 62, padT = 10, volH = 54, padB = 24;
   const plotW = W - padL - padR, plotH = H - padT - padB - volH;
   const data = candles.slice(-100);
@@ -488,6 +504,7 @@ function drawEquity(){
   if (!paper || !paper.equity || paper.equity.length < 2) return;
   const cv = $('equity'), [g, W, H] = sizeCanvas(cv);
   g.clearRect(0,0,W,H);
+  watermark(g, W, H);
   const pts = paper.equity;
   const padL = 8, padR = 60, padT = 12, padB = 20;
   let lo = Math.min(...pts.map(p=>p.bal), paper.start_balance);
@@ -590,9 +607,10 @@ async function pollSignals(){
   $('sUpd').textContent = (sig.updated_at||'').slice(11,19)+'Z';
   const groups = [['A · MACRO', sig.A||{}], ['B · CAPITULATION', sig.B||{}], ['X · FROTH', sig.X||{}]];
   $('vChecks').innerHTML = groups.map(([label,obj]) =>
-    `<div class="dimc" style="margin-top:4px">${label}</div>` +
+    `<div><div class="dimc" style="margin-top:4px">${label}</div>` +
     Object.entries(obj).map(([k,on]) =>
-      `<div><span class="dot ${on?'on':'off'}"></span>${k.replace(/_/g,' ')}</div>`).join('')
+      `<div><span class="dot ${on?'on':'off'}"></span>${k.replace(/_/g,' ')}</div>`).join('') +
+    `</div>`
   ).join('');
   $('mCorrNq').textContent = sig.corr_btc_nasdaq_30d?.toFixed(2) ?? '—';
   $('mCorrAu').textContent = sig.corr_btc_gold_30d?.toFixed(2) ?? '—';
