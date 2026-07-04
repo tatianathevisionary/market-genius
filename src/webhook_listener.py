@@ -69,6 +69,7 @@ STATUS_FILES = {
     "signal_engine": ("state.json", 2 * 60 * 60),
     "reddit_tracker": ("reddit/snapshots.jsonl", 40 * 60),
     "tv_alerts": ("alerts.jsonl", None),  # event-driven; age shown, never "down"
+    "paper_trader": ("paper/state.json", 15 * 60),
 }
 
 
@@ -365,6 +366,12 @@ class Handler(BaseHTTPRequestHandler):
                 self._respond_raw(200, page.read_bytes(), "text/html; charset=utf-8")
             else:
                 self._respond(404, {"error": "dashboard.html missing"})
+        elif self.path == "/console":
+            page = BASE_DIR / "web" / "console.html"
+            if page.exists():
+                self._respond_raw(200, page.read_bytes(), "text/html; charset=utf-8")
+            else:
+                self._respond(404, {"error": "console.html missing"})
         elif self.path == "/journal":
             page = BASE_DIR / "web" / "journal.html"
             if page.exists():

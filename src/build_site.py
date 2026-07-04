@@ -43,6 +43,7 @@ LISTENER = "http://localhost:8787"
 # web/<source> -> <name on the static site>. dashboard becomes the landing page.
 PAGES = {
     "dashboard.html": "index.html",
+    "console.html": "console.html",
     "journal.html": "journal.html",
     "ledger.html": "ledger.html",
     "social.html": "social.html",
@@ -53,13 +54,15 @@ PAGES = {
 DATA_COPIES = [
     "series.json", "series_long.json", "state.json", "signals_history.jsonl",
     "objective.json", "whale_ledger.jsonl", "journal.jsonl", "dashboard.md",
-    "market/snapshots.jsonl",
+    "market/snapshots.jsonl", "market/price_stream.json",
+    "paper/state.json", "paper/trades.jsonl",
 ]
 
 # The listener serves *.jsonl as a JSON array (clients call .json()), so the
 # static snapshot must do the same transform rather than ship raw JSONL.
 JSONL_AS_ARRAY = {"signals_history.jsonl", "whale_ledger.jsonl",
-                  "journal.jsonl", "market/snapshots.jsonl"}
+                  "journal.jsonl", "market/snapshots.jsonl",
+                  "paper/trades.jsonl"}
 
 # dynamic listener routes -> static snapshot file (best-effort; needs :8787 up).
 ROUTE_SNAPSHOTS = {"/status": "status.json", "/feed/news": "feed/news.json",
@@ -67,7 +70,8 @@ ROUTE_SNAPSHOTS = {"/status": "status.json", "/feed/news": "feed/news.json",
 
 # nav targets -> static page (both location.href='…' and href="…" forms).
 NAV = {
-    "/dashboard": "index.html", "/journal": "journal.html",
+    "/dashboard": "index.html", "/console": "console.html",
+    "/journal": "journal.html",
     "/reports": "reports.html", "/ledger": "ledger.html",
     "/social": "social.html", "/": "index.html",
 }
