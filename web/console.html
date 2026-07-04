@@ -70,7 +70,10 @@
   .confbar { flex:1; height:8px; background:var(--line); position:relative; }
   .confbar i { position:absolute; inset:0 auto 0 0; background:var(--accent);
                box-shadow:0 0 10px var(--accent); }
-  .checks { font-size:11px; line-height:1.9; }
+  .checks { font-size:11px; line-height:1.9; display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:0 16px; }
+  .sig { color:var(--pink); font-weight:700; letter-spacing:.1em; font-size:12px;
+         text-shadow:0 0 12px rgba(225,78,202,.65); }
   .checks .dot { display:inline-block; width:7px; height:7px; border-radius:50%;
                  margin-right:6px; background:var(--line2); vertical-align:1px; }
   .checks .on { background:var(--green); box-shadow:0 0 8px var(--green); }
@@ -115,6 +118,7 @@
   <div class="kv">WIN <b id="hWin">—</b></div>
   <div class="kv">REGIME <b id="hRegime">—</b></div>
   <div class="right">
+    <span class="sig">⚡ GENIUS_001</span>
     <div class="clock" id="clock">--:--:--</div>
     <div class="nav">
       <button onclick="location.href='/dashboard'">▦ DASHBOARD</button>
@@ -147,14 +151,15 @@
         </div>
       </div>
       <div class="panel">
-        <div class="panel-h"><h2>◎ Signal Engine</h2><span class="tag" id="sUpd"></span></div>
+        <div class="panel-h"><h2>▥ Macro Pulse · 5D ROC</h2></div>
         <div class="panel-b">
-          <div class="verdict-line">
-            <span class="verdict-dir" id="vDir">—</span>
-            <div class="confbar"><i id="vConf" style="width:0%"></i></div>
-            <span class="kv" id="vConfTxt"></span>
+          <canvas id="rocBars" class="chart" height="120"></canvas>
+          <div class="statgrid" style="margin-top:8px">
+            <span class="k">CORR BTC·NDQ</span><span class="v" id="mCorrNq">—</span>
+            <span class="k">CORR BTC·GOLD</span><span class="v" id="mCorrAu">—</span>
+            <span class="k">VOL VS 30D</span><span class="v" id="mVol">—</span>
+            <span class="k">DIST 50D MA</span><span class="v" id="mDist">—</span>
           </div>
-          <div class="checks" id="vChecks">loading…</div>
         </div>
       </div>
     </div>
@@ -177,15 +182,12 @@
         </div>
       </div>
       <div class="panel">
-        <div class="panel-h"><h2>▥ Macro Pulse · 5D ROC</h2></div>
-        <div class="panel-b">
-          <canvas id="rocBars" class="chart" height="120"></canvas>
-          <div class="statgrid" style="margin-top:8px">
-            <span class="k">CORR BTC·NDQ</span><span class="v" id="mCorrNq">—</span>
-            <span class="k">CORR BTC·GOLD</span><span class="v" id="mCorrAu">—</span>
-            <span class="k">VOL VS 30D</span><span class="v" id="mVol">—</span>
-            <span class="k">DIST 50D MA</span><span class="v" id="mDist">—</span>
-          </div>
+        <div class="panel-h"><h2>≡ Recent Bets</h2><span class="tag">5-min up/down · paper</span></div>
+        <div class="panel-b" style="max-height:300px; overflow-y:auto">
+          <table class="bets">
+            <thead><tr><th>time</th><th>dir</th><th>pnl</th><th>res</th></tr></thead>
+            <tbody id="betsBody"><tr><td colspan="4" class="dimc">loading…</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -228,12 +230,14 @@
       </div>
     </div>
     <div class="panel">
-      <div class="panel-h"><h2>≡ Recent Bets</h2><span class="tag">5-min up/down · paper</span></div>
-      <div class="panel-b" style="max-height:260px; overflow-y:auto">
-        <table class="bets">
-          <thead><tr><th>time</th><th>dir</th><th>entry</th><th>exit</th><th>stake</th><th>pnl</th><th>res</th></tr></thead>
-          <tbody id="betsBody"><tr><td colspan="7" class="dimc">loading…</td></tr></tbody>
-        </table>
+      <div class="panel-h"><h2>◎ Signal Engine</h2><span class="tag" id="sUpd"></span></div>
+      <div class="panel-b">
+        <div class="verdict-line">
+          <span class="verdict-dir" id="vDir">—</span>
+          <div class="confbar"><i id="vConf" style="width:0%"></i></div>
+          <span class="kv" id="vConfTxt"></span>
+        </div>
+        <div class="checks" id="vChecks">loading…</div>
       </div>
     </div>
   </div>
@@ -270,6 +274,15 @@ function sizeCanvas(cv){
   const g = cv.getContext('2d');
   g.setTransform(dpr,0,0,dpr,0,0);
   return [g, r.width, h];
+}
+function watermark(g, W, H){        // ⚡ GENIUS_001 chart signature
+  g.save();
+  g.font = '700 15px ' + css('--mono');
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = 'rgba(225,78,202,.15)';
+  g.shadowColor = 'rgba(225,78,202,.35)'; g.shadowBlur = 14;
+  g.fillText('⚡ GENIUS_001', W/2, H/2 - 6);
+  g.restore();
 }
 const tip = $('tip');
 function showTip(x,y,html){ tip.style.display='block'; tip.innerHTML=html;
@@ -339,6 +352,7 @@ function drawCandles(){
   if (!candles.length) return;
   const [g, W, H] = sizeCanvas(cv);
   g.clearRect(0,0,W,H);
+  watermark(g, W, H);
   const padL = 8, padR = 62, padT = 10, volH = 54, padB = 24;
   const plotW = W - padL - padR, plotH = H - padT - padB - volH;
   const data = candles.slice(-100);
@@ -448,15 +462,15 @@ async function pollPaper(){
 
 async function pollTrades(){
   try { trades = await j('/data/paper/trades.jsonl'); } catch(e){ return; }
-  const rows = trades.slice(-14).reverse().map(t => {
+  const rows = trades.slice(-16).reverse().map(t => {
     const cls = t.result==='WIN'?'pos':t.result==='LOSS'?'neg':'dimc';
-    return `<tr><td class="dimc">${new Date(t.ts_settle*1000).toISOString().slice(5,16).replace('T',' ')}</td>` +
+    return `<tr title="stake $${t.stake} · ${fmtP(t.entry)} → ${fmtP(t.exit)} · #${t.id} · SIMULATED">` +
+      `<td class="dimc">${new Date(t.ts_settle*1000).toISOString().slice(5,16).replace('T',' ')}</td>` +
       `<td><span class="chip ${t.dir==='UP'?'up':'down'}">${t.dir}</span></td>` +
-      `<td>${fmtP(t.entry)}</td><td>${fmtP(t.exit)}</td><td>$${t.stake}</td>` +
       `<td class="${cls}">${t.pnl>=0?'+':''}${t.pnl.toFixed(2)}</td>` +
       `<td class="${cls}">${t.result}${t.backfill?'·bf':''}</td></tr>`;
   }).join('');
-  $('betsBody').innerHTML = rows || '<tr><td colspan="7" class="dimc">no settled bets yet</td></tr>';
+  $('betsBody').innerHTML = rows || '<tr><td colspan="4" class="dimc">no settled bets yet</td></tr>';
   renderLog();
 }
 
@@ -466,6 +480,7 @@ function drawEquity(){
   if (!paper || !paper.equity || paper.equity.length < 2) return;
   const cv = $('equity'), [g, W, H] = sizeCanvas(cv);
   g.clearRect(0,0,W,H);
+  watermark(g, W, H);
   const pts = paper.equity;
   const padL = 8, padR = 60, padT = 12, padB = 20;
   let lo = Math.min(...pts.map(p=>p.bal), paper.start_balance);
@@ -568,9 +583,10 @@ async function pollSignals(){
   $('sUpd').textContent = (sig.updated_at||'').slice(11,19)+'Z';
   const groups = [['A · MACRO', sig.A||{}], ['B · CAPITULATION', sig.B||{}], ['X · FROTH', sig.X||{}]];
   $('vChecks').innerHTML = groups.map(([label,obj]) =>
-    `<div class="dimc" style="margin-top:4px">${label}</div>` +
+    `<div><div class="dimc" style="margin-top:4px">${label}</div>` +
     Object.entries(obj).map(([k,on]) =>
-      `<div><span class="dot ${on?'on':'off'}"></span>${k.replace(/_/g,' ')}</div>`).join('')
+      `<div><span class="dot ${on?'on':'off'}"></span>${k.replace(/_/g,' ')}</div>`).join('') +
+    `</div>`
   ).join('');
   $('mCorrNq').textContent = sig.corr_btc_nasdaq_30d?.toFixed(2) ?? '—';
   $('mCorrAu').textContent = sig.corr_btc_gold_30d?.toFixed(2) ?? '—';
