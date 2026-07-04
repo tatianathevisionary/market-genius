@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-04T22:19:23+00:00",
-  "price": 63237.76953125,
+  "updated_at": "2026-07-04T23:19:45+00:00",
+  "price": 62976.75,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": false,
@@ -23,23 +23,23 @@
   },
   "corr_btc_nasdaq_30d": 0.218,
   "corr_btc_gold_30d": 0.828,
-  "btc_gold_ratio": 15.102,
+  "btc_gold_ratio": 15.04,
   "roc5": {
-    "btc": 5.15,
+    "btc": 4.72,
     "brent": 0.19,
     "us10y": -1.77,
     "nasdaq": 1.82,
     "dxy": -0.5,
     "gold": 2.66
   },
-  "volume_vs_30d_avg": 0.6,
-  "ma50": 67048.0,
-  "ma200": 74827.0,
-  "dist_from_50d_pct": -5.7,
+  "volume_vs_30d_avg": 0.61,
+  "ma50": 67043.0,
+  "ma200": 74826.0,
+  "dist_from_50d_pct": -6.1,
   "verdict": {
-    "direction": "HOLD",
+    "direction": "BUY",
     "bias": "up",
-    "tier": null,
+    "tier": "accumulation",
     "confidence_pct": 60,
     "score": 2.5,
     "components": {
@@ -50,7 +50,7 @@
       "froth": 0,
       "volume": 0
     },
-    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
+    "stance": "accumulation \u2014 deep-value + macro releasing; scale in small ahead of B confirmation (knife-risk accepted)",
     "thesis": "[auto] composite +2.5 \u2014 valuation +1, trend -2, macro_release +2, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
