@@ -131,7 +131,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 23:40 UTC · price ticks live · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 23:43 UTC · price ticks live · not financial advice</div>
 
 <div class="bar">
   <div class="logo">⚡ BTC <span>GENIUS</span> · CONSOLE</div>
@@ -209,8 +209,8 @@
         <div class="panel-h"><h2>≡ Recent Bets</h2><span class="tag">5-min up/down · paper</span></div>
         <div class="panel-b" style="max-height:300px; overflow-y:auto">
           <table class="bets">
-            <thead><tr><th>time</th><th>dir</th><th>entry</th><th>exit</th><th>stake</th><th>pnl</th><th>res</th></tr></thead>
-            <tbody id="betsBody"><tr><td colspan="7" class="dimc">loading…</td></tr></tbody>
+            <thead><tr><th>time</th><th>dir</th><th>pnl</th><th>res</th></tr></thead>
+            <tbody id="betsBody"><tr><td colspan="4" class="dimc">loading…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -486,15 +486,15 @@ async function pollPaper(){
 
 async function pollTrades(){
   try { trades = await j('/data/paper/trades.jsonl'); } catch(e){ return; }
-  const rows = trades.slice(-14).reverse().map(t => {
+  const rows = trades.slice(-16).reverse().map(t => {
     const cls = t.result==='WIN'?'pos':t.result==='LOSS'?'neg':'dimc';
-    return `<tr><td class="dimc">${new Date(t.ts_settle*1000).toISOString().slice(5,16).replace('T',' ')}</td>` +
+    return `<tr title="stake $${t.stake} · ${fmtP(t.entry)} → ${fmtP(t.exit)} · #${t.id} · SIMULATED">` +
+      `<td class="dimc">${new Date(t.ts_settle*1000).toISOString().slice(5,16).replace('T',' ')}</td>` +
       `<td><span class="chip ${t.dir==='UP'?'up':'down'}">${t.dir}</span></td>` +
-      `<td>${fmtP(t.entry)}</td><td>${fmtP(t.exit)}</td><td>$${t.stake}</td>` +
       `<td class="${cls}">${t.pnl>=0?'+':''}${t.pnl.toFixed(2)}</td>` +
       `<td class="${cls}">${t.result}${t.backfill?'·bf':''}</td></tr>`;
   }).join('');
-  $('betsBody').innerHTML = rows || '<tr><td colspan="7" class="dimc">no settled bets yet</td></tr>';
+  $('betsBody').innerHTML = rows || '<tr><td colspan="4" class="dimc">no settled bets yet</td></tr>';
   renderLog();
 }
 
