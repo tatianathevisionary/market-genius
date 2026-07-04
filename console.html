@@ -128,7 +128,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 20:23 UTC · price ticks live · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-04 20:38 UTC · price ticks live · not financial advice</div>
 
 <div class="bar">
   <div class="logo">⚡ BTC <span>GENIUS</span> · CONSOLE</div>
@@ -572,7 +572,9 @@ function drawRoc(){
     g.fillStyle = col; g.shadowColor = col; g.shadowBlur = 4;
     g.fillRect(cx-bw/2+6, v>=0?zero-h:zero, bw-12, Math.max(2,h));
     g.shadowBlur = 0;
-    g.fillStyle = C.txt; g.fillText((v>0?'+':'')+v.toFixed(1)+'%', cx, v>=0?zero-h-6:zero+h+10);
+    g.fillStyle = C.txt;
+    g.fillText((v>0?'+':'')+v.toFixed(1)+'%', cx,
+               Math.min(H-14, Math.max(9, v>=0?zero-h-6:zero+h+10)));
     g.fillStyle = C.dim; g.fillText(k.toUpperCase(), cx, H-2);
   });
 }
@@ -642,9 +644,22 @@ function stepGraph(){
   const colFor = c => c==='bull'?C.green:c==='bear'?C.red:c==='catalyst'?C.amber:C.accent;
   nodes.forEach(n => {
     n.vx += (Math.random()-0.5)*0.0006; n.vy += (Math.random()-0.5)*0.0006;
-    n.vx += (0.5-n.x)*0.0004; n.vy += (0.5-n.y)*0.0004;   // gentle centering
+    n.vx += (0.5-n.x)*0.00012; n.vy += (0.5-n.y)*0.00012;  // gentle centering
     n.vx *= 0.985; n.vy *= 0.985;
-    n.x += n.vx; n.y += n.vy; n.pulse += 0.04;
+  });
+  for (let a=0; a<nodes.length; a++)            // pairwise repulsion: spread out
+    for (let b=a+1; b<nodes.length; b++){
+      const A = nodes[a], B = nodes[b];
+      let dx = A.x-B.x, dy = (A.y-B.y)*0.6, d2 = dx*dx+dy*dy;
+      if (d2 < 0.02 && d2 > 1e-6){
+        const f = 0.000012/d2;
+        A.vx += dx*f; A.vy += dy*f; B.vx -= dx*f; B.vy -= dy*f;
+      }
+    }
+  nodes.forEach(n => {
+    n.x = Math.min(0.98, Math.max(0.02, n.x + n.vx));
+    n.y = Math.min(0.96, Math.max(0.04, n.y + n.vy));
+    n.pulse += 0.04;
   });
   g.lineWidth = 1;
   edges.forEach(([a,b]) => {
