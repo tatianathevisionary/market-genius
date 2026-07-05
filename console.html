@@ -139,7 +139,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-05 06:28 UTC · price ticks live · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-05 06:38 UTC · price ticks live · not financial advice</div>
 
 <div class="bar">
   <div class="logo">⚡ BTC <span>GENIUS</span> · CONSOLE</div>
@@ -884,6 +884,9 @@ setInterval(pollPaper, 5000);
 setInterval(pollTrades, 20000);
 setInterval(pollSignals, 60000);
 window.addEventListener('resize', ()=>{ fitCandles(); drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); drawFlow(); });
+// Redraw everything when the tab becomes visible again (evicted canvas contexts).
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden){
+  fitCandles(); drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); drawFlow(); renderPressure(); } });
 </script>
 </body>
 </html>

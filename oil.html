@@ -101,7 +101,7 @@
 </style>
 </head>
 <body>
-<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-05 06:28 UTC · price ticks live · not financial advice</div>
+<div style="background:#e3a008;color:#06090d;font:11px/1.5 ui-monospace,monospace;text-align:center;padding:4px">SNAPSHOT — analysis built 2026-07-05 06:38 UTC · price ticks live · not financial advice</div>
 
 <div class="bar">
   <div class="logo">🛢 OIL <span>GENIUS</span> · GEOPOLITICS</div>
@@ -347,6 +347,13 @@ async function ties(){
 load(); ties();
 setInterval(load, 120000); setInterval(ties, 300000);
 window.addEventListener('resize', drawChart);
+
+// Recovery: Chrome evicts canvas contexts of backgrounded tabs, leaving every
+// stroke a silent no-op (blank black chart). Redraw on tab return, on context
+// restore, and on a slow heartbeat so the chart can never stay blank.
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) drawChart(); });
+$('chart').addEventListener('contextrestored', drawChart);
+setInterval(drawChart, 20000);
 </script>
 </body>
 </html>
