@@ -151,6 +151,19 @@
         </div>
       </div>
       <div class="panel">
+        <div class="panel-h"><h2>⇅ Daily Flow · Buy vs Sell</h2>
+          <span class="tag">binance taker vol</span></div>
+        <div class="panel-b">
+          <canvas id="flowBars" class="chart" height="130"></canvas>
+          <div class="statgrid" style="margin-top:8px">
+            <span class="k">TODAY BUY</span><span class="v pos" id="fBuy">—</span>
+            <span class="k">TODAY SELL</span><span class="v neg" id="fSell">—</span>
+            <span class="k">NET TODAY</span><span class="v" id="fNet">—</span>
+            <span class="k">NET 14D</span><span class="v" id="fNet14">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
         <div class="panel-h"><h2>▥ Macro Pulse · 5D ROC</h2></div>
         <div class="panel-b">
           <canvas id="rocBars" class="chart" height="120"></canvas>
@@ -546,6 +559,62 @@ function drawStreakBars(){
   });
 }
 
+/* ---------- daily buy/sell flow (Binance taker volume) ---------- */
+let flow = [], flowHover = null;
+const fmtBTC = v => (v >= 1000 ? (v/1000).toFixed(1) + 'k' : v.toFixed(0)) + ' BTC';
+async function pollFlow(){
+  try {
+    const raw = await j('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=14');
+    flow = raw.map(k => ({t:k[0]/1000, vol:+k[5], buy:+k[9], sell:+k[5]-+k[9]}));
+  } catch(e){ return; }
+  const today = flow[flow.length-1];
+  const usd = v => lastPrice ? ` ($${(v*lastPrice/1e6).toFixed(0)}M)` : '';
+  $('fBuy').textContent = fmtBTC(today.buy) + usd(today.buy);
+  $('fSell').textContent = fmtBTC(today.sell) + usd(today.sell);
+  const net = today.buy - today.sell;
+  $('fNet').innerHTML = `<span class="${net>=0?'pos':'neg'}">${net>=0?'+':'−'}${fmtBTC(Math.abs(net))}</span>`;
+  const net14 = flow.reduce((s,d) => s + d.buy - d.sell, 0);
+  $('fNet14').innerHTML = `<span class="${net14>=0?'pos':'neg'}">${net14>=0?'+':'−'}${fmtBTC(Math.abs(net14))}</span>`;
+  drawFlow();
+}
+function drawFlow(){
+  if (!flow.length) return;
+  const cv = $('flowBars'), [g, W, H] = sizeCanvas(cv);
+  g.clearRect(0,0,W,H);
+  const zero = H*0.52, maxV = Math.max(...flow.map(d => Math.max(d.buy, d.sell))) || 1;
+  const bw = W/flow.length;
+  g.strokeStyle = C.line; g.beginPath(); g.moveTo(0,zero); g.lineTo(W,zero); g.stroke();
+  flow.forEach((d,i) => {
+    const x0 = i*bw+2, w = Math.max(2, bw-4), last = i === flow.length-1;
+    const bh = d.buy/maxV*(zero-6), sh = d.sell/maxV*(H-zero-14);
+    g.fillStyle = last ? C.green : 'rgba(39,200,127,.55)';
+    g.shadowColor = C.green; g.shadowBlur = last ? 8 : 0;
+    g.fillRect(x0, zero-bh, w, Math.max(2,bh));
+    g.fillStyle = last ? C.red : 'rgba(255,79,86,.55)';
+    g.shadowColor = C.red; g.shadowBlur = last ? 8 : 0;
+    g.fillRect(x0, zero+1, w, Math.max(2,sh));
+    g.shadowBlur = 0;
+  });
+  g.font = '9px ' + css('--mono'); g.fillStyle = C.dim; g.textAlign = 'center';
+  [0, 6, flow.length-1].forEach(i => {
+    if (flow[i]) g.fillText(new Date(flow[i].t*1000).toISOString().slice(5,10),
+                            i*bw+bw/2, H-3);
+  });
+  if (flowHover){
+    const i = Math.min(flow.length-1, Math.max(0, Math.floor(flowHover.x/bw)));
+    const d = flow[i], net = d.buy - d.sell;
+    showTip(flowHover.px, flowHover.py,
+      `<span class="dimc">${new Date(d.t*1000).toISOString().slice(0,10)}${i===flow.length-1?' (today, partial)':''}</span><br>` +
+      `<span class="pos">buy ${fmtBTC(d.buy)}</span> · <span class="neg">sell ${fmtBTC(d.sell)}</span><br>` +
+      `net <b class="${net>=0?'pos':'neg'}">${net>=0?'+':'−'}${fmtBTC(Math.abs(net))}</b>`);
+  }
+}
+$('flowBars').addEventListener('mousemove', e => {
+  const r = e.target.getBoundingClientRect();
+  flowHover = {x:e.clientX-r.left, px:e.clientX, py:e.clientY}; drawFlow();
+});
+$('flowBars').addEventListener('mouseleave', ()=>{ flowHover=null; hideTip(); drawFlow(); });
+
 /* ---------- macro ROC bars ---------- */
 function drawRoc(){
   if (!sig || !sig.roc5) return;
@@ -692,13 +761,14 @@ function renderLog(){
 }
 
 /* ---------- schedulers ---------- */
-pollPrice(); pollCandles(); pollPaper(); pollTrades(); pollSignals(); stepGraph();
+pollPrice(); pollCandles(); pollPaper(); pollTrades(); pollSignals(); pollFlow(); stepGraph();
+setInterval(pollFlow, 300000);
 setInterval(pollPrice, 5000);
 setInterval(pollCandles, 15000);
 setInterval(pollPaper, 5000);
 setInterval(pollTrades, 20000);
 setInterval(pollSignals, 60000);
-window.addEventListener('resize', ()=>{ drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); });
+window.addEventListener('resize', ()=>{ drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); drawFlow(); });
 </script>
 </body>
 </html>
