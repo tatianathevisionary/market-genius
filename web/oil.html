@@ -323,6 +323,13 @@ async function ties(){
 load(); ties();
 setInterval(load, 120000); setInterval(ties, 300000);
 window.addEventListener('resize', drawChart);
+
+// Recovery: Chrome evicts canvas contexts of backgrounded tabs, leaving every
+// stroke a silent no-op (blank black chart). Redraw on tab return, on context
+// restore, and on a slow heartbeat so the chart can never stay blank.
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) drawChart(); });
+$('chart').addEventListener('contextrestored', drawChart);
+setInterval(drawChart, 20000);
 </script>
 </body>
 </html>

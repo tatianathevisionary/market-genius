@@ -860,6 +860,9 @@ setInterval(pollPaper, 5000);
 setInterval(pollTrades, 20000);
 setInterval(pollSignals, 60000);
 window.addEventListener('resize', ()=>{ fitCandles(); drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); drawFlow(); });
+// Redraw everything when the tab becomes visible again (evicted canvas contexts).
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden){
+  fitCandles(); drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); drawFlow(); renderPressure(); } });
 </script>
 </body>
 </html>
