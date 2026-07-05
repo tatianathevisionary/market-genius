@@ -13,9 +13,32 @@ of itself (and of you).
 ## Quick start
 
 ```bash
-launchctl list | grep btcgenius   # 6 agents: collector, engine, reddit, listener, whale-stream, price-stream
-open http://localhost:8787        # the console
-cat data/dashboard.md             # same intelligence, plain markdown
+launchctl list | grep btcgenius       # 9 agents: collector, engine, reddit, listener,
+                                      #   whale-stream, price-stream, paper-trader,
+                                      #   report-generator, site-publish
+open http://localhost:8787            # the analytics dashboard
+open http://localhost:8787/console    # the live trading console (SIMULATED paper bets)
+cat data/dashboard.md                 # same intelligence, plain markdown
+```
+
+`paper_trader.py` places **simulated** 5-minute BTC up/down paper bets
+(EMA momentum blended with the signal engine's bias) so the console has an
+honest live track record — no real orders, no exchange keys, ever.
+A static read-only snapshot of the whole site republishes to GitHub Pages
+every 15 minutes via `build_site.py`.
+
+## Repo layout
+
+```
+src/         Python daemons + builders (stdlib only)
+web/         console pages served by webhook_listener at :8787
+data/        generated state, ledgers, reports   (gitignored except seeds)
+launchd/     one .plist per agent (install to ~/Library/LaunchAgents)
+tradingview/ Pine indicator that fires the webhooks
+docs/        indicator/signal reference + screenshots (docs/img)
+apps/        independent sub-projects (own repos; gitignored)
+logs/        daemon logs (gitignored)
+_site/       Pages build output (gitignored; published to `site` branch)
 ```
 
 ## Architecture

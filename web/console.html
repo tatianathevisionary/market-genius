@@ -89,6 +89,14 @@
   table.bets td { padding:4px 6px; border-bottom:1px solid var(--line); white-space:nowrap; }
   table.bets tr:hover td { background:rgba(46,168,255,.05); }
 
+  .of-signal { text-align:center; font-size:15px; font-weight:700; letter-spacing:.08em;
+               padding:7px 4px; margin-bottom:10px; border:1px solid var(--line2); }
+  .of-row { margin:9px 0 3px; font-size:10px; color:var(--dim);
+            display:flex; justify-content:space-between; }
+  .of-bar { height:10px; display:flex; background:var(--line); }
+  .of-bar .b { background:var(--green); box-shadow:0 0 8px rgba(39,200,127,.4);
+               border-right:2px solid var(--bg); }
+  .of-bar .s { background:var(--red); box-shadow:0 0 8px rgba(255,79,86,.4); }
   .lgd { display:flex; gap:14px; font-size:10px; color:var(--dim); flex-wrap:wrap; }
   .lgd i { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
 
@@ -117,6 +125,7 @@
   <div class="kv">TRADES <b id="hTrades">—</b></div>
   <div class="kv">WIN <b id="hWin">—</b></div>
   <div class="kv">REGIME <b id="hRegime">—</b></div>
+  <div class="kv" title="15-minute taker buy/sell split">FLOW <b id="hFlow">—</b></div>
   <div class="right">
     <span class="sig">⚡ GENIUS_001</span>
     <div class="clock" id="clock">--:--:--</div>
@@ -124,6 +133,8 @@
       <button onclick="location.href='/dashboard'">▦ DASHBOARD</button>
       <button onclick="location.href='/journal'">✎ JOURNAL</button>
       <button onclick="location.href='/reports'">⛁ REPORTS</button>
+      <button onclick="location.href='/ledger'">◉ LEDGER</button>
+      <button onclick="location.href='/social'">𝕏 SOCIAL</button>
     </div>
   </div>
 </div>
@@ -192,6 +203,14 @@
           <div class="streak-x" id="stX">x0</div>
           <div class="wallet-sub" id="stTxt">—</div>
           <canvas id="stBars" class="chart" height="70"></canvas>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h2>◉ Order Flow · Buyers vs Sellers</h2>
+          <span class="tag">taker vol</span></div>
+        <div class="panel-b">
+          <div class="of-signal" id="ofSignal">—</div>
+          <div id="ofRows" class="dimc" style="font-size:11px">waiting for data…</div>
         </div>
       </div>
       <div class="panel">
@@ -361,8 +380,10 @@ async function pollPrice(){
 async function pollCandles(){
   try {
     const raw = await j('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=110');
-    candles = raw.map(k => ({t:k[0]/1000, o:+k[1], h:+k[2], l:+k[3], c:+k[4], v:+k[5]}));
+    candles = raw.map(k => ({t:k[0]/1000, o:+k[1], h:+k[2], l:+k[3], c:+k[4],
+                             v:+k[5], buy:+k[9]}));
     $('cSrc').textContent = 'binance · live';
+    renderPressure();
   } catch(e){
     try {  // offline fallback: synthesize candles from the local close-only ring
       const ps = await j('/data/market/price_stream.json');
@@ -597,7 +618,7 @@ async function pollFlow(){
   $('fNet').innerHTML = `<span class="${net>=0?'pos':'neg'}">${net>=0?'+':'−'}${fmtBTC(Math.abs(net))}</span>`;
   const net14 = flow.reduce((s,d) => s + d.buy - d.sell, 0);
   $('fNet14').innerHTML = `<span class="${net14>=0?'pos':'neg'}">${net14>=0?'+':'−'}${fmtBTC(Math.abs(net14))}</span>`;
-  drawFlow();
+  drawFlow(); renderPressure();
 }
 function drawFlow(){
   if (!flow.length) return;
@@ -636,6 +657,47 @@ $('flowBars').addEventListener('mousemove', e => {
   flowHover = {x:e.clientX-r.left, px:e.clientX, py:e.clientY}; drawFlow();
 });
 $('flowBars').addEventListener('mouseleave', ()=>{ flowHover=null; hideTip(); drawFlow(); });
+
+/* ---------- buyer/seller pressure signals (taker volume imbalance) ---------- */
+function renderPressure(){
+  const ratio = arr => {
+    const v = arr.reduce((s,c)=>s+c.v,0), b = arr.reduce((s,c)=>s+(c.buy??NaN),0);
+    return v && isFinite(b) ? b/v : null;
+  };
+  const rows = [['15M', ratio(candles.slice(-15))], ['1H', ratio(candles.slice(-60))]];
+  if (flow.length){
+    const t = flow[flow.length-1];
+    rows.push(['TODAY', t.vol ? t.buy/t.vol : null]);
+  }
+  if (rows[0][1] == null){
+    $('ofRows').textContent = 'taker split unavailable (offline candle source)';
+    return;
+  }
+  $('ofRows').innerHTML = rows.filter(r => r[1] != null).map(([label, r]) => {
+    const bp = Math.round(r*100);
+    return `<div class="of-row"><span>${label}</span>` +
+      `<span><b class="pos">BUY ${bp}%</b> · <b class="neg">SELL ${100-bp}%</b></span></div>` +
+      `<div class="of-bar" title="${label}: buyers ${bp}% vs sellers ${100-bp}% of taker volume">` +
+      `<i class="b" style="width:${bp}%"></i><i class="s" style="flex:1"></i></div>`;
+  }).join('');
+  const r15 = rows[0][1], r1h = rows[1][1] ?? r15;
+  const sig = $('ofSignal');
+  if (r15 >= 0.53 && r1h >= 0.50){
+    sig.textContent = '▲ BUYERS IN CONTROL';
+    sig.style.color = C.green; sig.style.borderColor = C.green;
+    sig.style.textShadow = '0 0 12px ' + C.green;
+  } else if (r15 <= 0.47 && r1h <= 0.50){
+    sig.textContent = '▼ SELLERS IN CONTROL';
+    sig.style.color = C.red; sig.style.borderColor = C.red;
+    sig.style.textShadow = '0 0 12px ' + C.red;
+  } else {
+    sig.textContent = '◆ BALANCED TAPE';
+    sig.style.color = C.amber; sig.style.borderColor = C.amber;
+    sig.style.textShadow = '0 0 10px ' + C.amber;
+  }
+  $('hFlow').textContent = `B${Math.round(r15*100)}/S${100-Math.round(r15*100)}`;
+  $('hFlow').style.color = r15 >= 0.53 ? C.green : r15 <= 0.47 ? C.red : '';
+}
 
 /* ---------- macro ROC bars ---------- */
 function drawRoc(){
