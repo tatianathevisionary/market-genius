@@ -127,7 +127,8 @@ def feed_db():
 
 def archive_tweets(feed):
     """Upsert the current feed into the archive; likes refresh, first_seen sticks."""
-    tweets = feed.get("tweets") or []
+    tweets = [t for t in feed.get("tweets") or []
+              if not social_spam(t.get("text") or "")]
     if not tweets:
         return 0
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -140,6 +141,20 @@ def archive_tweets(feed):
               t.get("url"), now) for t in tweets])
         return con.execute("SELECT COUNT(*) FROM tweets").fetchone()[0]
 X_TTL_SECONDS = 6 * 3600  # free tier is tiny; ~4 refreshes/day max
+
+# NSFW/spam filter for the unmoderated public fallbacks (Bluesky search is a
+# raw firehose; porn bots hashtag-stuff "#bitcoin" to ride keyword searches).
+SOCIAL_BLOCK = ["nsfw", "porn", "nude", "onlyfans", "fansly", "horny", "#teen",
+                "#18+", "pussy", "tits", "boobs", "nipples", "escort", "xxx",
+                "sex cam", "#egirl", "adult content"]
+
+
+def social_spam(text):
+    t = text.lower()
+    if any(w in t for w in SOCIAL_BLOCK):
+        return True
+    return t.count("#") >= 9  # hashtag-stuffed posts are ads, whatever the topic
+
 
 X_BULL = ["bull", "buy", "long", "ath", "all-time high", "pump", "accumul",
           "moon", "breakout", "support held", "bottom is in", "oversold"]
@@ -176,6 +191,8 @@ def fetch_bluesky():
     out = []
     for p in posts:
         text = p.get("record", {}).get("text", "")
+        if social_spam(text):
+            continue
         handle = p.get("author", {}).get("handle", "?")
         rkey = p.get("uri", "").rsplit("/", 1)[-1]
         out.append({
