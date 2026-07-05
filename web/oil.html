@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OIL GENIUS · GEOPOLITICS CONSOLE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#06090d; --panel:#0b1016; --line:#1b2733; --line2:#2a3b4d;
+          --txt:#c9d7e3; --dim:#5e7387; --accent:#2ea8ff; --red:#ff4f56; --green:#27c87f;
+          --amber:#e3a008; --purple:#a78bfa; --pink:#e14eca;
+          --mono:"SF Mono", ui-monospace, Menlo, monospace; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+         font:13px/1.45 var(--mono); padding-bottom:24px; }
+  ::-webkit-scrollbar { width:8px; height:8px; } ::-webkit-scrollbar-thumb { background:var(--line2); }
+  a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+
+  .bar { display:flex; align-items:center; gap:14px; padding:10px 18px; flex-wrap:wrap;
+         border-bottom:1px solid var(--line); background:var(--panel);
+         position:sticky; top:0; z-index:5; }
+  .logo { font-weight:700; letter-spacing:.14em; font-size:14px; }
+  .logo span { color:var(--amber); text-shadow:0 0 12px var(--amber); }
+  .price { font-size:22px; font-weight:700; color:var(--amber); }
+  .kv { font-size:11px; color:var(--dim); } .kv b { color:var(--txt); }
+  .right { margin-left:auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .clock { font-size:14px; color:var(--amber); font-weight:700; }
+  .nav button { background:transparent; color:var(--dim); border:1px solid var(--line2);
+                padding:4px 10px; font:11px var(--mono); cursor:pointer; }
+  .nav button:hover { color:var(--amber); border-color:var(--amber); }
+  .pulse-badge { padding:3px 12px; font-size:11px; font-weight:700; letter-spacing:.08em;
+                 color:#000; text-transform:uppercase; }
+
+  .wrap { max-width:1560px; margin:12px auto; padding:0 14px;
+          display:flex; flex-direction:column; gap:12px; }
+  .row-a { display:grid; grid-template-columns:330px minmax(0,1fr) 340px; gap:12px; }
+  @media (max-width:1150px){ .row-a { grid-template-columns:1fr; } }
+  .col { display:flex; flex-direction:column; gap:12px; min-width:0; }
+
+  .panel { background:var(--panel); border:1px solid var(--line); min-width:0; }
+  .panel-h { display:flex; align-items:baseline; gap:8px; padding:8px 12px;
+             border-bottom:1px solid var(--line); }
+  .panel-h h2 { margin:0; font-size:11px; font-weight:700; letter-spacing:.12em;
+                text-transform:uppercase; }
+  .panel-h .tag { font-size:10px; color:var(--dim); margin-left:auto; }
+  .panel-b { padding:10px 12px; position:relative; }
+
+  .pulse-num { font-size:46px; font-weight:700; line-height:1; }
+  .pulse-sub { font-size:11px; color:var(--dim); margin:4px 0 10px; }
+  .cat-row { font-size:10px; color:var(--dim); display:flex;
+             justify-content:space-between; margin-top:7px; }
+  .cat-bar { height:8px; background:var(--line); }
+  .cat-bar i { display:block; height:100%; background:var(--amber);
+               box-shadow:0 0 8px rgba(227,160,8,.5); }
+
+  .drivers { font-size:11px; line-height:1.75; }
+  .drivers h3 { margin:8px 0 2px; font-size:10px; letter-spacing:.1em;
+                color:var(--amber); text-transform:uppercase; }
+  .drivers .live { color:var(--txt); float:right; font-weight:700; }
+  .drivers div { clear:both; }
+
+  canvas.chart { display:block; width:100%; }
+  .pos { color:var(--green); } .neg { color:var(--red); } .dimc { color:var(--dim); }
+
+  .wire { max-height:640px; overflow-y:auto; }
+  .ev { padding:7px 0; border-bottom:1px solid var(--line); font-size:11px; }
+  .ev .meta { font-size:9px; color:var(--dim); margin-bottom:2px; display:flex; gap:8px; }
+  .chip { font-size:8px; font-weight:700; padding:1px 5px; letter-spacing:.06em;
+          text-transform:uppercase; color:#000; }
+  .c-opec { background:#e3a008; } .c-sanctions { background:#ff4f56; }
+  .c-chokepoint { background:#e14eca; } .c-conflict { background:#ff7849; }
+  .c-spr { background:#2ea8ff; } .c-demand { background:#27c87f; }
+  .ev a { color:var(--txt); }
+
+  #tip { position:fixed; pointer-events:none; background:#0d1420; border:1px solid var(--line2);
+         padding:6px 9px; font:11px var(--mono); color:var(--txt); z-index:50; display:none;
+         max-width:340px; box-shadow:0 4px 18px rgba(0,0,0,.5); }
+  .foot { text-align:center; font-size:10px; color:var(--dim); padding:8px; }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="logo">🛢 OIL <span>GENIUS</span> · GEOPOLITICS</div>
+  <span class="pulse-badge" id="pulseBadge" style="background:var(--dim)">PULSE —</span>
+  <div class="price" id="brentPx">—</div>
+  <div class="kv">BRENT <b id="brentChg">—</b></div>
+  <div class="kv">WTI <b id="wtiPx">—</b></div>
+  <div class="kv">SPREAD <b id="spread">—</b></div>
+  <div class="right">
+    <div class="clock" id="clock">--:--:--</div>
+    <div class="nav">
+      <button onclick="location.href='/console'">⚡ CONSOLE</button>
+      <button onclick="location.href='/dashboard'">▦ DASHBOARD</button>
+      <button onclick="location.href='/journal'">✎ JOURNAL</button>
+      <button onclick="location.href='/reports'">⛁ REPORTS</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="row-a">
+    <div class="col">
+      <div class="panel">
+        <div class="panel-h"><h2>⚠ Geopolitical Risk Pulse</h2><span class="tag" id="oUpd"></span></div>
+        <div class="panel-b">
+          <div class="pulse-num" id="pulseNum">—</div>
+          <div class="pulse-sub">weighted 48h news intensity across supply-threat
+            categories · 0 quiet → 100 crisis</div>
+          <div id="catRows"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h2>◈ What Moves Oil Futures</h2><span class="tag">live ties →</span></div>
+        <div class="panel-b drivers">
+          <h3>Supply</h3>
+          <div>OPEC+ quotas &amp; compliance</div>
+          <div>US shale output · rig counts</div>
+          <div>Outages: war, storms, strikes</div>
+          <h3>Risk Premium <span style="color:var(--dim)">(politics)</span></h3>
+          <div>Wars near producing regions</div>
+          <div>Sanctions on producers</div>
+          <div>Chokepoints — Hormuz ≈ 20% of global flow</div>
+          <h3>Demand</h3>
+          <div>Global growth · China imports</div>
+          <div>Seasonality: driving/heating</div>
+          <h3>Financial</h3>
+          <div>USD (oil is priced in $) <span class="live" id="dxyTie">—</span></div>
+          <div>Brent 5-day momentum <span class="live" id="brentRoc">—</span></div>
+          <div>Brent−WTI spread <span class="live" id="spreadTie">—</span></div>
+          <div>SPR releases · positioning · curve shape</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h2>▁ Brent &amp; WTI · Daily · Event Overlay</h2>
+        <span class="tag">markers = geopolitical event days · hover for headlines</span></div>
+      <div class="panel-b" style="padding:6px">
+        <canvas id="chart" class="chart" height="520"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h"><h2>⚡ Event Wire</h2><span class="tag" id="wireTag">GDELT · live</span></div>
+      <div class="panel-b wire" id="wire">loading…</div>
+    </div>
+  </div>
+
+  <div class="foot">prices: Yahoo Finance (BZ=F, CL=F front-month futures) · events: GDELT DOC 2.0
+    (free global news index) · refreshed every 30 min · analysis only, not financial advice</div>
+</div>
+
+<div id="tip"></div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C = { green:css('--green'), red:css('--red'), accent:css('--accent'),
+            amber:css('--amber'), pink:css('--pink'), dim:css('--dim'),
+            line:css('--line'), txt:css('--txt') };
+const CATCOL = { opec:C.amber, sanctions:C.red, chokepoint:C.pink,
+                 conflict:'#ff7849', spr:C.accent, demand:C.green };
+setInterval(()=>{ $('clock').textContent = new Date().toISOString().slice(11,19)+' UTC'; }, 1000);
+
+function sizeCanvas(cv){
+  const dpr = window.devicePixelRatio||1, h = +cv.getAttribute('height');
+  cv.style.height = h + 'px';
+  const w = Math.max(50, Math.round(cv.getBoundingClientRect().width));
+  if (cv.width !== Math.round(w*dpr) || cv.height !== Math.round(h*dpr)){
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+  }
+  const g = cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  return [g, w, h];
+}
+const tip = $('tip');
+function showTip(x,y,html){ tip.style.display='block'; tip.innerHTML=html;
+  tip.style.left=Math.min(x+14, innerWidth-360)+'px'; tip.style.top=(y+14)+'px'; }
+function hideTip(){ tip.style.display='none'; }
+async function j(u){ const r = await fetch(u); if(!r.ok) throw new Error(r.status); return r.json(); }
+
+let state=null, hist=null, events=[], byDay={}, hover=null;
+
+async function load(){
+  try { state = await j('/data/oil/state.json'); } catch(e){}
+  try { hist = await j('/data/oil/history.json'); } catch(e){}
+  try { events = await j('/data/oil/events.jsonl'); } catch(e){ events=[]; }
+  byDay = {};
+  events.forEach(e => (byDay[e.date] = byDay[e.date] || []).push(e));
+  render();
+}
+
+function render(){
+  if (state){
+    const b=state.brent, w=state.wti;
+    $('brentPx').textContent = b.price ? '$'+b.price.toFixed(2) : '—';
+    $('brentChg').innerHTML = b.change_pct==null ? '—' :
+      `<span class="${b.change_pct>=0?'pos':'neg'}">${b.change_pct>0?'+':''}${b.change_pct}%</span>`;
+    $('wtiPx').innerHTML = w.price ? `$${w.price.toFixed(2)} <span class="${w.change_pct>=0?'pos':'neg'}">` +
+      `${w.change_pct>0?'+':''}${w.change_pct??''}%</span>` : '—';
+    $('spread').textContent = state.brent_wti_spread!=null ? '$'+state.brent_wti_spread : '—';
+    $('spreadTie').textContent = state.brent_wti_spread!=null ? '$'+state.brent_wti_spread : '—';
+    $('oUpd').textContent = 'upd '+(state.updated_at||'').slice(11,19)+'Z';
+
+    const p = state.risk_pulse ?? 0;
+    const col = p>=65?C.red:p>=35?C.amber:C.green;
+    $('pulseNum').textContent = p;
+    $('pulseNum').style.color = col;
+    $('pulseNum').style.textShadow = '0 0 18px '+col;
+    const badge = $('pulseBadge');
+    badge.textContent = 'PULSE '+p+(p>=65?' · HOT':p>=35?' · ELEVATED':' · CALM');
+    badge.style.background = col;
+
+    const counts = state.category_counts_48h||{};
+    const maxC = Math.max(...Object.values(counts), 1);
+    $('catRows').innerHTML = Object.entries(state.categories||{}).map(([c,label]) =>
+      `<div class="cat-row"><span><i class="chip c-${c}">${c}</i> ${label}</span>` +
+      `<b style="color:var(--txt)">${counts[c]??0}</b></div>` +
+      `<div class="cat-bar"><i style="width:${Math.round(100*(counts[c]||0)/maxC)}%;` +
+      `background:${CATCOL[c]||C.amber}"></i></div>`).join('');
+
+    $('wire').innerHTML = (state.latest_events||[]).map(e =>
+      `<div class="ev"><div class="meta"><span class="chip c-${e.cat}">${e.cat}</span>` +
+      `<span>${(e.ts||'').slice(0,16).replace('T',' ')}Z</span><span>${e.source||''}</span></div>` +
+      `<a href="${e.url}" target="_blank" rel="noopener">${e.title}</a></div>`).join('')
+      || '<span class="dimc">no events yet — collector runs every 30 min</span>';
+    $('wireTag').textContent = `GDELT · ${events.length} tracked`;
+  }
+  drawChart();
+}
+
+function drawChart(){
+  if (!hist || !hist.brent || hist.brent.length < 10) return;
+  const cv = $('chart'), [g,W,H] = sizeCanvas(cv);
+  g.clearRect(0,0,W,H);
+  const days = hist.brent.slice(-365);
+  const wtiMap = {}; (hist.wti||[]).forEach(d => wtiMap[d.d]=d.c);
+  const padL=8, padR=56, padT=12, evH=46, padB=22;
+  const plotH = H-padT-padB-evH;
+  const vals = days.map(d=>d.c).concat(days.map(d=>wtiMap[d.d]).filter(Boolean));
+  let lo=Math.min(...vals), hi=Math.max(...vals);
+  const span=(hi-lo)||1; lo-=span*.05; hi+=span*.05;
+  const x=i=>padL+i*(W-padL-padR)/(days.length-1);
+  const y=v=>padT+(hi-v)/(hi-lo)*plotH;
+
+  g.font='10px '+css('--mono'); g.textBaseline='middle'; g.textAlign='left';
+  for(let i=0;i<=4;i++){
+    const v=lo+(hi-lo)*i/4, yy=y(v);
+    g.strokeStyle=C.line; g.beginPath(); g.moveTo(padL,yy); g.lineTo(W-padR,yy); g.stroke();
+    g.fillStyle=C.dim; g.fillText('$'+v.toFixed(0), W-padR+6, yy);
+  }
+  g.textAlign='center';
+  for(let i=0;i<days.length;i+=Math.ceil(days.length/8))
+    g.fillText(days[i].d.slice(2,7), x(i), H-8);
+
+  // event density lane
+  const evBase = padT+plotH+evH;
+  const evMax = Math.max(...days.map(d=>(byDay[d.d]||[]).length), 1);
+  days.forEach((d,i)=>{
+    const evs = byDay[d.d]||[];
+    if (!evs.length) return;
+    const hgt = Math.max(3, evs.length/evMax*(evH-8));
+    const top = {};
+    evs.forEach(e=>top[e.cat]=(top[e.cat]||0)+1);
+    const cat = Object.entries(top).sort((a,b)=>b[1]-a[1])[0][0];
+    g.fillStyle = CATCOL[cat]||C.red;
+    g.shadowColor = g.fillStyle; g.shadowBlur = 4;
+    g.fillRect(x(i)-1.5, evBase-hgt, 3, hgt);
+    g.shadowBlur = 0;
+  });
+  g.fillStyle=C.dim; g.textAlign='left';
+  g.fillText('event days ▮ (color = dominant category)', padL+2, padT+plotH+10);
+
+  const line=(get,col)=>{
+    g.beginPath();
+    let started=false;
+    days.forEach((d,i)=>{ const v=get(d); if(v==null) return;
+      started ? g.lineTo(x(i),y(v)) : g.moveTo(x(i),y(v)); started=true; });
+    g.strokeStyle=col; g.lineWidth=2; g.shadowColor=col; g.shadowBlur=7;
+    g.stroke(); g.shadowBlur=0;
+  };
+  line(d=>wtiMap[d.d], C.accent);
+  line(d=>d.c, C.amber);
+  g.font='bold 10px '+css('--mono');
+  g.fillStyle=C.amber; g.fillText('BRENT', padL+4, padT+8);
+  g.fillStyle=C.accent; g.fillText('WTI', padL+52, padT+8);
+  // signature
+  g.font='700 14px '+css('--mono'); g.textAlign='center';
+  g.fillStyle='rgba(227,160,8,.14)';
+  g.fillText('⚡ GENIUS_001', (W-padR)/2, padT+plotH/2);
+  g.textAlign='left';
+
+  if (hover){
+    const i=Math.min(days.length-1, Math.max(0, Math.round((hover.x-padL)/((W-padL-padR)/(days.length-1)))));
+    const d=days[i], evs=byDay[d.d]||[];
+    g.strokeStyle='rgba(94,115,135,.6)'; g.setLineDash([3,3]);
+    g.beginPath(); g.moveTo(x(i),padT); g.lineTo(x(i),evBase); g.stroke(); g.setLineDash([]);
+    const wv=wtiMap[d.d];
+    showTip(hover.px, hover.py,
+      `<span class="dimc">${d.d}</span><br>`+
+      `<b style="color:${C.amber}">Brent $${d.c}</b>`+(wv?` · <b style="color:${C.accent}">WTI $${wv}</b>`+
+      ` · spread $${(d.c-wv).toFixed(2)}`:'')+
+      (evs.length?`<br><span class="dimc">${evs.length} event(s):</span><br>`+
+        evs.slice(0,4).map(e=>`<span class="chip c-${e.cat}">${e.cat}</span> ${e.title.slice(0,60)}`).join('<br>')
+        +(evs.length>4?`<br><span class="dimc">+${evs.length-4} more…</span>`:'') : ''));
+  }
+}
+$('chart').addEventListener('mousemove', e=>{
+  const r=e.target.getBoundingClientRect();
+  hover={x:e.clientX-r.left, px:e.clientX, py:e.clientY}; drawChart();
+});
+$('chart').addEventListener('mouseleave', ()=>{ hover=null; hideTip(); drawChart(); });
+
+async function ties(){
+  try {
+    const s = await j('/data/state.json');
+    const dxy = s.roc5?.dxy, br = s.roc5?.brent;
+    $('dxyTie').innerHTML = dxy==null?'—':`DXY 5d <span class="${dxy<=0?'pos':'neg'}">${dxy>0?'+':''}${dxy}%</span>`;
+    $('brentRoc').innerHTML = br==null?'—':`<span class="${br>=0?'pos':'neg'}">${br>0?'+':''}${br}%</span>`;
+  } catch(e){}
+}
+
+load(); ties();
+setInterval(load, 120000); setInterval(ties, 300000);
+window.addEventListener('resize', drawChart);
+</script>
+</body>
+</html>

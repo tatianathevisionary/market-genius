@@ -70,6 +70,7 @@ STATUS_FILES = {
     "reddit_tracker": ("reddit/snapshots.jsonl", 40 * 60),
     "tv_alerts": ("alerts.jsonl", None),  # event-driven; age shown, never "down"
     "paper_trader": ("paper/state.json", 15 * 60),
+    "oil_collector": ("oil/state.json", 75 * 60),
 }
 
 
@@ -383,6 +384,12 @@ class Handler(BaseHTTPRequestHandler):
                 self._respond_raw(200, page.read_bytes(), "text/html; charset=utf-8")
             else:
                 self._respond(404, {"error": "dashboard.html missing"})
+        elif self.path == "/oil":
+            page = BASE_DIR / "web" / "oil.html"
+            if page.exists():
+                self._respond_raw(200, page.read_bytes(), "text/html; charset=utf-8")
+            else:
+                self._respond(404, {"error": "oil.html missing"})
         elif self.path == "/console":
             page = BASE_DIR / "web" / "console.html"
             if page.exists():
