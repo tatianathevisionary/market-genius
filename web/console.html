@@ -180,7 +180,7 @@
     <div class="panel">
       <div class="panel-h"><h2>▚ BTC · USDT · 1M CANDLES</h2>
         <span class="tag" id="cSrc">binance</span></div>
-      <div class="panel-b" style="padding:6px">
+      <div class="panel-b" style="padding:6px; flex:1; display:flex">
         <canvas id="candles" class="chart" height="380"></canvas>
       </div>
     </div>
@@ -279,14 +279,19 @@ const C = { green:css('--green'), red:css('--red'), accent:css('--accent'),
 
 /* ---------- shared canvas helpers ---------- */
 function sizeCanvas(cv){
-  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio||1;
+  const dpr = window.devicePixelRatio||1;
   const h = +cv.getAttribute('height');
-  if (cv.width !== Math.round(r.width*dpr) || cv.height !== Math.round(h*dpr)){
-    cv.width = Math.round(r.width*dpr); cv.height = Math.round(h*dpr);
+  // Pin the DISPLAY size in CSS. Without this the browser derives display
+  // height from the buffer's aspect ratio, which runs away under zoom/layout
+  // races (giant stretched charts).
+  cv.style.height = h + 'px';
+  const w = Math.max(50, Math.round(cv.getBoundingClientRect().width));
+  if (cv.width !== Math.round(w*dpr) || cv.height !== Math.round(h*dpr)){
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
   }
   const g = cv.getContext('2d');
   g.setTransform(dpr,0,0,dpr,0,0);
-  return [g, r.width, h];
+  return [g, w, h];
 }
 function watermark(g, W, H){        // ⚡ GENIUS_001 chart signature
   g.save();
@@ -301,6 +306,18 @@ const tip = $('tip');
 function showTip(x,y,html){ tip.style.display='block'; tip.innerHTML=html;
   tip.style.left=Math.min(x+14, innerWidth-190)+'px'; tip.style.top=(y+14)+'px'; }
 function hideTip(){ tip.style.display='none'; }
+
+/* ---------- layout: candle chart fills the front row's height ---------- */
+function fitCandles(){
+  const cv = $('candles'), panel = cv.closest('.panel');
+  panel.style.display = 'flex'; panel.style.flexDirection = 'column';
+  const col = document.querySelector('.row-a .col');
+  if (!col) return;
+  const target = Math.min(880, col.getBoundingClientRect().height
+               - panel.querySelector('.panel-h').getBoundingClientRect().height - 14);
+  if (target > 300 && Math.abs(target - +cv.getAttribute('height')) > 4)
+    cv.setAttribute('height', Math.round(target));
+}
 
 /* ---------- clock ---------- */
 setInterval(()=>{ $('clock').textContent = new Date().toISOString().slice(11,19) + ' UTC'; }, 1000);
@@ -386,7 +403,7 @@ function drawCandles(){
   }
   // time axis (date+time)
   g.textAlign='center';
-  for (let i=0;i<data.length;i+=25){
+  for (let i=6;i<data.length;i+=25){
     const d = new Date(data[i].t*1000);
     g.fillStyle=C.dim;
     g.fillText(d.toISOString().slice(11,16), x(i), H-10);
@@ -443,7 +460,12 @@ $('candles').addEventListener('mouseleave', ()=>{ candleHover = null; hideTip();
 /* ---------- paper account ---------- */
 let trades = [];
 async function pollPaper(){
-  try { paper = await j('/data/paper/state.json'); } catch(e){ return; }
+  try { paper = await j('/data/paper/state.json'); }
+  catch(e){
+    if (location.protocol === 'file:')
+      $('wUpd').textContent = 'open via http://localhost:8787/console — file:// cannot load data';
+    return;
+  }
   const p = paper;
   $('wBal').textContent = fmt$(p.balance);
   $('wBal').classList.toggle('neg', p.balance < p.start_balance);
@@ -734,7 +756,11 @@ function stepGraph(){
     g.fillStyle = col; g.shadowColor = col; g.shadowBlur = n.big?14:8;
     g.beginPath(); g.arc(n.x*W, n.y*H, Math.max(1.5,r), 0, 7); g.fill();
     g.shadowBlur = 0;
-    if (n.label){ g.fillStyle = 'rgba(201,215,227,.75)'; g.fillText(n.label, n.x*W+8, n.y*H+3); }
+    if (n.label){
+      g.fillStyle = 'rgba(201,215,227,.75)';
+      if (n.x > 0.8){ g.textAlign='right'; g.fillText(n.label, n.x*W-8, n.y*H+3); g.textAlign='left'; }
+      else g.fillText(n.label, n.x*W+8, n.y*H+3);
+    }
   });
   requestAnimationFrame(stepGraph);
 }
@@ -763,12 +789,14 @@ function renderLog(){
 /* ---------- schedulers ---------- */
 pollPrice(); pollCandles(); pollPaper(); pollTrades(); pollSignals(); pollFlow(); stepGraph();
 setInterval(pollFlow, 300000);
+setTimeout(()=>{ fitCandles(); drawCandles(); }, 400);
+setTimeout(()=>{ fitCandles(); drawCandles(); }, 2500);
 setInterval(pollPrice, 5000);
 setInterval(pollCandles, 15000);
 setInterval(pollPaper, 5000);
 setInterval(pollTrades, 20000);
 setInterval(pollSignals, 60000);
-window.addEventListener('resize', ()=>{ drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); drawFlow(); });
+window.addEventListener('resize', ()=>{ fitCandles(); drawCandles(); drawEquity(); drawStreakBars(); drawRoc(); drawFlow(); });
 </script>
 </body>
 </html>
