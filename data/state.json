@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-13T04:42:33+00:00",
+  "updated_at": "2026-07-13T05:42:43+00:00",
   "price": 63802.02734375,
   "regime": "Basing",
   "A": {
@@ -23,13 +23,13 @@
   },
   "corr_btc_nasdaq_30d": 0.462,
   "corr_btc_gold_30d": 0.783,
-  "btc_gold_ratio": 15.7,
+  "btc_gold_ratio": 15.698,
   "roc5": {
     "btc": -0.3,
-    "brent": 9.9,
+    "brent": 10.46,
     "us10y": 1.87,
-    "nasdaq": -0.98,
-    "dxy": 0.24,
+    "nasdaq": -1.26,
+    "dxy": 0.26,
     "gold": -2.19
   },
   "volume_vs_30d_avg": 0.51,
