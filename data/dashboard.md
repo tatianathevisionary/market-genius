@@ -1,6 +1,6 @@
 # BTC Genius Dashboard
 
-_Updated 2026-07-13T01:09:09+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-07-13T03:42:13+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Basing` | A: 1/4 | B: 1/3
 
@@ -12,14 +12,14 @@ _Updated 2026-07-13T01:09:09+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | +9.6% | shock originator |
+| Brent | +9.7% | shock originator |
 | US 10Y | +1.9% | transmission |
 | DXY | +0.3% | denominator |
-| Nasdaq fut | -0.4% | risk appetite |
-| Gold | -1.8% | hedge competitor |
+| Nasdaq fut | -0.8% | risk appetite |
+| Gold | -2.1% | hedge competitor |
 | **BTC** | **-0.3%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.462** | BTC↔Gold **0.783** | BTC/Gold ratio 15.629
+Correlations (30d): BTC↔Nasdaq **0.462** | BTC↔Gold **0.783** | BTC/Gold ratio 15.686
 
 ## A-score — macro pressure release
 
@@ -54,7 +54,7 @@ Correlations (30d): BTC↔Nasdaq **0.462** | BTC↔Gold **0.783** | BTC/Gold rat
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-07-13T00:34:02+00:00_
+- _as of 2026-07-13T03:33:30+00:00_
 
 ## Recent TradingView alerts
 
