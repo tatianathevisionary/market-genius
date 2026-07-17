@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-07-17T22:50:42+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-07-17T23:50:53+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Basing` | A: 2/4 | B: 0/3
 
-**BTC $63,934** | 5d +0.3% | vol 1.0x avg | +0.4% vs 50d MA ($63,709)
+**BTC $63,907** | 5d +0.2% | vol 0.99x avg | +0.3% vs 50d MA ($63,709)
 
 > Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
@@ -19,9 +19,9 @@ _Updated 2026-07-17T22:50:42+00:00 (hourly via launchd) — framework: [SIGNALS.
 | DXY | -0.2% | denominator |
 | Nasdaq fut | -4.2% | risk appetite |
 | Gold | -2.0% | hedge competitor |
-| **BTC** | **+0.3%** | subject |
+| **BTC** | **+0.2%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.158** | BTC↔Gold **0.4** | BTC/Gold ratio 15.892
+Correlations (30d): BTC↔Nasdaq **0.159** | BTC↔Gold **0.401** | BTC/Gold ratio 15.885
 
 ## A-score — macro pressure release
 
@@ -45,7 +45,7 @@ Correlations (30d): BTC↔Nasdaq **0.158** | BTC↔Gold **0.4** | BTC/Gold ratio
 | resistance | $71,986 | R1 x1 | 1 |
 | resistance | $67,248 | R1 x1 | 1 |
 | resistance | $64,972 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$63,934** | | |
+| **price** | **$63,907** | | |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 | support | $57,912 | R1 x2 | 2 |
 
@@ -56,7 +56,7 @@ Correlations (30d): BTC↔Nasdaq **0.158** | BTC↔Gold **0.4** | BTC/Gold ratio
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-07-17T22:36:07+00:00_
+- _as of 2026-07-17T23:37:33+00:00_
 
 ## Recent TradingView alerts
 
