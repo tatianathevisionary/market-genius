@@ -1,10 +1,12 @@
 # BTC Genius Dashboard
 
-_Updated 2026-07-17T08:45:51+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-07-17T09:52:58+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Trending` | A: 1/4 | B: 0/3
+## `Basing` | A: 1/4 | B: 0/3
 
-**BTC $62,771** | 5d -1.6% | vol 1.02x avg | -1.4% vs 50d MA ($63,686)
+**BTC $62,928** | 5d -1.3% | vol 0.89x avg | -1.2% vs 50d MA ($63,689)
+
+> Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -12,14 +14,14 @@ _Updated 2026-07-17T08:45:51+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | +11.4% | shock originator |
+| Brent | +12.8% | shock originator |
 | US 10Y | +0.7% | transmission |
 | DXY | -0.2% | denominator |
-| Nasdaq fut | -4.8% | risk appetite |
-| Gold | -2.6% | hedge competitor |
-| **BTC** | **-1.6%** | subject |
+| Nasdaq fut | -4.5% | risk appetite |
+| Gold | -2.5% | hedge competitor |
+| **BTC** | **-1.3%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.193** | BTC↔Gold **0.42** | BTC/Gold ratio 15.708
+Correlations (30d): BTC↔Nasdaq **0.19** | BTC↔Gold **0.417** | BTC/Gold ratio 15.723
 
 ## A-score — macro pressure release
 
@@ -43,7 +45,7 @@ Correlations (30d): BTC↔Nasdaq **0.193** | BTC↔Gold **0.42** | BTC/Gold rati
 | resistance | $71,986 | R1 x1 | 1 |
 | resistance | $67,248 | R1 x1 | 1 |
 | resistance | $64,972 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$62,771** | | |
+| **price** | **$62,928** | | |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 | support | $57,912 | R1 x2 | 2 |
 
@@ -54,7 +56,7 @@ Correlations (30d): BTC↔Nasdaq **0.193** | BTC↔Gold **0.42** | BTC/Gold rati
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-07-17T08:42:54+00:00_
+- _as of 2026-07-17T09:51:00+00:00_
 
 ## Recent TradingView alerts
 
