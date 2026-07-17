@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-07-16T07:27:48+00:00",
-  "price": 64468.0,
+  "updated_at": "2026-07-17T02:07:57+00:00",
+  "price": 63533.98828125,
   "regime": "Basing",
   "A": {
     "A1_oil_rolls_over": false,
-    "A2_yields_peak": true,
+    "A2_yields_peak": false,
     "A4_dxy_tops": true,
-    "A5_equities_stable": true
+    "A5_equities_stable": false
   },
-  "a_score": 3,
+  "a_score": 1,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -21,37 +21,37 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.259,
-  "corr_btc_gold_30d": 0.442,
-  "btc_gold_ratio": 15.997,
+  "corr_btc_nasdaq_30d": 0.237,
+  "corr_btc_gold_30d": 0.453,
+  "btc_gold_ratio": 15.941,
   "roc5": {
-    "btc": 1.04,
-    "brent": 10.68,
-    "us10y": -0.53,
-    "nasdaq": -1.03,
-    "dxy": -0.45,
-    "gold": -2.44
+    "btc": -0.42,
+    "brent": 11.6,
+    "us10y": 0.66,
+    "nasdaq": -3.2,
+    "dxy": -0.19,
+    "gold": -3.51
   },
-  "volume_vs_30d_avg": 0.94,
-  "ma50": 63915.0,
-  "ma200": 73396.0,
-  "dist_from_50d_pct": 0.9,
+  "volume_vs_30d_avg": 0.98,
+  "ma50": 63896.0,
+  "ma200": 73392.0,
+  "dist_from_50d_pct": -0.6,
   "verdict": {
     "direction": "HOLD",
-    "bias": "up",
+    "bias": "down",
     "tier": null,
-    "confidence_pct": 72,
-    "score": 5.5,
+    "confidence_pct": 58,
+    "score": -2.0,
     "components": {
       "valuation": 1,
-      "trend": 1,
-      "macro_release": 2,
+      "trend": -2,
+      "macro_release": 0,
       "exhaustion": 0,
       "froth": 0,
       "volume": 0
     },
-    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +5.5 \u2014 valuation +1, trend +1, macro_release +2",
+    "stance": "neutral \u2014 no edge either way; let the triggers decide",
+    "thesis": "[auto] composite -2.0 \u2014 valuation +1, trend -2",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
