@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-07-26T05:56:57+00:00",
-  "price": 64364.578125,
-  "regime": "Basing",
+  "updated_at": "2026-07-26T06:57:19+00:00",
+  "price": 64372.3203125,
+  "regime": "Macro-driven selloff",
   "A": {
     "A1_oil_rolls_over": false,
     "A2_yields_peak": false,
@@ -23,35 +23,35 @@
   },
   "corr_btc_nasdaq_30d": -0.249,
   "corr_btc_gold_30d": 0.404,
-  "btc_gold_ratio": 15.811,
+  "btc_gold_ratio": 15.813,
   "roc5": {
-    "btc": -1.33,
+    "btc": -3.21,
     "brent": 9.85,
     "us10y": 3.04,
     "nasdaq": -1.71,
     "dxy": 0.71,
     "gold": 1.45
   },
-  "volume_vs_30d_avg": 0.52,
-  "ma50": 63176.0,
-  "ma200": 72260.0,
-  "dist_from_50d_pct": 1.9,
+  "volume_vs_30d_avg": 0.54,
+  "ma50": 63245.0,
+  "ma200": 72125.0,
+  "dist_from_50d_pct": 1.8,
   "verdict": {
     "direction": "HOLD",
     "bias": "down",
     "tier": null,
-    "confidence_pct": 54,
-    "score": -1.0,
+    "confidence_pct": 58,
+    "score": -2.0,
     "components": {
       "valuation": 1,
       "trend": 1,
       "macro_release": -1,
       "exhaustion": 0,
       "froth": -2,
-      "volume": 0
+      "volume": -1
     },
-    "stance": "neutral \u2014 no edge either way; let the triggers decide",
-    "thesis": "[auto] composite -1.0 \u2014 valuation +1, trend +1, macro_release -1, froth -2",
+    "stance": "defensive \u2014 selloff still live; don't deploy new money yet",
+    "thesis": "[auto] composite -2.0 \u2014 valuation +1, trend +1, macro_release -1, froth -2, volume -1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
@@ -71,8 +71,8 @@
       "strength": 2
     },
     {
-      "level": 67248,
-      "strength": 1
+      "level": 67079,
+      "strength": 2
     },
     {
       "level": 74959,
