@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-08-02T00:04:42+00:00",
-  "price": 62836.01171875,
+  "updated_at": "2026-08-02T14:59:53+00:00",
+  "price": 62995.7890625,
   "regime": "Basing",
   "A": {
     "A1_oil_rolls_over": true,
@@ -19,39 +19,39 @@
   "b_max": 3,
   "X": {
     "X2_extended_above_50d": false,
-    "X6_hedge_test_failure": false
+    "X6_hedge_test_failure": true
   },
   "corr_btc_nasdaq_30d": -0.4,
-  "corr_btc_gold_30d": 0.206,
-  "btc_gold_ratio": 15.519,
+  "corr_btc_gold_30d": 0.201,
+  "btc_gold_ratio": 15.339,
   "roc5": {
-    "btc": -1.39,
+    "btc": -1.37,
     "brent": -6.88,
     "us10y": 1.41,
     "nasdaq": 0.43,
     "dxy": -1.65,
-    "gold": -0.45
+    "gold": 0.97
   },
-  "volume_vs_30d_avg": 0.55,
-  "ma50": 63371.0,
-  "ma200": 71293.0,
-  "dist_from_50d_pct": -0.8,
+  "volume_vs_30d_avg": 0.65,
+  "ma50": 63341.0,
+  "ma200": 71123.0,
+  "dist_from_50d_pct": -0.5,
   "verdict": {
     "direction": "HOLD",
-    "bias": "up",
+    "bias": "down",
     "tier": null,
     "confidence_pct": 54,
-    "score": 1.0,
+    "score": -1.0,
     "components": {
       "valuation": 1,
       "trend": -2,
       "macro_release": 2,
       "exhaustion": 0,
-      "froth": 0,
+      "froth": -2,
       "volume": 0
     },
-    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +1.0 \u2014 valuation +1, trend -2, macro_release +2",
+    "stance": "neutral \u2014 no edge either way; let the triggers decide",
+    "thesis": "[auto] composite -1.0 \u2014 valuation +1, trend -2, macro_release +2, froth -2",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
