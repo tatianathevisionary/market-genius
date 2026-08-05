@@ -1,12 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-08-05T17:04:30+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-08-05T18:04:40+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Trending` | A: 3/4 | B: 0/3
+## `Trending` | A: 4/4 | B: 0/3
 
-**BTC $64,603** | 5d +2.9% | vol 0.97x avg | +2.2% vs 50d MA ($63,242)
-
-> 1 froth/exit signal(s) active — see §4 before adding risk.
+**BTC $64,684** | 5d +3.0% | vol 0.96x avg | +2.3% vs 50d MA ($63,243)
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -14,19 +12,19 @@ _Updated 2026-08-05T17:04:30+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -12.9% | shock originator |
-| US 10Y | +0.2% | transmission |
-| DXY | -1.0% | denominator |
-| Nasdaq fut | +9.1% | risk appetite |
-| Gold | +6.7% | hedge competitor |
-| **BTC** | **+2.9%** | subject |
+| Brent | -13.0% | shock originator |
+| US 10Y | -0.1% | transmission |
+| DXY | -1.1% | denominator |
+| Nasdaq fut | +8.8% | risk appetite |
+| Gold | +6.8% | hedge competitor |
+| **BTC** | **+3.0%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.41** | BTC↔Gold **0.276** | BTC/Gold ratio 15.008
+Correlations (30d): BTC↔Nasdaq **-0.412** | BTC↔Gold **0.281** | BTC/Gold ratio 15.008
 
 ## A-score — macro pressure release
 
 - ✅ A1 oil rolls over
-- ⬜ A2 yields peak
+- ✅ A2 yields peak
 - ✅ A4 dxy tops
 - ✅ A5 equities stable
 - ➖ A3 rate-hike odds: not in free data (check CME FedWatch manually)
@@ -45,7 +43,7 @@ Correlations (30d): BTC↔Nasdaq **-0.41** | BTC↔Gold **0.276** | BTC/Gold rat
 | resistance | $79,488 | R1 x1, R3 $80,000 | 2 |
 | resistance | $74,959 | R1 x1, R3 $75,000 | 2 |
 | resistance | $67,079 | R1 x2 | 2 |
-| **price** | **$64,603** | | |
+| **price** | **$64,684** | | |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 | support | $57,912 | R1 x2 | 2 |
 
@@ -56,7 +54,7 @@ Correlations (30d): BTC↔Nasdaq **-0.41** | BTC↔Gold **0.276** | BTC/Gold rat
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-08-05T16:44:45+00:00_
+- _as of 2026-08-05T17:46:09+00:00_
 
 ## Recent TradingView alerts
 
