@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-08-08T06:27:11+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-08-08T07:45:20+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Trending` | A: 4/4 | B: 0/3
+## `Trending` | A: 4/4 | B: 1/3
 
-**BTC $64,944** | 5d +2.3% | vol 0.91x avg | +2.6% vs 50d MA ($63,279)
+**BTC $64,910** | 5d +2.3% | vol 0.9x avg | +2.5% vs 50d MA ($63,305)
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -19,7 +19,7 @@ _Updated 2026-08-08T06:27:11+00:00 (hourly via launchd) — framework: [SIGNALS.
 | Gold | +7.2% | hedge competitor |
 | **BTC** | **+2.3%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.407** | BTC↔Gold **0.258** | BTC/Gold ratio 14.962
+Correlations (30d): BTC↔Nasdaq **-0.361** | BTC↔Gold **0.266** | BTC/Gold ratio 14.954
 
 ## A-score — macro pressure release
 
@@ -32,7 +32,7 @@ Correlations (30d): BTC↔Nasdaq **-0.407** | BTC↔Gold **0.258** | BTC/Gold ra
 ## B-score — seller exhaustion
 
 - ⬜ B1 capitulation volume
-- ⬜ B5 correlation recouples
+- ✅ B5 correlation recouples
 - ⬜ B6 failed new low
 - ➖ B2 funding / B3 ETF flows / B4 on-chain: Tier-2 feeds, not yet wired
 
@@ -43,7 +43,8 @@ Correlations (30d): BTC↔Nasdaq **-0.407** | BTC↔Gold **0.258** | BTC/Gold ra
 | resistance | $79,488 | R1 x1, R3 $80,000 | 2 |
 | resistance | $74,959 | R1 x1, R3 $75,000 | 2 |
 | resistance | $67,079 | R1 x2 | 2 |
-| **price** | **$64,944** | | |
+| **price** | **$64,910** | | |
+| support | $62,227 | R1 x1 | 1 |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 | support | $57,912 | R1 x2 | 2 |
 
@@ -54,7 +55,7 @@ Correlations (30d): BTC↔Nasdaq **-0.407** | BTC↔Gold **0.258** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-08-08T06:21:43+00:00_
+- _as of 2026-08-08T07:24:03+00:00_
 
 ## Recent TradingView alerts
 
