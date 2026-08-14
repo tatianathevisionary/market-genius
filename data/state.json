@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-08-13T07:21:31+00:00",
-  "price": 63798.1796875,
+  "updated_at": "2026-08-14T05:56:02+00:00",
+  "price": 63314.640625,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": false,
-    "A2_yields_peak": false,
+    "A2_yields_peak": true,
     "A4_dxy_tops": false,
     "A5_equities_stable": true
   },
-  "a_score": 1,
+  "a_score": 2,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -19,39 +19,39 @@
   "b_max": 3,
   "X": {
     "X2_extended_above_50d": false,
-    "X6_hedge_test_failure": true
+    "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": -0.06,
-  "corr_btc_gold_30d": 0.003,
-  "btc_gold_ratio": 14.385,
+  "corr_btc_nasdaq_30d": -0.082,
+  "corr_btc_gold_30d": -0.025,
+  "btc_gold_ratio": 14.466,
   "roc5": {
-    "btc": -1.7,
-    "brent": 7.42,
-    "us10y": 1.41,
-    "nasdaq": 1.21,
-    "dxy": 0.05,
-    "gold": 4.55
+    "btc": -2.45,
+    "brent": 4.62,
+    "us10y": -0.62,
+    "nasdaq": 1.11,
+    "dxy": 0.25,
+    "gold": 0.83
   },
-  "volume_vs_30d_avg": 0.99,
-  "ma50": 63394.0,
-  "ma200": 69630.0,
-  "dist_from_50d_pct": 0.6,
+  "volume_vs_30d_avg": 0.83,
+  "ma50": 63384.0,
+  "ma200": 69628.0,
+  "dist_from_50d_pct": -0.1,
   "verdict": {
     "direction": "HOLD",
     "bias": "up",
     "tier": null,
-    "confidence_pct": 58,
-    "score": 2.0,
+    "confidence_pct": 54,
+    "score": 1.0,
     "components": {
       "valuation": 1,
-      "trend": 1,
-      "macro_release": 0,
+      "trend": -2,
+      "macro_release": 1,
       "exhaustion": 1,
-      "froth": -2,
+      "froth": 0,
       "volume": 0
     },
     "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +2.0 \u2014 valuation +1, trend +1, exhaustion +1, froth -2",
+    "thesis": "[auto] composite +1.0 \u2014 valuation +1, trend -2, macro_release +1, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
