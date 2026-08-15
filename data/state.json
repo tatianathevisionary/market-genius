@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-08-14T05:56:02+00:00",
-  "price": 63314.640625,
+  "updated_at": "2026-08-15T01:37:37+00:00",
+  "price": 62965.140625,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": false,
-    "A2_yields_peak": true,
+    "A2_yields_peak": false,
     "A4_dxy_tops": false,
     "A5_equities_stable": true
   },
-  "a_score": 2,
+  "a_score": 1,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -19,39 +19,39 @@
   "b_max": 3,
   "X": {
     "X2_extended_above_50d": false,
-    "X6_hedge_test_failure": false
+    "X6_hedge_test_failure": true
   },
-  "corr_btc_nasdaq_30d": -0.082,
-  "corr_btc_gold_30d": -0.025,
-  "btc_gold_ratio": 14.466,
+  "corr_btc_nasdaq_30d": -0.079,
+  "corr_btc_gold_30d": -0.017,
+  "btc_gold_ratio": 14.207,
   "roc5": {
-    "btc": -2.45,
-    "brent": 4.62,
-    "us10y": -0.62,
-    "nasdaq": 1.11,
-    "dxy": 0.25,
-    "gold": 0.83
+    "btc": -2.9,
+    "brent": 6.03,
+    "us10y": 0.77,
+    "nasdaq": 1.07,
+    "dxy": 0.04,
+    "gold": 2.1
   },
-  "volume_vs_30d_avg": 0.83,
-  "ma50": 63384.0,
-  "ma200": 69628.0,
-  "dist_from_50d_pct": -0.1,
+  "volume_vs_30d_avg": 0.91,
+  "ma50": 63451.0,
+  "ma200": 69502.0,
+  "dist_from_50d_pct": -0.8,
   "verdict": {
     "direction": "HOLD",
-    "bias": "up",
+    "bias": "down",
     "tier": null,
-    "confidence_pct": 54,
-    "score": 1.0,
+    "confidence_pct": 60,
+    "score": -2.5,
     "components": {
       "valuation": 1,
       "trend": -2,
-      "macro_release": 1,
+      "macro_release": 0,
       "exhaustion": 1,
-      "froth": 0,
+      "froth": -2,
       "volume": 0
     },
-    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +1.0 \u2014 valuation +1, trend -2, macro_release +1, exhaustion +1",
+    "stance": "neutral \u2014 no edge either way; let the triggers decide",
+    "thesis": "[auto] composite -2.5 \u2014 valuation +1, trend -2, exhaustion +1, froth -2",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
@@ -71,15 +71,15 @@
   ],
   "resistances": [
     {
+      "level": 65402,
+      "strength": 2
+    },
+    {
       "level": 67079,
       "strength": 2
     },
     {
       "level": 74959,
-      "strength": 2
-    },
-    {
-      "level": 79488,
       "strength": 2
     }
   ]
