@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-08-16T05:51:25+00:00",
-  "price": 62982.19921875,
+  "updated_at": "2026-08-16T06:51:35+00:00",
+  "price": 63001.890625,
   "regime": "Basing",
   "A": {
     "A1_oil_rolls_over": false,
@@ -23,9 +23,9 @@
   },
   "corr_btc_nasdaq_30d": -0.09,
   "corr_btc_gold_30d": -0.113,
-  "btc_gold_ratio": 14.194,
+  "btc_gold_ratio": 14.198,
   "roc5": {
-    "btc": -1.45,
+    "btc": -1.42,
     "brent": 5.95,
     "us10y": 0.77,
     "nasdaq": 1.03,
