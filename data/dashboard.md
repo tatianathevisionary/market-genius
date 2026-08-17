@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-08-17T04:00:03+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-08-17T05:02:54+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Basing` | A: 1/4 | B: 1/3
+## `Basing` | A: 2/4 | B: 1/3
 
-**BTC $63,368** | 5d -0.3% | vol 0.53x avg | -0.3% vs 50d MA ($63,579)
+**BTC $63,470** | 5d -0.1% | vol 0.56x avg | -0.2% vs 50d MA ($63,582)
 
 > Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
@@ -16,20 +16,20 @@ _Updated 2026-08-17T04:00:03+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | +1.3% | shock originator |
+| Brent | +1.0% | shock originator |
 | US 10Y | +0.8% | transmission |
-| DXY | +0.1% | denominator |
-| Nasdaq fut | +1.0% | risk appetite |
-| Gold | +0.9% | hedge competitor |
-| **BTC** | **-0.3%** | subject |
+| DXY | -0.3% | denominator |
+| Nasdaq fut | +1.7% | risk appetite |
+| Gold | +2.1% | hedge competitor |
+| **BTC** | **-0.1%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.09** | BTC↔Gold **-0.1** | BTC/Gold ratio 14.466
+Correlations (30d): BTC↔Nasdaq **-0.113** | BTC↔Gold **-0.133** | BTC/Gold ratio 14.255
 
 ## A-score — macro pressure release
 
 - ⬜ A1 oil rolls over
 - ⬜ A2 yields peak
-- ⬜ A4 dxy tops
+- ✅ A4 dxy tops
 - ✅ A5 equities stable
 - ➖ A3 rate-hike odds: not in free data (check CME FedWatch manually)
 
@@ -47,7 +47,7 @@ Correlations (30d): BTC↔Nasdaq **-0.09** | BTC↔Gold **-0.1** | BTC/Gold rati
 | resistance | $74,959 | R1 x1, R3 $75,000 | 2 |
 | resistance | $67,079 | R1 x2 | 2 |
 | resistance | $65,402 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$63,368** | | |
+| **price** | **$63,470** | | |
 | support | $62,227 | R1 x1 | 1 |
 | support | $59,109 | R1 x1, R3 $60,000 | 2 |
 | support | $57,912 | R1 x2 | 2 |
@@ -59,7 +59,7 @@ Correlations (30d): BTC↔Nasdaq **-0.09** | BTC↔Gold **-0.1** | BTC/Gold rati
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-08-17T03:42:42+00:00_
+- _as of 2026-08-17T04:46:49+00:00_
 
 ## Recent TradingView alerts
 
