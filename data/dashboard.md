@@ -1,12 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-08-19T06:36:39+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-08-19T16:41:14+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Basing` | A: 1/4 | B: 1/3
+## `Trending` | A: 2/4 | B: 1/3
 
-**BTC $64,220** | 5d +1.3% | vol 0.79x avg | +0.7% vs 50d MA ($63,750)
-
-> Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
+**BTC $68,578** | 5d +8.9% | vol 1.51x avg | +7.2% vs 50d MA ($63,959)
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -14,19 +12,19 @@ _Updated 2026-08-19T06:36:39+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | +2.9% | shock originator |
-| US 10Y | +0.5% | transmission |
-| DXY | -0.6% | denominator |
-| Nasdaq fut | -1.2% | risk appetite |
-| Gold | -0.2% | hedge competitor |
-| **BTC** | **+1.3%** | subject |
+| Brent | +3.6% | shock originator |
+| US 10Y | -0.5% | transmission |
+| DXY | -1.1% | denominator |
+| Nasdaq fut | -0.8% | risk appetite |
+| Gold | +3.2% | hedge competitor |
+| **BTC** | **+8.9%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **-0.062** | BTC↔Gold **-0.052** | BTC/Gold ratio 14.598
+Correlations (30d): BTC↔Nasdaq **0.03** | BTC↔Gold **0.239** | BTC/Gold ratio 15.073
 
 ## A-score — macro pressure release
 
 - ⬜ A1 oil rolls over
-- ⬜ A2 yields peak
+- ✅ A2 yields peak
 - ✅ A4 dxy tops
 - ⬜ A5 equities stable
 - ➖ A3 rate-hike odds: not in free data (check CME FedWatch manually)
@@ -42,13 +40,13 @@ Correlations (30d): BTC↔Nasdaq **-0.062** | BTC↔Gold **-0.052** | BTC/Gold r
 
 | Side | Level | Methods | Strength |
 |---|---|---|---|
+| resistance | $82,792 | R1 x1 | 1 |
+| resistance | $79,488 | R1 x1, R3 $80,000 | 2 |
 | resistance | $74,959 | R1 x1, R3 $75,000 | 2 |
-| resistance | $67,079 | R1 x2 | 2 |
-| resistance | $65,402 | R1 x1, R3 $65,000 | 2 |
-| **price** | **$64,220** | | |
-| support | $62,227 | R1 x1 | 1 |
-| support | $59,109 | R1 x1, R3 $60,000 | 2 |
-| support | $57,912 | R1 x2 | 2 |
+| **price** | **$68,578** | | |
+| support | $67,079 | R1 x2 | 2 |
+| support | $65,402 | R1 x1, R3 $65,000 | 2 |
+| support | $62,357 | R1 x2 | 2 |
 
 ## Reddit sentiment
 
@@ -57,7 +55,7 @@ Correlations (30d): BTC↔Nasdaq **-0.062** | BTC↔Gold **-0.052** | BTC/Gold r
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-08-19T06:27:52+00:00_
+- _as of 2026-08-19T16:33:45+00:00_
 
 ## Recent TradingView alerts
 
