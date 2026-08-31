@@ -1,10 +1,12 @@
 # BTC Genius Dashboard
 
-_Updated 2026-08-31T04:26:36+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-08-31T05:34:38+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Trending` | A: 2/4 | B: 1/3
+## `Basing` | A: 2/4 | B: 1/3
 
-**BTC $77,485** | 5d -1.9% | vol 0.79x avg | +15.7% vs 50d MA ($66,989)
+**BTC $78,039** | 5d -1.2% | vol 0.82x avg | +16.5% vs 50d MA ($67,000)
+
+> Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
 > BTC↔Nasdaq correlation broken (<0.2): moves are crypto-specific — weight ETF flows and sentiment over macro right now.
 
@@ -12,14 +14,14 @@ _Updated 2026-08-31T04:26:36+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -2.2% | shock originator |
+| Brent | -1.7% | shock originator |
 | US 10Y | -0.4% | transmission |
 | DXY | +0.6% | denominator |
-| Nasdaq fut | +0.8% | risk appetite |
-| Gold | -3.7% | hedge competitor |
-| **BTC** | **-1.9%** | subject |
+| Nasdaq fut | +1.2% | risk appetite |
+| Gold | -3.4% | hedge competitor |
+| **BTC** | **-1.2%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.134** | BTC↔Gold **0.764** | BTC/Gold ratio 17.334
+Correlations (30d): BTC↔Nasdaq **0.143** | BTC↔Gold **0.764** | BTC/Gold ratio 17.407
 
 ## A-score — macro pressure release
 
@@ -41,7 +43,7 @@ Correlations (30d): BTC↔Nasdaq **0.134** | BTC↔Gold **0.764** | BTC/Gold rat
 | Side | Level | Methods | Strength |
 |---|---|---|---|
 | resistance | $82,792 | R1 x1 | 1 |
-| **price** | **$77,485** | | |
+| **price** | **$78,039** | | |
 | support | $67,079 | R1 x2, R4 50d MA | 3 |
 | support | $65,402 | R1 x1, R3 $65,000 | 2 |
 | support | $62,357 | R1 x2 | 2 |
@@ -53,7 +55,7 @@ Correlations (30d): BTC↔Nasdaq **0.134** | BTC↔Gold **0.764** | BTC/Gold rat
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-08-31T04:25:08+00:00_
+- _as of 2026-08-31T05:13:33+00:00_
 
 ## Recent TradingView alerts
 
