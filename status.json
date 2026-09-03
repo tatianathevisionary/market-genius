@@ -1,1 +1,1 @@
-{"market_collector": {"state": "ok", "age_s": 34}, "signal_engine": {"state": "ok", "age_s": 6}, "reddit_tracker": {"state": "ok", "age_s": 494}, "tv_alerts": {"state": "ok", "age_s": 7897409}, "paper_trader": {"state": "ok", "age_s": 18}, "oil_collector": {"state": "ok", "age_s": 2166}}
+{"market_collector": {"state": "ok", "age_s": 21}, "signal_engine": {"state": "ok", "age_s": 913}, "reddit_tracker": {"state": "ok", "age_s": 172}, "tv_alerts": {"state": "ok", "age_s": 7898316}, "paper_trader": {"state": "ok", "age_s": 21}, "oil_collector": {"state": "ok", "age_s": 3073}}
