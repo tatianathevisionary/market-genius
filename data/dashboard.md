@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-09-12T05:19:45+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-09-12T06:19:55+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Macro-driven selloff` | A: 1/4 | B: 0/3
 
-**BTC $77,226** | 5d -3.9% | vol 1.02x avg | +9.3% vs 50d MA ($70,647)
+**BTC $77,225** | 5d -3.9% | vol 1.02x avg | +9.3% vs 50d MA ($70,647)
 
 > Cause still live, sellers not exhausted — no entry. Track A-score daily; oil and 10Y are the leads.
 
@@ -44,7 +44,7 @@ Correlations (30d): BTC↔Nasdaq **-0.164** | BTC↔Gold **0.671** | BTC/Gold ra
 |---|---|---|---|
 | resistance | $82,262 | R1 x1 | 1 |
 | resistance | $81,347 | R1 x1 | 1 |
-| **price** | **$77,226** | | |
+| **price** | **$77,225** | | |
 | support | $76,248 | R1 x1 | 1 |
 | support | $67,079 | R1 x2 | 2 |
 | support | $65,402 | R1 x1, R3 $65,000 | 2 |
@@ -56,7 +56,7 @@ Correlations (30d): BTC↔Nasdaq **-0.164** | BTC↔Gold **0.671** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-09-12T05:08:38+00:00_
+- _as of 2026-09-12T06:10:03+00:00_
 
 ## Recent TradingView alerts
 
