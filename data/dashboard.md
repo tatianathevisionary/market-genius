@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-09-13T17:23:22+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-09-13T21:14:07+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Basing` | A: 1/4 | B: 0/3
 
-**BTC $77,310** | 5d -1.4% | vol 0.44x avg | +8.6% vs 50d MA ($71,169)
+**BTC $77,311** | 5d -1.4% | vol 0.4x avg | +8.6% vs 50d MA ($71,169)
 
 > Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
@@ -44,7 +44,7 @@ Correlations (30d): BTC↔Nasdaq **-0.306** | BTC↔Gold **0.656** | BTC/Gold ra
 |---|---|---|---|
 | resistance | $82,262 | R1 x1 | 1 |
 | resistance | $81,347 | R1 x1 | 1 |
-| **price** | **$77,310** | | |
+| **price** | **$77,311** | | |
 | support | $76,248 | R1 x1 | 1 |
 | support | $67,079 | R1 x2 | 2 |
 | support | $65,402 | R1 x1, R3 $65,000 | 2 |
@@ -56,7 +56,7 @@ Correlations (30d): BTC↔Nasdaq **-0.306** | BTC↔Gold **0.656** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-09-13T15:55:34+00:00_
+- _as of 2026-09-13T20:51:38+00:00_
 
 ## Recent TradingView alerts
 

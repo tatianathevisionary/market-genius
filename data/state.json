@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-09-13T17:23:22+00:00",
-  "price": 77310.0078125,
+  "updated_at": "2026-09-13T21:14:07+00:00",
+  "price": 77311.171875,
   "regime": "Basing",
   "A": {
     "A1_oil_rolls_over": false,
@@ -32,7 +32,7 @@
     "dxy": 0.12,
     "gold": -1.84
   },
-  "volume_vs_30d_avg": 0.44,
+  "volume_vs_30d_avg": 0.4,
   "ma50": 71169.0,
   "ma200": 70138.0,
   "dist_from_50d_pct": 8.6,
