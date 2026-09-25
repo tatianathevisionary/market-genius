@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-25T06:14:34+00:00",
-  "price": 84021.9296875,
+  "updated_at": "2026-09-25T19:18:25+00:00",
+  "price": 83974.65625,
   "regime": "Trending",
   "A": {
-    "A1_oil_rolls_over": false,
+    "A1_oil_rolls_over": true,
     "A2_yields_peak": false,
     "A4_dxy_tops": false,
     "A5_equities_stable": true
   },
-  "a_score": 1,
+  "a_score": 2,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -21,37 +21,37 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.196,
-  "corr_btc_gold_30d": -0.043,
-  "btc_gold_ratio": 19.515,
+  "corr_btc_nasdaq_30d": 0.353,
+  "corr_btc_gold_30d": -0.131,
+  "btc_gold_ratio": 19.398,
   "roc5": {
-    "btc": 3.43,
-    "brent": 1.4,
-    "us10y": 3.12,
-    "nasdaq": 4.21,
-    "dxy": 1.0,
-    "gold": -2.7
+    "btc": 3.49,
+    "brent": -6.08,
+    "us10y": 3.72,
+    "nasdaq": 4.31,
+    "dxy": 0.74,
+    "gold": -2.17
   },
-  "volume_vs_30d_avg": 1.2,
-  "ma50": 74920.0,
-  "ma200": 70849.0,
-  "dist_from_50d_pct": 12.1,
+  "volume_vs_30d_avg": 1.16,
+  "ma50": 75322.0,
+  "ma200": 70929.0,
+  "dist_from_50d_pct": 11.5,
   "verdict": {
     "direction": "BUY",
     "bias": "up",
     "tier": "confirmed",
-    "confidence_pct": 68,
-    "score": 4.5,
+    "confidence_pct": 74,
+    "score": 6.0,
     "components": {
       "valuation": 0,
       "trend": 2,
-      "macro_release": 0,
+      "macro_release": 1,
       "exhaustion": 1,
       "froth": 0,
       "volume": 0
     },
     "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +4.5 \u2014 trend +2, exhaustion +1",
+    "thesis": "[auto] composite +6.0 \u2014 trend +2, macro_release +1, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
@@ -66,7 +66,7 @@
     },
     {
       "level": 76248,
-      "strength": 1
+      "strength": 2
     }
   ],
   "resistances": []
