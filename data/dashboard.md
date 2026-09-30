@@ -1,32 +1,30 @@
 # BTC Genius Dashboard
 
-_Updated 2026-09-29T20:36:29+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-09-30T06:46:45+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Basing` | A: 1/4 | B: 0/3
+## `Trending` | A: 1/4 | B: 0/3
 
-**BTC $83,581** | 5d -0.9% | vol 0.9x avg | +8.7% vs 50d MA ($76,871)
-
-> Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
+**BTC $82,995** | 5d -1.6% | vol 0.86x avg | +8.0% vs 50d MA ($76,859)
 
 ## Macro chain (5-day moves)
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -3.5% | shock originator |
+| Brent | -6.6% | shock originator |
 | US 10Y | +5.8% | transmission |
-| DXY | +0.8% | denominator |
-| Nasdaq fut | -1.2% | risk appetite |
-| Gold | -4.0% | hedge competitor |
-| **BTC** | **-0.9%** | subject |
+| DXY | +0.2% | denominator |
+| Nasdaq fut | -0.6% | risk appetite |
+| Gold | -2.5% | hedge competitor |
+| **BTC** | **-1.6%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.684** | BTC↔Gold **-0.234** | BTC/Gold ratio 19.869
+Correlations (30d): BTC↔Nasdaq **0.68** | BTC↔Gold **-0.299** | BTC/Gold ratio 19.702
 
 ## A-score — macro pressure release
 
-- ⬜ A1 oil rolls over
+- ✅ A1 oil rolls over
 - ⬜ A2 yields peak
 - ⬜ A4 dxy tops
-- ✅ A5 equities stable
+- ⬜ A5 equities stable
 - ➖ A3 rate-hike odds: not in free data (check CME FedWatch manually)
 
 ## B-score — seller exhaustion
@@ -41,7 +39,7 @@ Correlations (30d): BTC↔Nasdaq **0.684** | BTC↔Gold **-0.234** | BTC/Gold ra
 | Side | Level | Methods | Strength |
 |---|---|---|---|
 | resistance | $87,364 | R1 x1 | 1 |
-| **price** | **$83,581** | | |
+| **price** | **$82,995** | | |
 | support | $82,262 | R1 x1 | 1 |
 | support | $81,347 | R1 x1 | 1 |
 | support | $76,248 | R1 x1, R4 50d MA | 2 |
@@ -53,7 +51,7 @@ Correlations (30d): BTC↔Nasdaq **0.684** | BTC↔Gold **-0.234** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-09-29T11:47:39+00:00_
+- _as of 2026-09-30T06:30:07+00:00_
 
 ## Recent TradingView alerts
 
