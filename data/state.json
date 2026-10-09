@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-09T01:10:20+00:00",
-  "price": 81708.3203125,
+  "updated_at": "2026-10-09T07:58:21+00:00",
+  "price": 82537.8828125,
   "regime": "Crypto-specific selloff",
   "A": {
     "A1_oil_rolls_over": false,
     "A2_yields_peak": true,
-    "A4_dxy_tops": true,
+    "A4_dxy_tops": false,
     "A5_equities_stable": true
   },
-  "a_score": 3,
+  "a_score": 2,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -21,41 +21,45 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.928,
-  "corr_btc_gold_30d": -0.564,
-  "btc_gold_ratio": 19.595,
+  "corr_btc_nasdaq_30d": 0.918,
+  "corr_btc_gold_30d": -0.607,
+  "btc_gold_ratio": 19.569,
   "roc5": {
-    "btc": -3.6,
-    "brent": 1.38,
+    "btc": -4.56,
+    "brent": 0.99,
     "us10y": -0.11,
-    "nasdaq": 0.76,
-    "dxy": -0.02,
-    "gold": -0.77
+    "nasdaq": 0.51,
+    "dxy": 0.11,
+    "gold": 1.33
   },
-  "volume_vs_30d_avg": 1.49,
-  "ma50": 80529.0,
-  "ma200": 71798.0,
-  "dist_from_50d_pct": 1.5,
+  "volume_vs_30d_avg": 1.35,
+  "ma50": 80718.0,
+  "ma200": 71856.0,
+  "dist_from_50d_pct": 2.3,
   "verdict": {
     "direction": "HOLD",
     "bias": "up",
     "tier": null,
-    "confidence_pct": 74,
-    "score": 6.0,
+    "confidence_pct": 68,
+    "score": 4.5,
     "components": {
       "valuation": 0,
       "trend": 2,
-      "macro_release": 2,
+      "macro_release": 1,
       "exhaustion": 0,
       "froth": 0,
       "volume": 0
     },
     "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +6.0 \u2014 trend +2, macro_release +2",
+    "thesis": "[auto] composite +4.5 \u2014 trend +2, macro_release +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
   "supports": [
+    {
+      "level": 82416,
+      "strength": 2
+    },
     {
       "level": 81347,
       "strength": 2
@@ -63,17 +67,9 @@
     {
       "level": 76248,
       "strength": 1
-    },
-    {
-      "level": 74945,
-      "strength": 2
     }
   ],
   "resistances": [
-    {
-      "level": 82416,
-      "strength": 2
-    },
     {
       "level": 87255,
       "strength": 2
