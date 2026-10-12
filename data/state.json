@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-12T06:54:10+00:00",
-  "price": 83982.8984375,
-  "regime": "Trending",
+  "updated_at": "2026-10-12T08:09:55+00:00",
+  "price": 83732.890625,
+  "regime": "Basing",
   "A": {
     "A1_oil_rolls_over": false,
     "A2_yields_peak": true,
@@ -21,21 +21,21 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.92,
-  "corr_btc_gold_30d": -0.6,
-  "btc_gold_ratio": 19.953,
+  "corr_btc_nasdaq_30d": 0.919,
+  "corr_btc_gold_30d": -0.599,
+  "btc_gold_ratio": 19.913,
   "roc5": {
-    "btc": -1.84,
-    "brent": 4.38,
+    "btc": 0.55,
+    "brent": 3.76,
     "us10y": -0.63,
-    "nasdaq": -0.45,
-    "dxy": 0.02,
-    "gold": 1.26
+    "nasdaq": -0.41,
+    "dxy": 0.07,
+    "gold": 1.16
   },
-  "volume_vs_30d_avg": 0.54,
-  "ma50": 80948.0,
-  "ma200": 71982.0,
-  "dist_from_50d_pct": 3.7,
+  "volume_vs_30d_avg": 0.58,
+  "ma50": 81062.0,
+  "ma200": 72055.0,
+  "dist_from_50d_pct": 3.3,
   "verdict": {
     "direction": "HOLD",
     "bias": "up",
