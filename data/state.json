@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-12T00:15:13+00:00",
-  "price": 83657.6015625,
+  "updated_at": "2026-10-12T01:35:46+00:00",
+  "price": 83667.7578125,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": false,
     "A2_yields_peak": true,
-    "A4_dxy_tops": false,
+    "A4_dxy_tops": true,
     "A5_equities_stable": true
   },
-  "a_score": 2,
+  "a_score": 3,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -21,18 +21,18 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.917,
+  "corr_btc_nasdaq_30d": 0.919,
   "corr_btc_gold_30d": -0.598,
-  "btc_gold_ratio": 19.841,
+  "btc_gold_ratio": 19.762,
   "roc5": {
-    "btc": -2.22,
-    "brent": 3.21,
+    "btc": -2.21,
+    "brent": 2.68,
     "us10y": -0.63,
-    "nasdaq": -0.23,
-    "dxy": 0.01,
-    "gold": 1.43
+    "nasdaq": -0.49,
+    "dxy": -0.04,
+    "gold": 1.85
   },
-  "volume_vs_30d_avg": 0.43,
+  "volume_vs_30d_avg": 0.45,
   "ma50": 80942.0,
   "ma200": 71980.0,
   "dist_from_50d_pct": 3.4,
@@ -40,18 +40,18 @@
     "direction": "HOLD",
     "bias": "up",
     "tier": null,
-    "confidence_pct": 68,
-    "score": 4.5,
+    "confidence_pct": 74,
+    "score": 6.0,
     "components": {
       "valuation": 0,
       "trend": 2,
-      "macro_release": 1,
+      "macro_release": 2,
       "exhaustion": 0,
       "froth": 0,
       "volume": 0
     },
     "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
-    "thesis": "[auto] composite +4.5 \u2014 trend +2, macro_release +1",
+    "thesis": "[auto] composite +6.0 \u2014 trend +2, macro_release +2",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
