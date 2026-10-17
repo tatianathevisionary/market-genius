@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-10-17T03:35:18+00:00",
-  "price": 81456.0,
+  "updated_at": "2026-10-17T05:07:11+00:00",
+  "price": 81468.0390625,
   "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": false,
@@ -23,16 +23,16 @@
   },
   "corr_btc_nasdaq_30d": 0.899,
   "corr_btc_gold_30d": -0.516,
-  "btc_gold_ratio": 19.456,
+  "btc_gold_ratio": 19.485,
   "roc5": {
-    "btc": -2.66,
-    "brent": 4.75,
+    "btc": -2.64,
+    "brent": 4.91,
     "us10y": -2.78,
     "nasdaq": -5.52,
-    "dxy": -0.42,
-    "gold": -0.7
+    "dxy": -0.36,
+    "gold": -0.83
   },
-  "volume_vs_30d_avg": 0.82,
+  "volume_vs_30d_avg": 0.8,
   "ma50": 81251.0,
   "ma200": 72360.0,
   "dist_from_50d_pct": 0.3,
