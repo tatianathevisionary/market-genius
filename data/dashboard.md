@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-10-20T22:01:08+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-10-20T23:01:18+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Basing` | A: 2/4 | B: 0/3
 
-**BTC $82,870** | 5d +0.9% | vol 0.89x avg | +1.6% vs 50d MA ($81,568)
+**BTC $82,975** | 5d +1.0% | vol 0.9x avg | +1.7% vs 50d MA ($81,571)
 
 > Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
@@ -14,12 +14,12 @@ _Updated 2026-10-20T22:01:08+00:00 (hourly via launchd) — framework: [SIGNALS.
 |---|---|---|
 | Brent | +3.2% | shock originator |
 | US 10Y | -1.9% | transmission |
-| DXY | -0.5% | denominator |
-| Nasdaq fut | -2.9% | risk appetite |
-| Gold | -0.8% | hedge competitor |
-| **BTC** | **+0.9%** | subject |
+| DXY | -0.4% | denominator |
+| Nasdaq fut | -2.8% | risk appetite |
+| Gold | -0.9% | hedge competitor |
+| **BTC** | **+1.0%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.867** | BTC↔Gold **-0.497** | BTC/Gold ratio 20.005
+Correlations (30d): BTC↔Nasdaq **0.867** | BTC↔Gold **-0.498** | BTC/Gold ratio 20.04
 
 ## A-score — macro pressure release
 
@@ -41,7 +41,7 @@ Correlations (30d): BTC↔Nasdaq **0.867** | BTC↔Gold **-0.497** | BTC/Gold ra
 | Side | Level | Methods | Strength |
 |---|---|---|---|
 | resistance | $87,255 | R1 x2 | 2 |
-| **price** | **$82,870** | | |
+| **price** | **$82,975** | | |
 | support | $82,416 | R1 x2, R4 50d MA | 3 |
 | support | $81,347 | R1 x1, R4 50d MA | 2 |
 | support | $80,036 | R1 x2, R3 $80,000 | 3 |
@@ -53,7 +53,7 @@ Correlations (30d): BTC↔Nasdaq **0.867** | BTC↔Gold **-0.497** | BTC/Gold ra
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-10-20T21:48:54+00:00_
+- _as of 2026-10-20T22:50:21+00:00_
 
 ## Recent TradingView alerts
 
