@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-10-28T10:56:40+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-10-28T23:56:12+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
 ## `Basing` | A: 2/4 | B: 0/3
 
-**BTC $81,429** | 5d +0.4% | vol 0.83x avg | -0.6% vs 50d MA ($81,891)
+**BTC $81,244** | 5d +0.2% | vol 0.92x avg | -0.8% vs 50d MA ($81,888)
 
 > Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
@@ -12,14 +12,14 @@ _Updated 2026-10-28T10:56:40+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | +1.9% | shock originator |
-| US 10Y | -2.4% | transmission |
-| DXY | +0.6% | denominator |
-| Nasdaq fut | -0.1% | risk appetite |
-| Gold | -2.1% | hedge competitor |
-| **BTC** | **+0.4%** | subject |
+| Brent | +1.6% | shock originator |
+| US 10Y | -2.0% | transmission |
+| DXY | +0.3% | denominator |
+| Nasdaq fut | -1.1% | risk appetite |
+| Gold | -2.0% | hedge competitor |
+| **BTC** | **+0.2%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.707** | BTC↔Gold **0.211** | BTC/Gold ratio 20.052
+Correlations (30d): BTC↔Nasdaq **0.71** | BTC↔Gold **0.213** | BTC/Gold ratio 19.981
 
 ## A-score — macro pressure release
 
@@ -40,13 +40,13 @@ Correlations (30d): BTC↔Nasdaq **0.707** | BTC↔Gold **0.211** | BTC/Gold rat
 
 | Side | Level | Methods | Strength |
 |---|---|---|---|
-| resistance | $87,255 | R1 x2 | 2 |
 | resistance | $84,840 | R1 x1, R3 $85,000 | 2 |
 | resistance | $82,416 | R1 x2, R4 50d MA | 3 |
-| **price** | **$81,429** | | |
-| support | $81,347 | R1 x1, R4 50d MA | 2 |
+| resistance | $81,347 | R1 x1, R4 50d MA | 2 |
+| **price** | **$81,244** | | |
 | support | $80,036 | R1 x2, R3 $80,000 | 3 |
 | support | $76,248 | R1 x1 | 1 |
+| support | $74,945 | R1 x1, R3 $75,000 | 2 |
 
 ## Reddit sentiment
 
@@ -55,7 +55,7 @@ Correlations (30d): BTC↔Nasdaq **0.707** | BTC↔Gold **0.211** | BTC/Gold rat
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-10-28T06:54:33+00:00_
+- _as of 2026-10-28T22:42:00+00:00_
 
 ## Recent TradingView alerts
 
