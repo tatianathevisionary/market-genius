@@ -1,57 +1,57 @@
 {
-  "updated_at": "2026-10-30T00:41:07+00:00",
-  "price": 77118.8203125,
-  "regime": "Crypto-specific selloff",
+  "updated_at": "2026-10-30T07:36:30+00:00",
+  "price": 78176.1328125,
+  "regime": "Trending",
   "A": {
     "A1_oil_rolls_over": false,
     "A2_yields_peak": false,
-    "A4_dxy_tops": false,
+    "A4_dxy_tops": true,
     "A5_equities_stable": false
   },
-  "a_score": 0,
+  "a_score": 1,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
     "B5_correlation_recouples": false,
-    "B6_failed_new_low": false
+    "B6_failed_new_low": true
   },
-  "b_score": 0,
+  "b_score": 1,
   "b_max": 3,
   "X": {
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.747,
-  "corr_btc_gold_30d": 0.597,
-  "btc_gold_ratio": 19.166,
+  "corr_btc_nasdaq_30d": 0.745,
+  "corr_btc_gold_30d": 0.795,
+  "btc_gold_ratio": 19.572,
   "roc5": {
-    "btc": -4.55,
-    "brent": -1.54,
+    "btc": -2.31,
+    "brent": -3.64,
     "us10y": 0.73,
-    "nasdaq": -0.33,
-    "dxy": 0.22,
-    "gold": -0.9
+    "nasdaq": -0.53,
+    "dxy": -0.03,
+    "gold": -0.34
   },
-  "volume_vs_30d_avg": 1.65,
-  "ma50": 81865.0,
-  "ma200": 73099.0,
-  "dist_from_50d_pct": -5.8,
+  "volume_vs_30d_avg": 1.96,
+  "ma50": 81911.0,
+  "ma200": 73120.0,
+  "dist_from_50d_pct": -4.6,
   "verdict": {
     "direction": "HOLD",
-    "bias": "down",
+    "bias": "neutral",
     "tier": null,
-    "confidence_pct": 62,
-    "score": -3.0,
+    "confidence_pct": 50,
+    "score": 0.0,
     "components": {
       "valuation": 0,
       "trend": -1,
-      "macro_release": -1,
-      "exhaustion": 0,
+      "macro_release": 0,
+      "exhaustion": 1,
       "froth": 0,
       "volume": 0
     },
-    "stance": "defensive \u2014 selloff still live; don't deploy new money yet",
-    "thesis": "[auto] composite -3.0 \u2014 trend -1, macro_release -1",
+    "stance": "neutral \u2014 no edge either way; let the triggers decide",
+    "thesis": "[auto] composite +0.0 \u2014 trend -1, exhaustion +1",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
