@@ -1,27 +1,27 @@
 # BTC Genius Dashboard
 
-_Updated 2026-11-02T03:12:02+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-11-02T04:27:21+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Trending` | A: 2/4 | B: 0/3
+## `Trending` | A: 3/4 | B: 0/3
 
-**BTC $78,427** | 5d -2.9% | vol 0.54x avg | -4.3% vs 50d MA ($81,919)
+**BTC $78,481** | 5d -2.9% | vol 0.57x avg | -4.2% vs 50d MA ($81,921)
 
 ## Macro chain (5-day moves)
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -4.8% | shock originator |
+| Brent | -5.3% | shock originator |
 | US 10Y | -1.2% | transmission |
 | DXY | -0.0% | denominator |
-| Nasdaq fut | -2.3% | risk appetite |
-| Gold | -3.2% | hedge competitor |
+| Nasdaq fut | -2.2% | risk appetite |
+| Gold | -3.0% | hedge competitor |
 | **BTC** | **-2.9%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.804** | BTC↔Gold **0.821** | BTC/Gold ratio 20.072
+Correlations (30d): BTC↔Nasdaq **0.803** | BTC↔Gold **0.821** | BTC/Gold ratio 20.042
 
 ## A-score — macro pressure release
 
-- ⬜ A1 oil rolls over
+- ✅ A1 oil rolls over
 - ✅ A2 yields peak
 - ✅ A4 dxy tops
 - ⬜ A5 equities stable
@@ -41,7 +41,7 @@ Correlations (30d): BTC↔Nasdaq **0.804** | BTC↔Gold **0.821** | BTC/Gold rat
 | resistance | $82,416 | R1 x2, R4 50d MA | 3 |
 | resistance | $81,347 | R1 x1, R4 50d MA | 2 |
 | resistance | $80,036 | R1 x2, R3 $80,000 | 3 |
-| **price** | **$78,427** | | |
+| **price** | **$78,481** | | |
 | support | $76,248 | R1 x1 | 1 |
 | support | $74,945 | R1 x1, R3 $75,000 | 2 |
 | support | $66,910 | R1 x1 | 1 |
@@ -53,7 +53,7 @@ Correlations (30d): BTC↔Nasdaq **0.804** | BTC↔Gold **0.821** | BTC/Gold rat
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-11-02T03:04:26+00:00_
+- _as of 2026-11-02T04:21:02+00:00_
 
 ## Recent TradingView alerts
 
