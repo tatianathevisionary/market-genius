@@ -1,25 +1,25 @@
 # BTC Genius Dashboard
 
-_Updated 2026-11-03T06:41:23+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-11-03T07:41:34+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Crypto-specific selloff` | A: 3/4 | B: 0/3
+## `Basing` | A: 3/4 | B: 0/3
 
-**BTC $76,612** | 5d -5.7% | vol 0.96x avg | -6.5% vs 50d MA ($81,911)
+**BTC $76,686** | 5d -1.4% | vol 0.95x avg | -6.3% vs 50d MA ($81,883)
 
-> Macro pressure releasing but no seller-exhaustion evidence yet — watch for B1/B6 events at the support zones below.
+> Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
 ## Macro chain (5-day moves)
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -7.2% | shock originator |
+| Brent | -6.4% | shock originator |
 | US 10Y | -1.9% | transmission |
 | DXY | -0.6% | denominator |
 | Nasdaq fut | -5.7% | risk appetite |
-| Gold | -3.4% | hedge competitor |
-| **BTC** | **-5.7%** | subject |
+| Gold | -3.8% | hedge competitor |
+| **BTC** | **-1.4%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.826** | BTC↔Gold **0.827** | BTC/Gold ratio 19.472
+Correlations (30d): BTC↔Nasdaq **0.854** | BTC↔Gold **0.83** | BTC/Gold ratio 19.563
 
 ## A-score — macro pressure release
 
@@ -40,10 +40,10 @@ Correlations (30d): BTC↔Nasdaq **0.826** | BTC↔Gold **0.827** | BTC/Gold rat
 
 | Side | Level | Methods | Strength |
 |---|---|---|---|
-| resistance | $82,416 | R1 x2, R4 50d MA | 3 |
-| resistance | $81,347 | R1 x1, R4 50d MA | 2 |
+| resistance | $84,840 | R1 x1, R3 $85,000 | 2 |
+| resistance | $82,017 | R1 x4, R4 50d MA | 5 |
 | resistance | $80,036 | R1 x2, R3 $80,000 | 3 |
-| **price** | **$76,612** | | |
+| **price** | **$76,686** | | |
 | support | $76,248 | R1 x1 | 1 |
 | support | $74,945 | R1 x1, R3 $75,000 | 2 |
 | support | $66,910 | R1 x1 | 1 |
@@ -55,7 +55,7 @@ Correlations (30d): BTC↔Nasdaq **0.826** | BTC↔Gold **0.827** | BTC/Gold rat
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-11-03T06:32:21+00:00_
+- _as of 2026-11-03T07:33:45+00:00_
 
 ## Recent TradingView alerts
 
