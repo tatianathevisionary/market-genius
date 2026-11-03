@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-02T23:39:37+00:00",
-  "price": 76691.078125,
+  "updated_at": "2026-11-03T00:39:48+00:00",
+  "price": 77012.09375,
   "regime": "Crypto-specific selloff",
   "A": {
     "A1_oil_rolls_over": true,
@@ -21,21 +21,21 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.823,
-  "corr_btc_gold_30d": 0.822,
-  "btc_gold_ratio": 19.394,
+  "corr_btc_nasdaq_30d": 0.821,
+  "corr_btc_gold_30d": 0.819,
+  "btc_gold_ratio": 19.413,
   "roc5": {
-    "btc": -5.63,
-    "brent": -9.88,
+    "btc": -5.24,
+    "brent": -9.96,
     "us10y": -1.85,
-    "nasdaq": -4.1,
+    "nasdaq": -4.09,
     "dxy": -0.16,
-    "gold": -2.08
+    "gold": -1.77
   },
   "volume_vs_30d_avg": 0.9,
-  "ma50": 81913.0,
-  "ma200": 73157.0,
-  "dist_from_50d_pct": -6.4,
+  "ma50": 81919.0,
+  "ma200": 73158.0,
+  "dist_from_50d_pct": -6.0,
   "verdict": {
     "direction": "HOLD",
     "bias": "up",
