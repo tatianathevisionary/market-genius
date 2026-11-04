@@ -1,10 +1,10 @@
 # BTC Genius Dashboard
 
-_Updated 2026-11-04T02:14:02+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
+_Updated 2026-11-04T08:08:11+00:00 (hourly via launchd) — framework: [SIGNALS.md](../docs/SIGNALS.md)_
 
-## `Basing` | A: 3/4 | B: 0/3
+## `Basing` | A: 3/4 | B: 1/3
 
-**BTC $76,809** | 5d -1.2% | vol 0.9x avg | -6.2% vs 50d MA ($81,886)
+**BTC $78,306** | 5d +1.4% | vol 1.08x avg | -4.4% vs 50d MA ($81,950)
 
 > Basing regime: arm the §3 breakout entry — trigger is the range high on >1.5x volume with 5d ETF inflows positive.
 
@@ -12,14 +12,14 @@ _Updated 2026-11-04T02:14:02+00:00 (hourly via launchd) — framework: [SIGNALS.
 
 | Series | 5d % | Chain role |
 |---|---|---|
-| Brent | -10.5% | shock originator |
+| Brent | -10.0% | shock originator |
 | US 10Y | -0.8% | transmission |
-| DXY | -0.9% | denominator |
-| Nasdaq fut | -6.8% | risk appetite |
-| Gold | -2.4% | hedge competitor |
-| **BTC** | **-1.2%** | subject |
+| DXY | -0.7% | denominator |
+| Nasdaq fut | -5.7% | risk appetite |
+| Gold | -0.5% | hedge competitor |
+| **BTC** | **+1.4%** | subject |
 
-Correlations (30d): BTC↔Nasdaq **0.855** | BTC↔Gold **0.823** | BTC/Gold ratio 19.416
+Correlations (30d): BTC↔Nasdaq **0.859** | BTC↔Gold **0.832** | BTC/Gold ratio 19.427
 
 ## A-score — macro pressure release
 
@@ -33,7 +33,7 @@ Correlations (30d): BTC↔Nasdaq **0.855** | BTC↔Gold **0.823** | BTC/Gold rat
 
 - ⬜ B1 capitulation volume
 - ⬜ B5 correlation recouples
-- ⬜ B6 failed new low
+- ✅ B6 failed new low
 - ➖ B2 funding / B3 ETF flows / B4 on-chain: Tier-2 feeds, not yet wired
 
 ## Support / Resistance (confluence-rated)
@@ -43,7 +43,7 @@ Correlations (30d): BTC↔Nasdaq **0.855** | BTC↔Gold **0.823** | BTC/Gold rat
 | resistance | $84,840 | R1 x1, R3 $85,000 | 2 |
 | resistance | $82,017 | R1 x4, R4 50d MA | 5 |
 | resistance | $80,036 | R1 x2, R3 $80,000 | 3 |
-| **price** | **$76,809** | | |
+| **price** | **$78,306** | | |
 | support | $76,248 | R1 x1 | 1 |
 | support | $74,945 | R1 x1, R3 $75,000 | 2 |
 | support | $66,910 | R1 x1 | 1 |
@@ -55,7 +55,7 @@ Correlations (30d): BTC↔Nasdaq **0.855** | BTC↔Gold **0.823** | BTC/Gold rat
 - froth: 0
 - macro_chain: 0
 - rotation: 0
-- _as of 2026-11-04T01:41:11+00:00_
+- _as of 2026-11-04T08:06:35+00:00_
 
 ## Recent TradingView alerts
 
