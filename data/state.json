@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-06T07:15:22+00:00",
-  "price": 75285.84375,
+  "updated_at": "2026-11-06T08:15:32+00:00",
+  "price": 75594.5,
   "regime": "Crypto-specific selloff",
   "A": {
     "A1_oil_rolls_over": true,
     "A2_yields_peak": true,
-    "A4_dxy_tops": false,
+    "A4_dxy_tops": true,
     "A5_equities_stable": false
   },
-  "a_score": 2,
+  "a_score": 3,
   "a_max": 4,
   "B": {
     "B1_capitulation_volume": false,
@@ -21,37 +21,37 @@
     "X2_extended_above_50d": false,
     "X6_hedge_test_failure": false
   },
-  "corr_btc_nasdaq_30d": 0.887,
-  "corr_btc_gold_30d": 0.747,
-  "btc_gold_ratio": 18.565,
+  "corr_btc_nasdaq_30d": 0.885,
+  "corr_btc_gold_30d": 0.743,
+  "btc_gold_ratio": 18.594,
   "roc5": {
-    "btc": -3.79,
-    "brent": -15.36,
+    "btc": -3.39,
+    "brent": -15.96,
     "us10y": -3.05,
-    "nasdaq": -5.6,
-    "dxy": 0.05,
-    "gold": 4.01
+    "nasdaq": -5.41,
+    "dxy": -0.0,
+    "gold": 4.28
   },
   "volume_vs_30d_avg": 1.79,
-  "ma50": 81966.0,
-  "ma200": 73189.0,
-  "dist_from_50d_pct": -8.1,
+  "ma50": 81972.0,
+  "ma200": 73190.0,
+  "dist_from_50d_pct": -7.8,
   "verdict": {
     "direction": "HOLD",
-    "bias": "neutral",
+    "bias": "up",
     "tier": null,
-    "confidence_pct": 50,
-    "score": 0.0,
+    "confidence_pct": 56,
+    "score": 1.5,
     "components": {
       "valuation": 0,
       "trend": -1,
-      "macro_release": 1,
+      "macro_release": 2,
       "exhaustion": 0,
       "froth": 0,
       "volume": 0
     },
-    "stance": "neutral \u2014 no edge either way; let the triggers decide",
-    "thesis": "[auto] composite +0.0 \u2014 trend -1, macro_release +1",
+    "stance": "constructive \u2014 leaning toward adds once a B-trigger fires",
+    "thesis": "[auto] composite +1.5 \u2014 trend -1, macro_release +2",
     "horizon_days": 7,
     "invalidation": "auto-graded at horizon: up=+2%, down=-2%, neutral=within \u00b12%"
   },
